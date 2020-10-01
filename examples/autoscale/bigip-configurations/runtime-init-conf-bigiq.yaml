@@ -1,0 +1,136 @@
+---
+extension_packages:
+  install_operations:
+  - extensionHash: e7c9acb0ddfc9e9949c48b9a8de686c365764f28347aacf194a6de7e3ed183be
+    extensionType: do
+    extensionVersion: 1.13.0
+  - extensionHash: ba2db6e1c57d2ce6f0ca20876c820555ffc38dd0a714952b4266c4daf959d987
+    extensionType: as3
+    extensionVersion: 3.20.0
+  - extensionHash: d52ad1ca23df1d9c81a9e3641fc25b593dd0c0a17cc3a90316067ae78e41a990
+    extensionType: ts
+    extensionVersion: 1.12.0
+extension_services:
+  service_operations:
+  - extensionType: do
+    type: inline
+    value:
+      Common:
+        class: Tenant
+        dbvars:
+          class: DbVariables
+          provision.extramb: 500
+          restjavad.useextramb: true
+        myDns:
+          class: DNS
+          nameServers:
+          - 8.8.8.8
+        myLicense:
+          class: License
+          licenseType: licensePool
+          bigIqHost: '192.168.1.4'
+          bigIqUsername: azureuser
+          bigIqPassword: "{{{BIGIQ_PASSWORD}}}"
+          licensePool: clpv2
+          skuKeyword1: F5-BIG-MSP-BT-1G
+          unitOfMeasure: hourly
+          reachable: false
+          hypervisor: azure
+          overwrite: false
+        myNtp:
+          class: NTP
+          servers:
+          - 0.pool.ntp.org
+          timezone: UTC
+        myProvisioning:
+          asm: nominal
+          class: Provision
+          ltm: nominal
+        mySystem:
+          autoPhonehome: true
+          class: System
+          hostname: "{{HOST_NAME}}.local"
+      async: true
+      class: Device
+      label: myBIG-IPdeclarationfordeclarativeonboarding
+      schemaVersion: 1.0.0
+  - extensionType: as3
+    type: inline
+    value:
+      action: deploy
+      class: AS3
+      declaration:
+        Sample_http_01:
+          A1:
+            My_ASM_Policy:
+              class: WAF_Policy
+              ignoreChanges: true
+              enforcementMode: blocking
+              url: https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+            class: Application
+            serviceMain:
+              class: Service_HTTP
+              policyWAF:
+                use: My_ASM_Policy
+              pool: webPool
+              virtualAddresses:
+              - 0.0.0.0
+              virtualPort: 80
+            template: http
+            webPool:
+              class: Pool
+              members:
+              - serverAddresses:
+                - 10.0.1.4
+                servicePort: 80
+              monitors:
+              - http
+          class: Tenant
+        class: ADC
+        label: Sample1
+        remark: HTTPwithcustompersistence
+        schemaVersion: 3.0.0
+      persist: true
+  - extensionType: ts
+    type: inline
+    value:
+      Azure_Consumer:
+        appInsightsResourceName: dd-app-*
+        class: Telemetry_Consumer
+        maxBatchIntervalMs: 5000
+        maxBatchSize: 250
+        trace: true
+        type: Azure_Application_Insights
+        useManagedIdentity: true
+      Bigip_Poller:
+        actions:
+        - includeData: {}
+          locations:
+            system:
+              cpu: true
+              networkInterfaces:
+                '1.0':
+                  counters.bitsIn: true
+        class: Telemetry_System_Poller
+        interval: 60
+      class: Telemetry
+      controls:
+        class: Controls
+        debug: true
+        logLevel: debug
+post_onboard_enabled: []
+pre_onboard_enabled: []
+runtime_parameters:
+- name: HOST_NAME
+  type: metadata
+  metadataProvider:
+    environment: azure
+    type: compute
+    field: name
+- name: BIGIQ_PASSWORD
+  type: secret
+  secretProvider:
+    type: KeyVault
+    environment: azure
+    vaultUrl: https://myVaultName.vault.azure.net
+    secretId: mySecret
