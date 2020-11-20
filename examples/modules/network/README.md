@@ -17,7 +17,7 @@
 
 ## Introduction
 
-This ARM template creates virtual network, subnets, and security groups required to support F5 solutions. Link this template to create networks, security groups, and subnets required for F5 deployments.
+This ARM template creates a virtual network, subnets, and route tables required to support F5 solutions. Link this template to create networks, subnets, and route tables required for F5 deployments.
 
 ## Prerequisites
 
@@ -32,25 +32,17 @@ This ARM template creates virtual network, subnets, and security groups required
 
 | Parameter | Required | Description |
 | --- | --- | --- |
-| mgmtNsg | Yes | Valid values: 'Default', 'None', existing_nsg_name. 'Default' creates a network security group named 'mgmtNSG' and applies SG to mgmtSubnet. 'None', does not create a management security group, or apply group to mgmtSubnet. Supplying an existing security group name will apply SG to 'mgmtSubnet'. |
-| appNsg | Yes | Valid values: 'Default', 'None', existing_nsg_name. 'Default' creates a network security group named 'appNSG' and applies SG to appSubnet. 'None', does not create a management security group, or apply group to appSubnet. Supplying an existing security group name will apply SG to 'appSubnet'. |
-| restrictedSrcMgmtAddress | Yes | Address range allowed to access BIG-IP management. Used to construct rules for mgmtNSG security group. |
-| restrictedSrcMgmtPort | Yes | F5 admin portal port used to access BIG-IP management. Used to construct rules for mgmtNSG security group. |
-| provisionPublicIP | Yes | Used to construct appNsg. 'false' creates a rule to block internet traffic. 'true', creates a rule to allow internet traffic.  |
 | virtualNetworkName| Yes | Name used to create virtual network. |
 | vnetAddressPrefix | Yes | Enter the start of the CIDR block used when creating the Vnet and subnets.  You MUST type just the first two octets of the /16 virtual network that will be created, for example '10.0', '10.100', 192.168'." |
-| numSubnets| Yes | Number of subnets to create. Value of >=1 creates subnet named mgmtSubnet. Value >=2 creates 2 subnets named mgmtSubnet and appSubnet. Value > 2 creates mgmtSubnet, appSubnet, and subnet(n) where n starts at 2 and continues to *supplied value*-2. Subnet values are constructed using vnetAddressPrefix.*n*.0/24 where *n=0* for mgmtSubnet, *n=1* for appSubnet, and *n* increments by one for each additional subnet created. |
+| numSubnets| Yes | Number of subnets to create. A route table resource will be created and associated with each subnet resource. |
 | tagValues| Yes | List of tags to add to created resources. |
 
 ### Template Outputs
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| appNSG | Application Network Security Group resource ID | Application Network Security Group | string |
-| appSubnet | Application Subnet resource ID | Application Subnet | string |
-| mgmtNSG | Management Network Security Group resource ID | Management Network Security Group | string |
-| mgmtSubnet | Management Subnet resource ID | Management Subnet | string |
-| subnets | Application Subnets resource IDs | Application Subnets | array |
+| routeTables | Route tables resource IDs | Route Tables | array |
+| subnets | Subnets resource IDs | Subnets | array |
 | virtualNetwork | Virtual Network resource ID | Virtual Network | string |
 
 

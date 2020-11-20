@@ -15,8 +15,7 @@
     - [Template Outputs](#template-outputs)
   - [Resource Creation Flow Chart](#resource-creation-flow-chart)
   - [Important Configuration Notes](#important-configuration-notes-1)
-    - [Template Parameters](#template-parameters)
-  - [Resource Creation Flow Chart](#resource-creation-flow-chart-1)
+  - [Template Parameters](#template-parameters)
 
 ## Introduction
 
@@ -111,7 +110,3 @@ completed and submitted the F5 Contributor License Agreement.
 | functionAppSku | Yes | Supply a configuration for the function app server farm plan SKU (premium or appservice) in JSON format. Information about server farm plans is available [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2018-02-01/serverfarms). |
 | functionAppVnetId | No | The fully-qualified resource ID of the Azure Virtual Network where BIG-IQ is deployed. This is required when connecting to BIG-IQ via a private IP address; the Azure function app will be granted ingress permission to the virtual network. When specifying an Azure public IP address for bigIqAddress, leave the default of **Default**. |
 | tagValues| Yes | List of tags to add to created resources. |
-
-## Resource Creation Flow Chart
-
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/master/examples/images/azure-function-module.png)
