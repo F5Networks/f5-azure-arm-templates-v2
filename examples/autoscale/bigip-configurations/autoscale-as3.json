@@ -1,49 +1,48 @@
 {
-  "action": "deploy",
-  "class": "AS3",
-  "declaration": {
-    "Sample_http_01": {
-      "A1": {
-        "My_ASM_Policy": {
-          "class": "WAF_Policy",
-          "ignoreChanges": true,
-          "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
+    "action": "deploy",
+    "class": "AS3",
+    "declaration": {
+        "Sample_http_01": {
+            "A1": {
+                "My_ASM_Policy": {
+                    "class": "WAF_Policy",
+                    "ignoreChanges": true,
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
+                },
+                "class": "Application",
+                "serviceMain": {
+                    "class": "Service_HTTP",
+                    "policyWAF": {
+                        "use": "My_ASM_Policy"
+                    },
+                    "pool": "webPool",
+                    "virtualAddresses": [
+                        "0.0.0.0"
+                    ],
+                    "virtualPort": 80
+                },
+                "template": "http",
+                "webPool": {
+                    "class": "Pool",
+                    "members": [
+                        {
+                            "serverAddresses": [
+                                "10.0.0.2"
+                            ],
+                            "servicePort": 80
+                        }
+                    ],
+                    "monitors": [
+                        "http"
+                    ]
+                }
+            },
+            "class": "Tenant"
         },
-        "class": "Application",
-        "serviceMain": {
-          "class": "Service_HTTP",
-          "policyWAF": {
-            "use": "My_ASM_Policy"
-          },
-          "pool": "webPool",
-          "virtualAddresses": [
-            "0.0.0.0"
-          ],
-          "virtualPort": 80
-        },
-        "template": "http",
-        "webPool": {
-          "class": "Pool",
-          "members": [
-            {
-              "serverAddresses": [
-                "10.0.0.2"
-              ],
-              "servicePort": 80
-            }
-          ],
-          "monitors": [
-            "http"
-          ]
-        }
-      },
-      "class": "Tenant"
+        "class": "ADC",
+        "label": "Sample 1",
+        "remark": "HTTP with custom persistence",
+        "schemaVersion": "3.0.0"
     },
-    "class": "ADC",
-    "label": "Sample 1",
-    "remark": "HTTP with custom persistence",
-    "schemaVersion": "3.0.0"
-  },
-  "persist": true,
-  "contentVersion": "1.1.0.0"
+    "persist": true
 }

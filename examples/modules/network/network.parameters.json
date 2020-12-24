@@ -1,24 +1,24 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.1.0.0",
-  "parameters": {
-    "numSubnets": {
-      "value": 1
-    },
-    "tagValues": {
-      "value": {
-        "application": "APP",
-        "cost": "COST",
-        "environment": "ENV",
-        "group": "GROUP",
-        "owner": "OWNER"
-      }
-    },
-    "virtualNetworkName": {
-      "value": "virtualNetwork"
-    },
-    "vnetAddressPrefix": {
-      "value": "10.0"
-    }
-  }
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"numSubnets": {
+			"value": 1
+		},
+		"tagValues": {
+			"value": {
+				"application": "APP",
+				"cost": "COST",
+				"environment": "ENV",
+				"group": "GROUP",
+				"owner": "OWNER"
+			}
+		},
+		"virtualNetworkName": {
+			"value": "virtualNetwork"
+		},
+		"vnetAddressPrefix": {
+			"value": "10.0"
+		}
+	}
 }

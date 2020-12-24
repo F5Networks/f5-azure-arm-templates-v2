@@ -288,16 +288,16 @@ The following is a map that shows the available options for the template variabl
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 15.1.004000 | 15.1.0 Build 0.0.4 |
-| 14.1.206000 | 14.1.2 Build 0.0.6 |
+| 15.1.200000 | 15.1.2 Build 0.0.9 |
+| 14.1.300000 | 14.1.3 Build 0.0.8 |
 | latest | This will select the latest BIG-IP version available |
 
 These templates have been tested and validated with the following versions of BIG-IP. 
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 15.1.0 | 0.0.4 |
-| 14.1.2 | 0.0.6 |
+| 15.1.2 | 0.0.9 |
+| 14.1.3 | 0.0.8 |
 
 ## Supported instance types and hypervisors
 
@@ -320,7 +320,7 @@ Use the appropriate button below to deploy:
 
 - **PAYG**: This allows you to use pay-as-you-go hourly billing.
 
-  [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.1.0.0%2Fexamples%2Fautoscale%2Fpayg%2Fazuredeploy.json)
+  [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.2.0.0%2Fexamples%2Fautoscale%2Fpayg%2Fazuredeploy.json)
 
 
 ### Programmatic deployments

@@ -1,33 +1,32 @@
 {
-  "Common": {
-    "class": "Tenant",
-    "myDns": {
-      "class": "DNS",
-      "nameServers": [
-        "8.8.8.8"
-      ]
+    "Common": {
+        "class": "Tenant",
+        "myDns": {
+            "class": "DNS",
+            "nameServers": [
+                "8.8.8.8"
+            ]
+        },
+        "myNtp": {
+            "class": "NTP",
+            "servers": [
+                "0.pool.ntp.org"
+            ],
+            "timezone": "UTC"
+        },
+        "myProvisioning": {
+            "asm": "nominal",
+            "class": "Provision",
+            "ltm": "nominal"
+        },
+        "mySystem": {
+            "autoPhonehome": false,
+            "class": "System",
+            "hostname": "{{ HOST_NAME }}.local"
+        }
     },
-    "myNtp": {
-      "class": "NTP",
-      "servers": [
-        "0.pool.ntp.org"
-      ],
-      "timezone": "UTC"
-    },
-    "myProvisioning": {
-      "asm": "nominal",
-      "class": "Provision",
-      "ltm": "nominal"
-    },
-    "mySystem": {
-      "autoPhonehome": false,
-      "class": "System",
-      "hostname": "{{ HOST_NAME }}.local"
-    }
-  },
-  "async": true,
-  "class": "Device",
-  "label": "my BIG-IP declaration for declarative onboarding",
-  "schemaVersion": "1.0.0",
-  "contentVersion": "1.1.0.0"
+    "async": true,
+    "class": "Device",
+    "label": "my BIG-IP declaration for declarative onboarding",
+    "schemaVersion": "1.0.0"
 }
