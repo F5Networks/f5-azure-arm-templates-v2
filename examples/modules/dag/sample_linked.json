@@ -1,0 +1,173 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"artifactLocation": {
+			"defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
+			"metadata": {
+				"description": "The directory, relative to the templateBaseUrl, where the modules folder is located."
+			},
+			"type": "string"
+		},
+		"templateBaseUrl": {
+			"defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
+			"metadata": {
+				"description": "The publicly accessible URL where the linked ARM templates are located."
+			},
+			"type": "string"
+		}
+	},
+	"variables": {
+		"deploymentApiVersion": "2019-05-01"
+	},
+	"resources": [
+		{
+			"apiVersion": "[variables('deploymentApiVersion')]",
+			"name": "dagTemplate",
+			"properties": {
+				"mode": "Incremental",
+				"parameters": {
+					"uniqueString": {
+						"value": ""
+					},
+					"externalLoadBalancerName": {
+						"value": "None"
+					},
+					"internalLoadBalancerName": {
+						"value": "None"
+					},
+					"internalLoadBalancerProbePort": {
+						"value": "3456"
+					},
+					"internalSubnetId": {
+						"value": ""
+					},
+					"loadBalancerRulePorts": {
+						"value": [
+							"80",
+							"443"
+						]
+					},
+					"nsg0": {
+						"value": [
+							{
+								"destinationPortRanges": ["22","8443"],
+								"sourceAddressPrefix": "",
+								"protocol": "Tcp"
+							},
+							{
+								"destinationPortRanges": ["80","443"],
+								"sourceAddressPrefix": "",
+								"protocol": "Tcp"
+							}
+						]
+					},
+					"nsg1": {
+						"value": [
+							{
+								"destinationPortRanges": ["80","443"],
+								"sourceAddressPrefix": "",
+								"protocol": "Tcp"
+							}
+						]
+					},
+					"nsg2": {
+						"value": [
+							{
+								"destinationPortRanges": ["80","443"],
+								"sourceAddressPrefix": "",
+								"protocol": "Tcp"
+							}
+						]
+					},
+					"numberPublicExternalIpAddresses": {
+						"value": 1
+					},
+					"numberPublicMgmtIpAddresses": {
+						"value": 0
+					},
+					"tagValues": {
+						"value": {
+							"application": "APP",
+							"cost": "COST",
+							"environment": "ENV",
+							"group": "GROUP",
+							"owner": "OWNER"
+						}
+					}
+				},
+				"templateLink": {
+					"contentVersion": "1.2.0.0",
+					"uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/dag/dag.json')]"
+				}
+			},
+			"type": "Microsoft.Resources/deployments"
+		}
+	],
+	"outputs": {
+		"externalIpIds": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.externalIpIds.value]"
+		},
+		"externalIps": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.externalIps.value]"
+		},
+		"externalIpDns": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.externalIpDns.value]"
+		},
+		"externalBackEndLoadBalancerID": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerID.value]"
+		},
+		"externalBackEndMgmtLoadBalancerID": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.externalBackEndMgmtLoadBalancerID.value]"
+		},
+		"externalFrontEndLoadBalancerID": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.externalFrontEndLoadBalancerID.value]"
+		},
+		"externalFrontEndLoadBalancerInboundID": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.externalFrontEndLoadBalancerInboundID.value]"
+		},
+		"externalFrontEndMgmtLoadBalancerID": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.externalFrontEndMgmtLoadBalancerID.value]"
+		},
+		"externalLoadBalancer": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.externalLoadBalancer.value]"
+		},
+		"externalLoadBalancerProbesID": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesID.value]"
+		},
+		"externalLoadBalancerRulesID": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.externalLoadBalancerRulesID.value]"
+		},
+		"mgmtIpIds": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.mgmtIpIds.value]"
+		},
+		"mgmtIps": {
+			"type": "array",
+			"value": "[reference('dagTemplate').outputs.mgmtIps.value]"
+		},
+		"nsg0Id": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.nsg0Id.value]"
+		},
+		"nsg1Id": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.nsg1Id.value]"
+		},
+		"nsg2Id": {
+			"type": "string",
+			"value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+		}
+	}
+}

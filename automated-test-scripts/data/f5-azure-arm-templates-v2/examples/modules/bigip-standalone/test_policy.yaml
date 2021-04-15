@@ -1,0 +1,17 @@
+# Bigip Module Test
+azure-arm-bigip-standalone-module-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    # PAYG 3NIC, static, public mgmt
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters.yaml"
+    # BYOL 3NIC, static, no public mgmt
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters1.yaml"
+    # PAYG 2NIC, static, public mgmt
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters2.yaml"
+    # BYOL 2NIC, dhcp, public mgmt
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters3.yaml"
+    # PAYG 1NIC, static public mgmt
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters4.yaml"
+    # BYOL 1NIC, static, public mgmt
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters5.yaml"

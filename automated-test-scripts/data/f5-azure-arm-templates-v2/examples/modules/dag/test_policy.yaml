@@ -1,0 +1,10 @@
+---
+# Dag Module Tests
+azure-arm-network-module-test:
+    test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/dag/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/prepub_parameters1.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/prepub_parameters2.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/prepub_parameters3.yaml"

@@ -1,0 +1,48 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"vmssId": {
+			"value": ""
+		},
+		"bigIqAddress": {
+			"value": ""
+		},
+		"bigIqLicensePool": {
+			"value": ""
+		},
+		"bigIqPassword": {
+			"value": ""
+		},
+		"bigIqUsername": {
+			"value": ""
+		},
+		"bigIqTenant": {
+			"value": ""
+		},
+		"bigIqUtilitySku": {
+			"value": ""
+		},
+		"functionAppName": {
+			"value": "functionApp"
+		},
+		"functionAppSku": {
+			"value": {
+				"Tier": "ElasticPremium",
+				"Name": "EP1"
+			}
+		},
+		"functionAppVnetId": {
+			"value": "Default"
+		},
+		"tagValues": {
+			"value": {
+				"application": "APP",
+				"cost": "COST",
+				"environment": "ENV",
+				"group": "GROUP",
+				"owner": "OWNER"
+			}
+		}
+  }
+}
