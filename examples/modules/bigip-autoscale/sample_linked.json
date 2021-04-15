@@ -1,0 +1,159 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"artifactLocation": {
+			"defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
+			"metadata": {
+				"description": "The directory, relative to the templateBaseUrl, where the modules folder is located."
+			},
+			"type": "string"
+		},
+		"templateBaseUrl": {
+			"defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
+			"metadata": {
+				"description": "The publicly accessible URL where the linked ARM templates are located."
+			},
+			"type": "string"
+		}
+	},
+	"variables": {
+		"deploymentApiVersion": "2019-05-01"
+	},
+	"resources": [
+		{
+			"apiVersion": "[variables('deploymentApiVersion')]",
+			"name": "bigipTemplate",
+			"properties": {
+				"mode": "Incremental",
+				"parameters": {
+					"adminUsername": {
+						"value": "my-admin"
+					},
+					"appInsights": {
+						"value": ""
+					},
+					"cpuMetricName": {
+						"value": "Percentage CPU"
+					},
+					"customAutoscaleRules": {
+						"value": []
+					},
+					"customEmail": {
+						"value": []
+					},
+					"uniqueString": {
+						"value": ""
+					},
+					"image": {
+						"value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000"
+					},
+					"inboundMgmtNatPoolId": {
+						"value": ""
+					},
+					"inboundSshNatPoolId": {
+						"value": ""
+					},
+					"instanceHealthProbeId": {
+						"value": ""
+					},
+					"instanceType": {
+						"value": "Standard_D2s_v3"
+					},
+					"loadBalancerBackendAddressPoolsArray": {
+						"value": []
+					},
+					"nsgId": {
+						"value": ""
+					},
+					"provisionPublicIp": {
+						"value": {}
+					},
+					"roleDefinitionId": {
+						"value": ""
+					},
+					"bigIpRuntimeInitConfig": {
+						"value": ""
+					},
+					"scaleInCpuThreshold": {
+						"value": 20
+					},
+					"scaleInThroughputThreshold": {
+						"value": 10000000
+					},
+					"scaleInTimeWindow": {
+						"value": 10
+					},
+					"scaleOutCpuThreshold": {
+						"value": 80
+					},
+					"scaleOutThroughputThreshold": {
+						"value": 20000000
+					},
+					"scaleOutTimeWindow": {
+						"value": 10
+					},
+					"sshKey": {
+						"value": ""
+					},
+					"subnetId": {
+						"value": ""
+					},
+					"tagValues": {
+						"value": {
+							"application": "APP",
+							"cost": "COST",
+							"environment": "ENV",
+							"group": "GROUP",
+							"owner": "OWNER"
+						}
+					},
+					"throughputMetricName": {
+						"value": "Network In"
+					},
+					"updateTag": {
+						"value": "[utcNow()]"
+					},
+					"useAvailabilityZones": {
+						"value": "Yes"
+					},
+					"userAssignManagedIdentity": {
+						"value": ""
+					},
+					"vmScaleSetMaxCount": {
+						"value": 4
+					},
+					"vmScaleSetMinCount": {
+						"value": 2
+					},
+					"vmssName": {
+						"value": "bigip-vmss"
+					}
+				},
+				"templateLink": {
+					"contentVersion": "1.2.0.0",
+					"uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/bigip-autoscale/bigip.json')]"
+				}
+			},
+			"type": "Microsoft.Resources/deployments"
+		}
+	],
+	"outputs": {
+		"appInsightsComponentID": {
+			"type": "array",
+			"value": "[reference('bigipTemplate').outputs.appInsightsComponentID.value]"
+		},
+		"appIps": {
+			"type": "array",
+			"value": "[reference('bigipTemplate').outputs.roleAssignmentID.value]"
+		},
+		"autoscaleSettingsID": {
+			"type": "string",
+			"value": "[reference('bigipTemplate').outputs.autoscaleSettingsID.value]"
+		},
+		"vmssID": {
+			"type": "string",
+			"value": "[reference('bigipTemplate').outputs.vmssID.value]"
+		}
+	}
+}

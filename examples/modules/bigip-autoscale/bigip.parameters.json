@@ -1,0 +1,108 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"adminUsername": {
+			"value": "my-admin"
+		},
+		"appInsights": {
+			"value": ""
+		},
+		"cpuMetricName": {
+			"value": "Percentage CPU"
+		},
+		"customAutoscaleRules": {
+			"value": []
+		},
+		"customEmail": {
+			"value": []
+		},
+		"uniqueString": {
+			"value": ""
+		},
+		"image": {
+			"value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000"
+		},
+		"inboundMgmtNatPoolId": {
+			"value": ""
+		},
+		"inboundSshNatPoolId": {
+			"value": ""
+		},
+		"instanceHealthProbeId": {
+			"value": ""
+		},
+		"instanceType": {
+			"value": "Standard_D2s_v3"
+		},
+		"loadBalancerBackendAddressPoolsArray": {
+			"value": []
+		},
+		"nsgId": {
+			"value": ""
+		},
+		"provisionPublicIp": {
+			"value": {}
+		},
+		"roleDefinitionId": {
+			"value": ""
+		},
+		"bigIpRuntimeInitConfig": {
+			"value": ""
+		},
+		"scaleInCpuThreshold": {
+			"value": 20
+		},
+		"scaleInThroughputThreshold": {
+			"value": 10000000
+		},
+		"scaleInTimeWindow": {
+			"value": 10
+		},
+		"scaleOutCpuThreshold": {
+			"value": 80
+		},
+		"scaleOutThroughputThreshold": {
+			"value": 20000000
+		},
+		"scaleOutTimeWindow": {
+			"value": 10
+		},
+		"sshKey": {
+			"value": ""
+		},
+		"subnetId": {
+			"value": ""
+		},
+		"tagValues": {
+			"value": {
+				"application": "APP",
+				"cost": "COST",
+				"environment": "ENV",
+				"group": "GROUP",
+				"owner": "OWNER"
+			}
+		},
+		"throughputMetricName": {
+			"value": "Network In"
+		},
+		"updateTag": {
+			"value": "[utcNow()]"
+		},
+		"useAvailabilityZones": {
+			"value": "Yes"
+		},
+		"userAssignManagedIdentity": {
+			"value": ""
+		},
+		"vmScaleSetMaxCount": {
+			"value": 4
+		},
+		"vmScaleSetMinCount": {
+			"value": 2
+		},
+		"vmssName": {
+			"value": "bigip-vmss"
+		}
+	}
+}

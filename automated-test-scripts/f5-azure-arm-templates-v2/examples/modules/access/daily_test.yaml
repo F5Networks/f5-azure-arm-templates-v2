@@ -1,0 +1,17 @@
+---
+name: Azure Examples - Access
+onStart:
+- ../../../common/helper_init.sh
+- ../../../common/create_resource_group.sh
+- ./create_deployment.sh
+- ../../../common/verify_create.sh
+- ./tests/verify_identity.sh
+- ./tests/verify_keyvault.sh
+- ./tests/verify_cust_role_def.sh
+- ./tests/verify_deployment_outputs.sh
+- ../../../common/delete_deployment.sh
+- ../../../common/verify_delete.sh
+onFail:
+- ../../../common/capture_deployment_status.sh
+- ../../../common/delete_deployment.sh
+- ../../../common/verify_delete.sh
