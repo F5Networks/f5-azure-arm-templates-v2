@@ -384,6 +384,11 @@
       "type": "string",
       "value": "[resourceGroup().name]"
     },
+    "vmssId": {
+      "condition": "[parameters('createAutoscaleGroup')]",
+      "type": "string",
+      "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('vmssName'))]"
+    },
     "vmssName": {
       "condition": "[parameters('createAutoscaleGroup')]",
       "type": "string",

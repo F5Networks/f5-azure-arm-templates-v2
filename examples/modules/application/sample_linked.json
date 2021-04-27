@@ -85,6 +85,10 @@
 			"type": "string",
 			"value": "[reference('appTemplate').outputs.resourceGroup.value]"
 		},
+		"vmssId": {
+			"type": "string",
+			"value": "[reference('appTemplate').outputs.vmssId.value]"
+		},
 		"vmssName": {
 			"type": "string",
 			"value": "[reference('appTemplate').outputs.vmssName.value]"

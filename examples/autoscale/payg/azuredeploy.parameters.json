@@ -17,9 +17,6 @@
 		"sshKey": {
 			"value": ""
 		},
-		"newPassword": {
-			"value": ""
-		},
 		"appContainerName": {
 			"value": "f5devcentral/f5-demo-app:latest"
 		},
@@ -28,6 +25,9 @@
 		},
 		"bigIpRuntimeInitConfig": {
 			"value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"
+		},
+		"bigIpRuntimeInitPackageUrl": {
+			"value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run"
 		},
 		"bigIpScalingMaxSize": {
 			"value": 10

@@ -23,10 +23,39 @@ else
     BIGIQ_PARAMS=''
 fi
 
+## Create runtime configs with yq
+cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-<LICENSE TYPE>.yaml <DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"<SECRET VALUE>\"" -i <DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"blocking\"" -i <DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"blocking\"" -i <DEWPOINT JOB ID>.yaml
+
+if [[ <LICENSE TYPE> == "bigiq" ]]; then
+    /usr/bin/yq e ".runtime_parameters.[5].secretProvider.vaultUrl = \"<RESOURCE GROUP>fnfv\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[5].secretProvider.secretId = \"<RESOURCE GROUP>fnbigiq\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIqHost = \"${BIGIQ_ADDRESS}\"" -i <DEWPOINT JOB ID>.yaml
+fi
+
+cp <DEWPOINT JOB ID>.yaml update_<DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"transparent\"" -i update_<DEWPOINT JOB ID>.yaml
+/usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"transparent\"" -i update_<DEWPOINT JOB ID>.yaml
+
+## Upload templates and configs to container
+CONFIG_RESULT=$(az storage blob upload -f <DEWPOINT JOB ID>.yaml --account-name ${STORAGE_ACCOUNT_NAME} -c templates -n <DEWPOINT JOB ID>.yaml)
+CONFIG_UPDATE_RESULT=$(az storage blob upload -f update_<DEWPOINT JOB ID>.yaml --account-name ${STORAGE_ACCOUNT_NAME} -c templates -n update_<DEWPOINT JOB ID>.yaml)
+
+RUNTIME_CONFIG_URL=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>.yaml
 
 WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group <RESOURCE GROUP> --workspace-name <RESOURCE GROUP>-log-wrkspc --query customerId | tr -d '"')
 
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"image":{"value":"<IMAGE>"},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"newPassword":{"value":"<SECRET VALUE>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+if [[ -z <BIGIP RUNTIME INIT PACKAGEURL> ]]; then
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"image":{"value":"<IMAGE>"},"bigIpRuntimeInitConfig":{"value":"'"${RUNTIME_CONFIG_URL}"'"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+else
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"image":{"value":"<IMAGE>"},"bigIpRuntimeInitConfig":{"value":"'"${RUNTIME_CONFIG_URL}"'"},"bigIpRuntimeInitPackageUrl":{"value":"<BIGIP RUNTIME INIT PACKAGEURL>"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+fi
+
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

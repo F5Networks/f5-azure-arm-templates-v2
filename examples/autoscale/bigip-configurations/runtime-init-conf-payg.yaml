@@ -34,6 +34,13 @@ runtime_parameters:
     headers:
       - name: Metadata
         value: true
+  - name: REGION
+    type: url
+    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2020-09-01'
+    query: location
+    headers:
+      - name: Metadata
+        value: true
 bigip_ready_enabled: []
 extension_packages:
   install_operations:
@@ -46,9 +53,6 @@ extension_packages:
     - extensionType: ts
       extensionVersion: 1.18.0
       extensionHash: de4c82cafe503e65b751fcacfb2f169912ad5ce1645e13c5135dca972299174a
-    - extensionType: fast
-      extensionVersion: 1.7.0
-      extensionHash: 9c617f5bb1bb0d08ec095ce568a6d5d2ef162e504cd183fe3540586200f9d950
 extension_services:
   service_operations:
     - extensionType: do
@@ -66,7 +70,7 @@ extension_services:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true
-            ui.advisory.color: green
+            ui.advisory.color: blue
             ui.advisory.text: "Provisioned via Runtime Init and DO"
           myDns:
             class: DNS
@@ -136,20 +140,6 @@ extension_services:
               class: Log_Publisher
               destinations:
                 - use: telemetry_formatted
-            telemetry_traffic_log_profile:
-              class: Traffic_Log_Profile
-              requestSettings:
-                requestEnabled: true
-                requestProtocol: mds-tcp
-                requestPool:
-                  use: telemetry
-                requestTemplate: event_source="request_logging",hostname="$BIGIP_HOSTNAME",client_ip="$CLIENT_IP",server_ip="$SERVER_IP",http_method="$HTTP_METHOD",http_uri="$HTTP_URI",virtual_name="$VIRTUAL_NAME",event_timestamp="$DATE_HTTP"
-              responseSettings:
-                responseEnabled: true
-                responseProtocol: mds-tcp
-                responsePool:
-                  use: telemetry
-                responseTemplate: event_source="response_logging",hostname="$BIGIP_HOSTNAME",client_ip="$CLIENT_IP",server_ip="$SERVER_IP",http_method="$HTTP_METHOD",http_uri="$HTTP_URI",virtual_name="$VIRTUAL_NAME",event_timestamp="$DATE_HTTP",http_statcode="$HTTP_STATCODE",http_status="$HTTP_STATUS",response_ms="$RESPONSE_MSECS"
             telemetry_asm_security_log_profile:
               class: Security_Log_Profile
               application:
@@ -217,41 +207,56 @@ extension_services:
     - extensionType: ts
       type: inline
       value:
-        My_Listener:
-          class: Telemetry_Listener
-          port: 6514
-        My_System:
-          class: Telemetry_System
-          systemPoller:
-            interval: 60
-        Azure_Consumer:
-          appInsightsResourceName: '{{{UNIQUE_STRING}}}-insights'
-          class: Telemetry_Consumer
-          maxBatchIntervalMs: 5000
-          maxBatchSize: 250
-          trace: true
-          type: Azure_Application_Insights
-          useManagedIdentity: true
-        Azure_Log_Analytics:
-          class: Telemetry_Consumer
-          type: Azure_Log_Analytics
-          workspaceId: '{{{WORKSPACE_ID}}}'
-          useManagedIdentity: true
-          region: '{{{ REGION }}}'
-        Bigip_Poller:
-          actions:
-            - includeData: {}
-              locations:
-                system:
-                  cpu: true
-                  networkInterfaces:
-                    '1.0':
-                      counters.bitsIn: true
-          class: Telemetry_System_Poller
-          interval: 60
         class: Telemetry
         controls:
           class: Controls
-          debug: true
-          logLevel: debug
+          logLevel: info
+        My_Metrics_Namespace:
+          class: Telemetry_Namespace
+          My_System_Poller:
+            class: Telemetry_System_Poller
+            interval: 60
+            actions:
+              - includeData: {}
+                locations:
+                  system:
+                    cpu: true
+          My_Scaling_Endpoints:
+            class: Telemetry_Endpoints
+            items:
+              throughputIn:
+                name: throughputIn
+                path: /mgmt/tm/sys/performance/throughput?$top=1&$select=Current
+              hostname:
+                name: hostname
+                path: /mgmt/tm/sys/global-settings?$select=hostname
+          My_Custom_Endpoints_Poller:
+            class: Telemetry_System_Poller
+            interval: 60
+            endpointList:
+            - My_Scaling_Endpoints/hostname
+            - My_Scaling_Endpoints/throughputIn
+          My_Telemetry_System:
+            class: Telemetry_System
+            systemPoller:
+            - My_System_Poller
+            - My_Custom_Endpoints_Poller
+          My_Azure_Application_Insights:
+            appInsightsResourceName: '{{{UNIQUE_STRING}}}-insights'
+            class: Telemetry_Consumer
+            maxBatchIntervalMs: 5000
+            maxBatchSize: 250
+            type: Azure_Application_Insights
+            useManagedIdentity: true
+        My_Remote_Logs_Namespace:
+          class: Telemetry_Namespace
+          My_Listener:
+            class: Telemetry_Listener
+            port: 6514
+          My_Azure_Log_Analytics:
+            class: Telemetry_Consumer
+            type: Azure_Log_Analytics
+            workspaceId: '{{{WORKSPACE_ID}}}'
+            useManagedIdentity: true
+            region: '{{{REGION}}}'
 post_onboard_enabled: []

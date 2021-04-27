@@ -104,7 +104,7 @@ This solution leverages more traditional Auto Scale configuration management pra
 
 - F5 ARM templates do not reconfigure existing Azure resources, such as network security groups. Depending on your configuration, you may need to configure these resources to allow the BIG-IP VE(s) to receive traffic for your application. Similarly, the DAG example template that deploys Azure Load Balancer(s) configures load balancing rules and probes on those resources to forward external traffic to the BIG-IP(s) on standard ports 443 and 80. F5 recommends cloning this repository and modifying the module templates to fit your use case.
 
-- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-bigip-deployment) for more BIG-IP customization details.  
+- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.  
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -147,10 +147,11 @@ This solution leverages more traditional Auto Scale configuration management pra
 | --- | --- | --- | --- |
 | appUsername | Application user name | Application Template | string |
 | appVmssName | Application Virtual Machine Scale Set name | Application Template | string |
-| bigipPassword | BIG-IP password | BIG-IP Template | string |
-| bigipUsername | BIG-IP user name | BIG-IP Template | string |
+| appVmssId | Application Virtual Machine Scale Set resource ID | Application Template | string |
+| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
 | virtualNetworkId | Virtual Network resource ID | Network Template | string |
 | vmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | string |
+| vmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | string |
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | array |
 
 

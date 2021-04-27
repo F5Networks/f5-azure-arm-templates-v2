@@ -45,6 +45,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 | adminUsername | No | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
 | appInsights | No | Valid values: empty value, an acceptable application insight component name. Creates application insight component with specified name. |
 | bigIpRuntimeInitConfig | Yes | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
 | cpuMetricName | No | Valid values include valid metric name. See [this documentation](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported) for supported values. A value of 'Default' creates metric using Azure instance metrics. This is required when customAutoscaleRules parameter is not used. |
 | customAutoscaleRules | No | Leave default to create Azure native CPU and throughput metric triggers. Enter an array of appropriate json to use custom triggers. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/autoscalesettings) for valid json. **Note: when using custom triggers, parameters used to collect metric thresholds are not used.** |
 | customEmail | No | Enter an array of email addresses to be notified when scale up or scale down occurs. For example: ['myemail@email.com','myemail2@email.com']. |
@@ -83,6 +84,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 | autoscaleSettingsID | Autoscale Settings resource ID | Virtual Machine Scale Set | string |
 | roleAssignmentID | Role Assignment resource ID | Role Definition | string |
 | vmssID | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
+| vmssName | Virtual Machine Scale Set name | Virtual Machine Scale Set | string |
 
 
 ## Example Configurations

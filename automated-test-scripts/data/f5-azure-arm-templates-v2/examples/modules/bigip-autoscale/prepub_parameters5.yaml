@@ -8,7 +8,7 @@ CUSTOM AUTOSCALE RULES: []
 CUSTOM EMAIL: '[]'
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
-IMAGE: /subscriptions/d18b486a-112d-4402-add2-7fb1006f943a/resourceGroups/automation-templates-persistent-resources/providers/Microsoft.Compute/images/all.2.slot.byol.15.1.201000
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:15.1.201000 # custom image fails licensing, needs investigation
 INSTANCE TYPE: Standard_DS4_v2
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
 INTERNAL LOAD BALANCER PROBE PORT: 3456

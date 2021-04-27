@@ -8,6 +8,9 @@
 		"appInsights": {
 			"value": ""
 		},
+		"bigIpRuntimeInitPackageUrl": {
+			"value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run"
+		},
 		"cpuMetricName": {
 			"value": "Percentage CPU"
 		},

@@ -18,14 +18,14 @@
         },
         "vnetName": {
             "defaultValue": "virtualNetwork",
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "Supply a name for virtual network."
             }
         },
         "vnetAddressPrefix": {
             "defaultValue": "10.0",
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "Enter the start of the CIDR block used when creating the vnet and subnets.  You MUST type just the first two octets of the /16 virtual network that will be created, for example '10.0', '10.100', 192.168'."
             }
@@ -144,7 +144,7 @@
             "type": "Array"
         },
         "natGateway": {
-            "type": "String",
+            "type": "string",
             "value": "[resourceId('Microsoft.Network/natGateways', variables('natGatewayName'))]"
         },
         "subnets": {
@@ -156,7 +156,7 @@
             "type": "Array"
         },
         "virtualNetwork": {
-            "type": "String",
+            "type": "string",
             "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
         }
     }

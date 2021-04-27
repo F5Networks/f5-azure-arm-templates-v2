@@ -57,4 +57,5 @@ This template deploys a simple example application. It launches a linux VM used 
 | appIp | Virtual Machine private IP address | Virtual Machine | string |
 | resourceGroup | Virtual Machine Scale Set Resource Group | Virtual Machine Scale Set | string |
 | vmName | Virtual Machine Name | Virtual Machine | string |
+| vmssId | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
 | vmssName | Virtual Machine Scale Set Name | Virtual Machine Scale Set | string |

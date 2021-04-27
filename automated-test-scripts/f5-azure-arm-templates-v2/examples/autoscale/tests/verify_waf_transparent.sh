@@ -1,10 +1,10 @@
 #  expectValue = "Succeeded"
 #  scriptTimeout = 3
 #  replayEnabled = true
-#  replayTimeout = 10
+#  replayTimeout = 60
 
 # get app address
-APP_ADDRESS=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["appPublicIps"].value[0]')
+APP_ADDRESS=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["wafPublicIPs"].value[0]')
 echo "APP_ADDRESS: ${APP_ADDRESS}"
 
 # confirm app is available
