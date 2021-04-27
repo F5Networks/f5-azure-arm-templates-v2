@@ -5,7 +5,8 @@
 
 ## Contents
 
-- [Example Quickstart - BIG-IP Virtual Edition with WAF (LTM + ASM)](#example-quickstart---big-ip-virtual-edition-with-waf--ltm---asm-)
+- [Deploying the BIG-IP VE in Azure - Example Quickstart BIG-IP WAF (LTM + ASM) - Virtual Machine](#deploying-the-big-ip-ve-in-azure---example-quickstart-big-ip-waf-ltm--asm---virtual-machine)
+  - [Contents](#contents)
   - [Introduction](#introduction)
   - [Diagram](#diagram)
   - [Prerequisites](#prerequisites)
@@ -15,11 +16,18 @@
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the Azure Deploy button](#deploying-via-the-azure-deploy-button)
     - [Deploying via the Azure CLI](#deploying-via-the-azure-cli)
+      - [Azure CLI (2.0) Script Example](#azure-cli-20-script-example)
     - [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment)
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
+    - [Accessing the BIG-IP](#accessing-the-big-ip)
+    - [Further Exploring](#further-exploring)
+      - [WebUI](#webui)
+      - [SSH](#ssh)
     - [Testing the WAF Service](#testing-the-waf-service)
   - [Deleting this Solution](#deleting-this-solution)
+    - [Deleting the deployment via Azure Portal](#deleting-the-deployment-via-azure-portal)
+    - [Deleting the deployment using the Azure CLI](#deleting-the-deployment-using-the-azure-cli)
   - [Troubleshooting Steps](#troubleshooting-steps)
   - [Security](#security)
   - [BIG-IP Versions](#big-ip-versions)
@@ -82,9 +90,9 @@ By default, this solution creates a Vnet with four subnets, an example Web Appli
     - Additional cloud services like [Private endpoints](https://docs.microsoft.com/en-us/azure/storage/common/storage-private-endpoints#connecting-to-private-endpoints) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
-- This solution template provides an **initial** deployment only for an "infrastructure" use case ( meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function).  This solution leverages wa-agent to send the instance **customData**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform.  Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-bigip-deployment) for more information.
+- This solution template provides an **initial** deployment only for an "infrastructure" use case ( meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function).  This solution leverages wa-agent to send the instance **customData**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform.  Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
 
-- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-bigip-deployment) for more BIG-IP customization details.  
+- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.  
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -117,10 +125,9 @@ By default, this solution creates a Vnet with four subnets, an example Web Appli
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
 | appPrivateIp | Application Private IP Address | Application Template | string |
-| appPublicIps | Application Public IP Addresses | Dag Template | array |
 | appUsername | Application user name | Application Template | string |
 | appVmName | Application Virtual Machine name | Application Template | string |
-| bigipUsername | BIG-IP user name | BIG-IP Template | string |
+| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
 | mgmtPrivateIp | Management Private IP Address | BIG-IP Template | string |
 | mgmtPrivateUrl | Management Private IP Address | BIG-IP Template | string |
 | mgmtPublicIp | Management Public IP Address | Dag Template | string |
@@ -134,6 +141,7 @@ By default, this solution creates a Vnet with four subnets, an example Web Appli
 | vip1PublicUrlHttps | Service (VIP) Public HTTPS URL | Dag Template | string |
 | virtualNetworkId | Virtual Network resource ID | Network Template | string |
 | vmId | Virtual Machine resource ID | BIG-IP Template | string |
+| wafPublicIps | VIP Public IP Addresses | Dag Template | array |
 
 
 ## Deploying this Solution

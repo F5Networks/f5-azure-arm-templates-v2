@@ -154,6 +154,10 @@
 		"vmssID": {
 			"type": "string",
 			"value": "[reference('bigipTemplate').outputs.vmssID.value]"
+		},
+		"vmssName": {
+			"type": "string",
+			"value": "[reference('bigipTemplate').outputs.vmssName.value]"
 		}
 	}
 }

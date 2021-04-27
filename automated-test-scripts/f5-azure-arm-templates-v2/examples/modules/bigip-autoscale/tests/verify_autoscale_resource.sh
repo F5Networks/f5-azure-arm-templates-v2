@@ -60,10 +60,6 @@ else
     metric_threshold_1=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[1].metricTrigger.threshold)
     metric_threshold_2=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[2].metricTrigger.threshold)
     metric_threshold_3=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[3].metricTrigger.threshold)
-    metric_timeWindow_0=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[0].metricTrigger.timeWindow | grep -Eo '[0-9]{1,2}')
-    metric_timeWindow_1=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[1].metricTrigger.timeWindow | grep -Eo '[0-9]{1,2}')
-    metric_timeWindow_2=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[2].metricTrigger.timeWindow | grep -Eo '[0-9]{1,2}')
-    metric_timeWindow_3=$(echo '<CUSTOM AUTOSCALE RULES>' | jq -r .[3].metricTrigger.timeWindow | grep -Eo '[0-9]{1,2}')
     autoscale_settings[profiles\[\].rules\[0\].metricTrigger.metricName]="${metric_name_0}"
     autoscale_settings[profiles\[\].rules\[1\].metricTrigger.metricName]="${metric_name_1}"
     autoscale_settings[profiles\[\].rules\[2\].metricTrigger.metricName]="${metric_name_2}"
@@ -72,10 +68,10 @@ else
     autoscale_settings[profiles\[\].rules\[1\].metricTrigger.threshold]="${metric_threshold_1}"
     autoscale_settings[profiles\[\].rules\[2\].metricTrigger.threshold]="${metric_threshold_2}"
     autoscale_settings[profiles\[\].rules\[3\].metricTrigger.threshold]="${metric_threshold_3}"
-    autoscale_settings[profiles\[\].rules\[0\].metricTrigger.timeWindow]="0:${metric_timeWindow_0}:00"
-    autoscale_settings[profiles\[\].rules\[1\].metricTrigger.timeWindow]="0:${metric_timeWindow_1}:00"
-    autoscale_settings[profiles\[\].rules\[2\].metricTrigger.timeWindow]="0:${metric_timeWindow_2}:00"
-    autoscale_settings[profiles\[\].rules\[3\].metricTrigger.timeWindow]="0:${metric_timeWindow_3}:00"
+    autoscale_settings[profiles\[\].rules\[0\].metricTrigger.timeWindow]="0:10:00"
+    autoscale_settings[profiles\[\].rules\[1\].metricTrigger.timeWindow]="0:10:00"
+    autoscale_settings[profiles\[\].rules\[2\].metricTrigger.timeWindow]="0:10:00"
+    autoscale_settings[profiles\[\].rules\[3\].metricTrigger.timeWindow]="0:10:00"
 fi
 # verify autoscale output id
 id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.autoscaleSettingsID.value)

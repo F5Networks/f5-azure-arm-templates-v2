@@ -35,13 +35,6 @@
 			},
 			"type": "string"
 		},
-		"newPassword": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "The new password to be used for the admin user on the BIG-IP instances. This is required for creating the AZURE_PASSWORD secret referenced in the bigIpRuntimeInitConfig template parameter."
-			},
-			"type": "securestring"
-		},
 		"appContainerName": {
 			"defaultValue": "f5devcentral/f5-demo-app:latest",
 			"metadata": {
@@ -66,6 +59,13 @@
 			"defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
 			"metadata": {
 				"description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
+			},
+			"type": "string"
+		},
+		"bigIpRuntimeInitPackageUrl": {
+			"defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run",
+			"metadata": {
+				"description": "URL for BIG-IP Runtime Init package"
 			},
 			"type": "string"
 		},
@@ -158,17 +158,17 @@
         "uniqueString": "[toLower(parameters('uniqueString'))]",
 		"adminUsername": "azureuser",
 
-		"assignManagedIdentity": "[or(not(empty(parameters('newPassword'))), not(empty(variables('customAutoscaleRules'))))]",
+		"assignManagedIdentity": "[not(empty(variables('customAutoscaleRules')))]",
 		"builtInRoleType": "Contributor",
 		"customRoleAssignableScopes": [],
 		"customRoleDescription": "",
 		"customRoleName": "",
 		"customRolePermissions": [],
-		"keyVaultName": "[concat(variables('uniqueString'), 'sv')]",
-		"keyVaultPermissionsKeys": ["get","list"],
-		"keyVaultPermissionsSecrets": ["get","list"],
-		"secretName": "mySecret",
-		"userAssignedIdentityName": "[concat(variables('uniqueString'), '-secretIdentity')]",
+		"keyVaultName": "",
+		"keyVaultPermissionsKeys": [],
+		"keyVaultPermissionsSecrets": [],
+		"secretName": "",
+		"userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
 
 		"numSubnets": 2,
 		"restrictedSrcMgmtPort": "8443",
@@ -195,7 +195,7 @@
 		"appInsights": "[concat(variables('uniqueString'), '-insights')]",
 		"appInsightsId": "[resourceId('Microsoft.Insights/components', variables('appInsights'))]",
 		"cpuMetricName": "Percentage CPU",
-		"customAutoscaleRules": [{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"customMetrics/F5_system_cpu","metricNamespace":"","metricResourceUri":"[variables('appInsightsId')]","operator":"GreaterThan","statistic":"Average","threshold":"80","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M"}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"customMetrics/F5_system_cpu","metricNamespace":"","metricResourceUri":"[variables('appInsightsId')]","operator":"LessThan","statistic":"Average","threshold":"20","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M"}},{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"customMetrics/F5_system_networkInterfaces_mgmt_counters.bitsIn","metricNamespace":"","metricResourceUri":"[variables('appInsightsId')]","operator":"GreaterThan","statistic":"Average","threshold":"20000000","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M"}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"customMetrics/F5_system_networkInterfaces_mgmt_counters.bitsIn","metricNamespace":"","metricResourceUri":"[variables('appInsightsId')]","operator":"LessThan","statistic":"Average","threshold":"10000000","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M"}}],
+		"customAutoscaleRules": [{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"GreaterThan","statistic":"Average","threshold":"[variables('scaleOutCpuThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":false}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"LessThan","statistic":"Average","threshold":"[variables('scaleInCpuThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":false}},{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"GreaterThan","statistic":"Average","threshold":"[variables('scaleOutThroughputThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":false}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"LessThan","statistic":"Average","threshold":"[variables('scaleInThroughputThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":false}}],
 		"customEmail": [],
 		"image": "[parameters('image')]",
 		"instanceType": "Standard_DS3_v2",
@@ -240,7 +240,7 @@
 					"keyVaultPermissionsKeys":{ "value": "[variables('keyVaultPermissionsKeys')]" },
 					"keyVaultPermissionsSecrets":{ "value": "[variables('keyVaultPermissionsSecrets')]" },
 					"secretName":{ "value": "[variables('secretName')]" },
-					"secretValue":{ "value": "[parameters('newPassword')]" },
+					"secretValue":{ "value": "" },
 					"userAssignedIdentityName":{ "value": "[variables('userAssignedIdentityName')]" },
 					"tagValues":{ "value": "[parameters('tagValues')]" }
 				}
@@ -355,6 +355,7 @@
 					"provisionPublicIp":{ "value": "[variables('provisionPublicIpBigip')]" },
 					"roleDefinitionId":{ "value": "[variables('roleDefinitionId')]" },
 					"bigIpRuntimeInitConfig":{ "value": "[parameters('bigIpRuntimeInitConfig')]" },
+					"bigIpRuntimeInitPackageUrl": { "value": "[parameters('bigIpRuntimeInitPackageUrl')]" },
 					"scaleInCpuThreshold":{ "value": "[variables('scaleInCpuThreshold')]" },
 					"scaleInThroughputThreshold":{ "value": "[variables('scaleInThroughputThreshold')]" },
 					"scaleInTimeWindow":{ "value": "[variables('scaleInTimeWindow')]" },
@@ -404,36 +405,40 @@
 	],
 	"outputs": {
 		"virtualNetworkId": {
-            "type": "String",
+            "type": "string",
             "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
         },
 		"appVmssName": {
 			"condition": "[variables('provisionApp')]",
-            "type": "String",
+            "type": "string",
             "value": "[reference('appTemplate').outputs.vmssName.value]"
         },
-		"appPublicIps": {
+		"appVmssId": {
+			"condition": "[variables('provisionApp')]",
+            "type": "string",
+            "value": "[reference('appTemplate').outputs.vmssId.value]"
+        },
+		"wafPublicIPs": {
 			"condition": "[variables('provisionApp')]",
             "type": "array",
             "value": "[reference('dagTemplate').outputs.externalIps.value]"
         },
 		"appUsername": {
 			"condition": "[variables('provisionApp')]",
-            "type": "String",
+            "type": "string",
             "value": "[variables('adminUsername')]"
         },
+		"vmssName": {
+            "type": "string",
+            "value": "[reference('bigipTemplate').outputs.vmssName.value]"
+        },
 		"vmssId": {
-            "type": "String",
+            "type": "string",
             "value": "[reference('bigipTemplate').outputs.vmssID.value]"
         },
 		"bigipUsername": {
-            "type": "String",
+            "type": "string",
             "value": "[variables('adminUsername')]"
-        },
-		"bigipPassword": {
-			"condition": "[not(empty(parameters('newPassword')))]",
-            "type": "String",
-            "value": "[parameters('newPassword')]"
         }
 	}
 }

@@ -6,7 +6,7 @@ INSTANCE TYPE: Standard_DS4_v2
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:15.1.201000
 LICENSE TYPE: payg
 NIC COUNT: 2
-PROVISION PUBLIC IP: false
+PROVISION PUBLIC IP: true
 REGION: westus
 RESOURCE GROUP: dd-quick-<DEWPOINT JOB ID>
 RESTRICTED SRC ADDRESS: '*'

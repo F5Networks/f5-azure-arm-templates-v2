@@ -63,7 +63,7 @@
             "value": "[reference('networkTemplate').outputs.routeTables.value]"
         },
 		"natGateway": {
-			"type": "String",
+			"type": "string",
 			"value": "[reference('networkTemplate').outputs.natGateway.value]"
 		},
 		"subnets": {
@@ -71,7 +71,7 @@
             "value": "[reference('networkTemplate').outputs.subnets.value]"
         },
 		"virtualNetwork": {
-			"type": "String",
+			"type": "string",
 			"value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
 		}
 	}

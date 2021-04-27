@@ -30,7 +30,7 @@
 			"type": "string"
 		},
 		"instanceType": {
-			"defaultValue": "Standard_DS2_v2",
+			"defaultValue": "Standard_DS3_v2",
 			"metadata": {
 				"description": "Enter valid instance type."
 			},
@@ -61,13 +61,6 @@
 			},
 			"type": "int"
 		},
-		"usePublicMgmtAddress": {
-			"defaultValue": true,
-			"metadata": {
-				"description": "Enter true to set management interface with public IP address. In most production environments this would be set to false."
-			},
-			"type": "bool"
-		},
 		"restrictedSrcAddressMgmt": {
 			"metadata": {
 				"description": "REQUIRED - When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources."
@@ -84,6 +77,13 @@
 			"defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/quickstart/bigip-configurations/runtime-init-conf-payg.yaml",
 			"metadata": {
 				"description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
+			},
+			"type": "string"
+		},
+		"bigIpRuntimeInitPackageUrl": {
+			"defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run",
+			"metadata": {
+				"description": "URL for BIG-IP Runtime Init package"
 			},
 			"type": "string"
 		},
@@ -158,7 +158,7 @@
 					"numSubnets":{ "value": "[variables('numSubnets')]" },
 					"vnetName":{ "value": "[variables('vnetName')]" },
 					"vnetAddressPrefix":{ "value": "[variables('vnetAddressPrefix')]" },
-					"createNatGateway":{ "value": "[if(parameters('usePublicMgmtAddress'), false(), true())]" },
+					"createNatGateway":{ "value": false },
 					"tagValues":{ "value": "[parameters('tagValues')]" }
 				}
 			}
@@ -187,7 +187,7 @@
 					"nsg1":{ "value": "[variables('nsg1')]" },
 					"nsg2":{ "value": "[variables('nsg2')]" },
 					"numberPublicExternalIpAddresses":{ "value": 2 },
-					"numberPublicMgmtIpAddresses":{ "value": "[if(parameters('usePublicMgmtAddress'), 1, 0)]" },
+					"numberPublicMgmtIpAddresses":{ "value": 1 },
 					"tagValues":{ "value": "[parameters('tagValues')]" }
 				}
 			}
@@ -242,7 +242,7 @@
 					"loadBalancerBackendAddressPoolsArray":{ "value": [] },
 					"mgmtSubnetId":{ "value": "[reference('networkTemplate').outputs.subnets.value[0]]" },
 					"mgmtNsgID":{ "value": "[reference('dagTemplate').outputs.nsg0Id.value]" },
-					"mgmtPublicIpId":{ "value": "[if(parameters('usePublicMgmtAddress'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]" },
+					"mgmtPublicIpId":{ "value": "[reference('dagTemplate').outputs.mgmtIpIds.value[0]]" },
 					"mgmtSelfIp":{ "value": "[variables('mgmtSelfIp')]" },
 					"nic1SubnetId":{ "value": "[if(greaterOrEquals(parameters('numNics'), 2), reference('networkTemplate').outputs.subnets.value[1], '')]" },
 					"nic1NsgId":{ "value": "[if(greaterOrEquals(parameters('numNics'), 2), reference('dagTemplate').outputs.nsg1Id.value, '')]" },
@@ -255,6 +255,7 @@
 					"nic2SelfIp":{ "value": "[variables('nic2SelfIp')]" },
 					"nic2ServiceIPs":{ "value": [] },
 					"roleDefinitionId":{ "value": "" },
+					"bigIpRuntimeInitPackageUrl": { "value": "[parameters('bigIpRuntimeInitPackageUrl')]" },
 					"bigIpRuntimeInitConfig":{ "value": "[parameters('bigIpRuntimeInitConfig')]" },
 					"sshKey":{ "value": "[parameters('sshKey')]" },
 					"tagValues":{ "value": "[parameters('tagValues')]" },
@@ -268,40 +269,38 @@
 	],
 	"outputs": {
 		"virtualNetworkId": {
-            "type": "String",
+            "type": "string",
             "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
         },
 		"mgmtPublicIp": {
-			"condition": "[parameters('usePublicMgmtAddress')]",
-            "type": "String",
+            "type": "string",
             "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
         },
 		"mgmtPrivateIp": {
-            "type": "String",
+            "type": "string",
             "value": "[variables('mgmtSelfIp')]"
         },
 		"mgmtPublicUrl": {
-			"condition": "[parameters('usePublicMgmtAddress')]",
-            "type": "String",
+            "type": "string",
             "value": "[if(equals(parameters('numNics'), 1), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':8443/'), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/'))]"
         },
 		"mgmtPrivateUrl": {
-            "type": "String",
+            "type": "string",
             "value": "[if(equals(parameters('numNics'), 1), concat('https://', variables('mgmtSelfIp'), ':8443/'), concat('https://', variables('mgmtSelfIp'), ':443/'))]"
         },
 		"appVmName": {
 			"condition": "[variables('provisionApp')]",
-            "type": "String",
+            "type": "string",
             "value": "[reference('appTemplate').outputs.vmName.value]"
         },
-		"appPublicIps": {
+		"wafPublicIPs": {
 			"condition": "[variables('provisionApp')]",
             "type": "array",
             "value": "[reference('dagTemplate').outputs.externalIps.value]"
         },
 		"appPrivateIp": {
 			"condition": "[variables('provisionApp')]",
-            "type": "String",
+            "type": "string",
             "value": "[reference('appTemplate').outputs.appIp.value]"
         },
 		"vip1PrivateIp": {
@@ -334,15 +333,15 @@
         },
 		"appUsername": {
 			"condition": "[variables('provisionApp')]",
-            "type": "String",
+            "type": "string",
             "value": "[variables('adminUsername')]"
         },
 		"vmId": {
-            "type": "String",
+            "type": "string",
             "value": "[reference('bigipTemplate').outputs.vmID.value]"
         },
 		"bigipUsername": {
-            "type": "String",
+            "type": "string",
             "value": "[variables('adminUsername')]"
         }
 	}
