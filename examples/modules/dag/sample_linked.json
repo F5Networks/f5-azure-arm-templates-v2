@@ -117,37 +117,37 @@
 			"type": "array",
 			"value": "[reference('dagTemplate').outputs.externalIpDns.value]"
 		},
-		"externalBackEndLoadBalancerID": {
+		"externalBackEndLoadBalancerId": {
 			"type": "string",
-			"value": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerID.value]"
+			"value": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value]"
 		},
-		"externalBackEndMgmtLoadBalancerID": {
+		"externalBackEndMgmtLoadBalancerId": {
 			"type": "string",
-			"value": "[reference('dagTemplate').outputs.externalBackEndMgmtLoadBalancerID.value]"
+			"value": "[reference('dagTemplate').outputs.externalBackEndMgmtLoadBalancerId.value]"
 		},
-		"externalFrontEndLoadBalancerID": {
+		"externalFrontEndLoadBalancerId": {
 			"type": "array",
-			"value": "[reference('dagTemplate').outputs.externalFrontEndLoadBalancerID.value]"
+			"value": "[reference('dagTemplate').outputs.externalFrontEndLoadBalancerId.value]"
 		},
-		"externalFrontEndLoadBalancerInboundID": {
+		"externalFrontEndLoadBalancerInboundId": {
 			"type": "string",
-			"value": "[reference('dagTemplate').outputs.externalFrontEndLoadBalancerInboundID.value]"
+			"value": "[reference('dagTemplate').outputs.externalFrontEndLoadBalancerInboundId.value]"
 		},
-		"externalFrontEndMgmtLoadBalancerID": {
+		"externalFrontEndMgmtLoadBalancerId": {
 			"type": "string",
-			"value": "[reference('dagTemplate').outputs.externalFrontEndMgmtLoadBalancerID.value]"
+			"value": "[reference('dagTemplate').outputs.externalFrontEndMgmtLoadBalancerId.value]"
 		},
 		"externalLoadBalancer": {
 			"type": "string",
 			"value": "[reference('dagTemplate').outputs.externalLoadBalancer.value]"
 		},
-		"externalLoadBalancerProbesID": {
+		"externalLoadBalancerProbesId": {
 			"type": "array",
-			"value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesID.value]"
+			"value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesId.value]"
 		},
-		"externalLoadBalancerRulesID": {
+		"externalLoadBalancerRulesId": {
 			"type": "array",
-			"value": "[reference('dagTemplate').outputs.externalLoadBalancerRulesID.value]"
+			"value": "[reference('dagTemplate').outputs.externalLoadBalancerRulesId.value]"
 		},
 		"mgmtIpIds": {
 			"type": "array",

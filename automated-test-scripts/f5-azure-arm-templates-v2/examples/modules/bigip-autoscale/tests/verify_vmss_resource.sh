@@ -56,21 +56,21 @@ vmss_settings[virtualMachineProfile.extensionProfile.extensions\[\].settings.com
 
 # verify load balancer backend address pools based network.json environmental setup
 if [ <NUMBER PUBLIC MGMT IP ADDRESSES> = 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" != "none" ]; then
-    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)"
-    int_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerID.value)"
+    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)"
+    int_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerId.value)"
     vmss_settings[virtualMachineProfile.networkProfile.networkInterfaceConfigurations\[\].ipConfigurations\[\].loadBalancerBackendAddressPools\[\].id]="${int_backend_pool}"
 elif [ <NUMBER PUBLIC MGMT IP ADDRESSES> != 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" != "none" ]; then
-    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)"
-    int_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerID.value)"
-    mgmt_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerID.value)"
+    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)"
+    int_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerId.value)"
+    mgmt_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerId.value)"
     vmss_settings[virtualMachineProfile.networkProfile.networkInterfaceConfigurations\[\].ipConfigurations\[\].loadBalancerBackendAddressPools\[\].id]="${mgmt_backend_pool}"
     vmss_settings[virtualMachineProfile.networkProfile.networkInterfaceConfigurations\[\].ipConfigurations\[\].loadBalancerBackendAddressPools\[\].id]="${int_backend_pool}"
 elif [ <NUMBER PUBLIC MGMT IP ADDRESSES> != 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" == "none" ]; then
-    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)"
-    mgmt_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerID.value)"
+    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)"
+    mgmt_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerId.value)"
     vmss_settings[virtualMachineProfile.networkProfile.networkInterfaceConfigurations\[\].ipConfigurations\[\].loadBalancerBackendAddressPools\[\].id]="${mgmt_backend_pool}"
 else
-    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)"
+    ext_backend_pool="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)"
 fi
 vmss_settings[virtualMachineProfile.networkProfile.networkInterfaceConfigurations\[\].ipConfigurations\[\].loadBalancerBackendAddressPools\[\].id]="${ext_backend_pool}"
 
@@ -86,7 +86,7 @@ fi
 
 # verify upgrade policy and health probe ID
 if [[ "<USE ROLLING UPGRADE>" == "Yes" ]] && [ "<EXTERNAL LOAD BALANCER NAME>" != "none" ]; then
-    health_probe_id="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalLoadBalancerProbesID.value[0])"
+    health_probe_id="$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalLoadBalancerProbesId.value[0])"
     upgrade_policy="Rolling"
     vmss_settings[virtualMachineProfile.networkProfile.healthProbe.id]="${health_probe_id}"
     vmss_settings[upgradePolicy.mode]="${upgrade_policy}"
@@ -143,7 +143,7 @@ if [[ "<USE AVAILABILITY ZONES>" == "Yes" ]]; then
 fi
 
 # verify vmss id output
-id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.vmssID.value)
+id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.vmssId.value)
 vmss_settings[id]="${id}"
 
 # Run arrays through function

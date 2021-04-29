@@ -19,7 +19,7 @@ MGMT_PUBLIC_IP_ID=""
 MGMT_NSG_ID=""
 
 if [[ "<NUMBER PUBLIC MGMT IP ADDRESSES>" -gt "0" ]]; then
-    MGMT_PUBLIC_IP_ID="\"mgmtPublicIpID\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.mgmtIpIds.value[0])\"},"
+    MGMT_PUBLIC_IP_ID="\"mgmtPublicIpId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.mgmtIpIds.value[0])\"},"
 fi
 
 if [[ "<NSG0>" != "[]" ]]; then  

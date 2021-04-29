@@ -71,12 +71,12 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| roleAssignmentID | Role Assignment resource ID | Role Definition | string |
+| roleAssignmentId | Role Assignment resource ID | Role Definition | string |
 | selfIp0 | Private IP addresses | Network Interface | string |
 | selfIp1 | Private IP addresses | Network Interface | string |
 | selfIp2 | Private IP addresses | Network Interface | string |
 | selfIp3 | Private IP addresses | Network Interface | string |
-| vmID | Virtual Machine resource ID | Virtual Machine | string |
+| vmId | Virtual Machine resource ID | Virtual Machine | string |
 
 
 ## Example Configurations

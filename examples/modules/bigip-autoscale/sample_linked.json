@@ -139,21 +139,21 @@
 		}
 	],
 	"outputs": {
-		"appInsightsComponentID": {
+		"appInsightsComponentId": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.appInsightsComponentID.value]"
+			"value": "[reference('bigipTemplate').outputs.appInsightsComponentId.value]"
 		},
 		"appIps": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.roleAssignmentID.value]"
+			"value": "[reference('bigipTemplate').outputs.roleAssignmentId.value]"
 		},
-		"autoscaleSettingsID": {
+		"autoscaleSettingsId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.autoscaleSettingsID.value]"
+			"value": "[reference('bigipTemplate').outputs.autoscaleSettingsId.value]"
 		},
-		"vmssID": {
+		"vmssId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmssID.value]"
+			"value": "[reference('bigipTemplate').outputs.vmssId.value]"
 		},
 		"vmssName": {
 			"type": "string",

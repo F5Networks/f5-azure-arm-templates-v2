@@ -610,7 +610,7 @@
     }
   ],
   "outputs": {
-    "appInsightsComponentID": {
+    "appInsightsComponentId": {
       "condition": "[not(equals(variables('appInsightsName'), 'NOT_USED'))]",
       "type": "string",
       "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/microsoft.insights/components/', parameters('appInsights'))]"
@@ -620,16 +620,16 @@
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), variables('appInsightsComponentsApiVersion')).InstrumentationKey]"
     },
-    "roleAssignmentID": {
+    "roleAssignmentId": {
       "condition": "[not(empty(parameters('roleDefinitionId')))]",
       "type": "string",
       "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourcegroups/',  resourceGroup().name, '/providers/Microsoft.Authorization/roleAssignments/', guid(resourceGroup().id, 'roleId'))]"
     },
-    "autoscaleSettingsID": {
+    "autoscaleSettingsId": {
       "type": "string",
       "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/microsoft.insights/autoscalesettings/', concat(parameters('uniqueString'), '-autoscaleconfig'))]"
     },
-    "vmssID": {
+    "vmssId": {
       "type": "string",
       "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]"
     },

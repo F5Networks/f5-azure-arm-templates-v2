@@ -510,12 +510,12 @@
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName2')),'2016-09-01').ipConfigurations[0].properties.privateIPAddress]"
     },
-    "roleAssignmentID": {
+    "roleAssignmentId": {
       "condition": "[not(empty(parameters('roleDefinitionId')))]",
       "type": "string",
       "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourcegroups/',  resourceGroup().name, '/providers/Microsoft.Authorization/roleAssignments/', guid(resourceGroup().id, 'roleId'))]"
     },
-    "vmID": {
+    "vmId": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')),'2019-12-01').vmId]"
     }

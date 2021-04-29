@@ -272,19 +272,19 @@
             "type": "string",
             "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
         },
-		"mgmtPublicIp": {
+		"bigIpManagementPublicIp": {
             "type": "string",
             "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
         },
-		"mgmtPrivateIp": {
+		"bigIpManagementPrivateIp": {
             "type": "string",
             "value": "[variables('mgmtSelfIp')]"
         },
-		"mgmtPublicUrl": {
+		"bigIpManagementPublicUrl": {
             "type": "string",
             "value": "[if(equals(parameters('numNics'), 1), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':8443/'), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/'))]"
         },
-		"mgmtPrivateUrl": {
+		"bigIpManagementPrivateUrl": {
             "type": "string",
             "value": "[if(equals(parameters('numNics'), 1), concat('https://', variables('mgmtSelfIp'), ':8443/'), concat('https://', variables('mgmtSelfIp'), ':443/'))]"
         },
@@ -293,7 +293,7 @@
             "type": "string",
             "value": "[reference('appTemplate').outputs.vmName.value]"
         },
-		"wafPublicIPs": {
+		"wafPublicIps": {
 			"condition": "[variables('provisionApp')]",
             "type": "array",
             "value": "[reference('dagTemplate').outputs.externalIps.value]"
@@ -311,7 +311,7 @@
             "type": "string",
             "value": "[reference('dagTemplate').outputs.externalIps.value[1]]"
         },
-		"vip1PublicIPDns": {
+		"vip1PublicIpDns": {
             "type": "string",
             "value": "[reference('dagTemplate').outputs.externalIpDns.value[1]]"
         },
@@ -338,9 +338,9 @@
         },
 		"vmId": {
             "type": "string",
-            "value": "[reference('bigipTemplate').outputs.vmID.value]"
+            "value": "[reference('bigipTemplate').outputs.vmId.value]"
         },
-		"bigipUsername": {
+		"bigIpUsername": {
             "type": "string",
             "value": "[variables('adminUsername')]"
         }

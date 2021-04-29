@@ -74,7 +74,7 @@ else
     autoscale_settings[profiles\[\].rules\[3\].metricTrigger.timeWindow]="0:10:00"
 fi
 # verify autoscale output id
-id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.autoscaleSettingsID.value)
+id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.autoscaleSettingsId.value)
 autoscale_settings[id]="${id}"
 
 # Run array's through function

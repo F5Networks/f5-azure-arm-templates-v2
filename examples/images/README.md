@@ -49,13 +49,13 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 | customEmail | No | Enter an array of email addresses to be notified when scale up or scale down occurs. For example: ['myemail@email.com','myemail2@email.com']. |
 | uniqueString | Yes | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
 | image | Yes |  There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
-| inboundMgmtNatPoolID | No | NAT pool ID used for the BIG-IP management GUI connections. Leave as default if you do not want to use natpools or are using public IP. |
-| inboundSshNatPoolID | No | NAT pool ID used for SSH connections to BIG-IP. Leave as default if you do not want to use natpools or are using public IP. |
-| instanceHealthProbeID | Yes | Enter the resource ID of the probe that you wish to use to determine instance health when performing a rolling upgrade of scale set instances. Use the default value if you are using a manual upgrade policy. Note: The probe must be associated with a load balancing rule. |
+| inboundMgmtNatPoolId | No | NAT pool ID used for the BIG-IP management GUI connections. Leave as default if you do not want to use natpools or are using public IP. |
+| inboundSshNatPoolId | No | NAT pool ID used for SSH connections to BIG-IP. Leave as default if you do not want to use natpools or are using public IP. |
+| instanceHealthProbeId | Yes | Enter the resource ID of the probe that you wish to use to determine instance health when performing a rolling upgrade of scale set instances. Use the default value if you are using a manual upgrade policy. Note: The probe must be associated with a load balancing rule. |
 | instanceType | Yes | Enter a valid instance type. |
 | loadBalancerBackendAddressPoolsArray | Yes | Enter an array of pools where BIG-IP instances are to be added. |
 | nsgID | No | Enter security group ID to use. Use default if you do not wish to apply an NSG policy. |
-| provisionPublicIP | No | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
+| provisionPublicIp | No | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
 | roleDefinitionId | No | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
 | runtimeConfig | Yes | Url to bigip-runtime-init configuration file or json string to use for configuration file. |
 | scaleInCpuThreshold | Sometimes | The percentage of CPU utilization that should trigger a scale in event. Required when customAutoscaleRules parameter not used. |
@@ -78,11 +78,11 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| appInsightsComponentID | Application Insights resource ID | Application Insights | string |
+| appInsightsComponentId | Application Insights resource ID | Application Insights | string |
 | appInsightsInstrumentationKey | Application Insights Instrumentation Key | Application Insights | string |
-| roleAssignmentID | Role Assignment resource ID | Role Definition | string |
-| autoscaleSettingsID | Autoscale Settings resource ID | Virtual Machine Scale Set | string |
-| vmssID | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
+| roleAssignmentId | Role Assignment resource ID | Role Definition | string |
+| autoscaleSettingsId | Autoscale Settings resource ID | Virtual Machine Scale Set | string |
+| vmssId | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
 
 
 ## Example Configurations

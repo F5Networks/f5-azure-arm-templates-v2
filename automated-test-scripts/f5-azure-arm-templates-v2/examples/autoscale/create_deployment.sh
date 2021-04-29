@@ -35,7 +35,7 @@ cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-<LICENSE TYPE
 if [[ <LICENSE TYPE> == "bigiq" ]]; then
     /usr/bin/yq e ".runtime_parameters.[5].secretProvider.vaultUrl = \"<RESOURCE GROUP>fnfv\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters.[5].secretProvider.secretId = \"<RESOURCE GROUP>fnbigiq\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIqHost = \"${BIGIQ_ADDRESS}\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"${BIGIQ_ADDRESS}\"" -i <DEWPOINT JOB ID>.yaml
 fi
 
 cp <DEWPOINT JOB ID>.yaml update_<DEWPOINT JOB ID>.yaml

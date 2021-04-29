@@ -10,7 +10,7 @@ github_response=`curl https://status.github.com/api/status.json?callback-apiStat
 
 # get the private key from key vault via file
 SSH_PORT='22'
-HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["mgmtPublicIp"].value')
+HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
 
 echo "Verify HOST=$HOST"
 

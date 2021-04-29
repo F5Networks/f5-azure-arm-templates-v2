@@ -79,11 +79,11 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| appInsightsComponentID | Application Insights resource ID | Application Insights | string |
+| appInsightsComponentId | Application Insights resource ID | Application Insights | string |
 | appInsightsInstrumentationKey | Application Insights Instrumentation Key | Application Insights | string |
-| autoscaleSettingsID | Autoscale Settings resource ID | Virtual Machine Scale Set | string |
-| roleAssignmentID | Role Assignment resource ID | Role Definition | string |
-| vmssID | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
+| autoscaleSettingsId | Autoscale Settings resource ID | Virtual Machine Scale Set | string |
+| roleAssignmentId | Role Assignment resource ID | Role Definition | string |
+| vmssId | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
 | vmssName | Virtual Machine Scale Set name | Virtual Machine Scale Set | string |
 
 

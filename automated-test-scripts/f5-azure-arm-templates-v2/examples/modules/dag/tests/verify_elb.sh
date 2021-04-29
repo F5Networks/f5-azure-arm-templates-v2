@@ -28,9 +28,9 @@ if [[ "<EXTERNAL LOAD BALANCER NAME>" == "None" ]]; then
 else
     declare -A elb
     # verify backendAddressPools and inbound nat pools
-    elb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)
+    elb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)
     if [[ <NUMBER PUBLIC MGMT IP ADDRESSES> -gt 0 ]]; then
-        elb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerID.value)
+        elb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerId.value)
         elb[inboundNatPools\[0\].backendPort]=22
         elb[inboundNatPools\[1\].backendPort]=8443
     fi
@@ -38,7 +38,7 @@ else
     upperappip=$((<NUMBER PUBLIC EXT IP ADDRESSES>-1))
     for ((i=0; i<=upperappip; i++));
         do
-            elb[frontendIpConfigurations\[${i}\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalFrontEndLoadBalancerID.value[${i}])
+            elb[frontendIpConfigurations\[${i}\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalFrontEndLoadBalancerId.value[${i}])
         done
     
     # verify probes and loadbalancing rules
@@ -47,8 +47,8 @@ else
     upperprobe=$((${arraylength}-1))
     for ((i=0; i<=upperprobe; i++));
         do
-            elb[probes\[${i}\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalLoadBalancerProbesID.value[${i}])
-            elb[loadBalancingRules\[${i}\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalLoadBalancerRulesID.value[${i}])
+            elb[probes\[${i}\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalLoadBalancerProbesId.value[${i}])
+            elb[loadBalancingRules\[${i}\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.externalLoadBalancerRulesId.value[${i}])
         done
     
     # Run array's through function
