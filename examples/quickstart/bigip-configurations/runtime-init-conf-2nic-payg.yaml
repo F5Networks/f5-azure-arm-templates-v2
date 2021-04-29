@@ -53,7 +53,7 @@ extension_services:
           PAYG license
         Common:
           class: Tenant
-          dbVars:
+          My_DbVariables:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true
@@ -62,20 +62,20 @@ extension_services:
             ui.advisory.text: BIG-IP VE Quickstart
             config.allow.rfc3927: enable
             dhclient.mgmt: disable
-          myDns:
+          My_Dns:
             class: DNS
             nameServers:
               - 168.63.129.16
-          myNtp:
+          My_Ntp:
             class: NTP
             servers:
               - 0.pool.ntp.org
             timezone: UTC
-          myProvisioning:
+          My_Provisioning:
             class: Provision
             ltm: nominal
             asm: nominal
-          mySystem:
+          My_System:
             class: System
             autoPhonehome: true
             hostname: '{{{HOST_NAME}}}.local'

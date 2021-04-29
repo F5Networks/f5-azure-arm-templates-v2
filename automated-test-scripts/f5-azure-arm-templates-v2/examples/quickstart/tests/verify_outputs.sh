@@ -48,14 +48,14 @@ declare -A outputs
 outputs[appPrivateIp]="10.0.<NIC COUNT>.4"
 outputs[appUsername]="azureuser"
 outputs[appVmName]="<RESOURCE GROUP>-app-vm"
-outputs[bigipUsername]="azureuser"
-outputs[mgmtPrivateIp]=$mgmt_private_ip
-outputs[mgmtPrivateUrl]="https://${mgmt_private_ip}:${mgmt_port}/"
+outputs[bigIpUsername]="azureuser"
+outputs[bigIpManagementPrivateIp]=$mgmt_private_ip
+outputs[bigIpManagementPrivateUrl]="https://${mgmt_private_ip}:${mgmt_port}/"
 
 if [[ <PROVISION PUBLIC IP> == True ]]; then
     mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
-    outputs[mgmtPublicIp]=$mgmt_public_ip
-    outputs[mgmtPublicUrl]="https://${mgmt_public_ip}:${mgmt_port}/"
+    outputs[bigIpManagementPublicIp]=$mgmt_public_ip
+    outputs[bigIpManagementPublicUrl]="https://${mgmt_public_ip}:${mgmt_port}/"
 fi
 
 outputs[vip1PrivateIp]=$vip_1_private_ip

@@ -50,22 +50,22 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| externalBackEndLoadBalancerID | Application Back End Address Pool resource ID | External Load Balancer | string |
-| externalBackEndMgmtLoadBalancerID | Management Back End Address Pool resource ID | External Load Balancer | string |
-| externalFrontEndLoadBalancerID | Application Front End resource IDs | External Load Balancer | array |
-| externalFrontEndMgmtLoadBalancerID | Management Front End resource ID | External Load Balancer | string |
+| externalBackEndLoadBalancerId | Application Back End Address Pool resource ID | External Load Balancer | string |
+| externalBackEndMgmtLoadBalancerId | Management Back End Address Pool resource ID | External Load Balancer | string |
+| externalFrontEndLoadBalancerId | Application Front End resource IDs | External Load Balancer | array |
+| externalFrontEndMgmtLoadBalancerId | Management Front End resource ID | External Load Balancer | string |
 | externalIpDns | External Public IP Addresses DNS | External Public IP Address | array |
 | externalIpIds | External Public IP Address resource IDs | External Public IP Address | array |
 | externalIps | External Public IP Addresses | External Public IP Address | array |
 | externalLoadBalancer | External Load Balancer resource ID | External Load Balancer | string |
-| externalLoadBalancerProbesID | External Load Balancer Probe resource IDs | External Load Balancer | array |
-| externalLoadBalancerRulesID | External Load Balancing Rules resource IDs | External Load Balancer | array |
+| externalLoadBalancerProbesId | External Load Balancer Probe resource IDs | External Load Balancer | array |
+| externalLoadBalancerRulesId | External Load Balancing Rules resource IDs | External Load Balancer | array |
 | inboundMgmtNatPool | Management NAT Pool resource ID | Management Public IP Address | string |
 | inboundSshNatPool | SSH NAT Pool resource ID | Management Public IP Address | string |
-| internalBackEndLoadBalancerID | Internal Back End Address Pool resource ID | Internal Load Balancer | string |
-| internalFrontEndLoadBalancerIP | Internal Front End resource ID | Internal Load Balancer | string |
+| internalBackEndLoadBalancerId | Internal Back End Address Pool resource ID | Internal Load Balancer | string |
+| internalFrontEndLoadBalancerIp | Internal Front End resource ID | Internal Load Balancer | string |
 | internalLoadBalancer | Internal Load Balancer resource ID | Internal Load Balancer | string |
-| internalLoadBalancerProbeID | Internal Load Balancer Probe ID | Internal Load Balancer | string |
+| internalLoadBalancerProbeId | Internal Load Balancer Probe ID | Internal Load Balancer | string |
 | mgmtIpIds | Management Public IP Address resource IDs | Management Public IP Address | array |
 | mgmtIps | Management Public IP Addresses | Management Public IP Address | array |
 | nsg0Id | Network Security Group resource ID | Network Security Group | string |

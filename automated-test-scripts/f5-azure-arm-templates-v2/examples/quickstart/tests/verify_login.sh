@@ -19,7 +19,7 @@ if [[ <PROVISION PUBLIC IP> == False ]]; then
     SSH_RESPONSE="encrypted-password !!"
     PASSWORD_RESPONSE="quickstart"
 else
-    HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["mgmtPublicIp"].value')
+    HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
     echo "Host: $HOST"
     ssh-keygen -R ${HOST} 2>/dev/null
     SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${HOST} -p $SSH_PORT 'list auth user azureuser')

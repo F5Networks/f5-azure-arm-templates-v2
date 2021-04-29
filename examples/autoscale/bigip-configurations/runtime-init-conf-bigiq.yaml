@@ -73,17 +73,17 @@ extension_services:
         async: true
         Common:
           class: Tenant
-          dbVars:
+          My_DbVariables:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true
             ui.advisory.color: blue
             ui.advisory.text: "Provisioned via Runtime Init and DO"
-          myDns:
+          My_Dns:
             class: DNS
             nameServers:
               - 168.63.129.16
-          myLicense:
+          My_License:
             class: License
             hypervisor: azure
             licenseType: licensePool
@@ -96,16 +96,16 @@ extension_services:
             unitOfMeasure: hourly
             reachable: false
             overwrite: false
-          myNtp:
+          My_Ntp:
             class: NTP
             servers:
               - 0.pool.ntp.org
             timezone: UTC
-          myProvisioning:
+          My_Provisioning:
             asm: nominal
             class: Provision
             ltm: nominal
-          mySystem:
+          My_System:
             class: System
             autoPhonehome: true
             hostname: '{{{HOST_NAME}}}.local'

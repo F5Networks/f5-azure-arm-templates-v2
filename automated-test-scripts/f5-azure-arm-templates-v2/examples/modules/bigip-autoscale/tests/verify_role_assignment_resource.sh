@@ -29,7 +29,7 @@ function verify_role_assignment_resource() {
 declare -A role_assignment
 if [[ "<USE ROLE DEFINITION ID>" == "Yes" ]]; then
     roleDefinitionId=$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq -r .properties.outputs.builtInRoleId.value)
-    id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.roleAssignmentID.value)
+    id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.roleAssignmentId.value)
     role_assignment[\[\].roleDefinitionId]="$roleDefinitionId"
     role_assignment[\[\].roleDefinitionName]="<BUILT IN ROLE TYPE>"
     role_assignment[\[\].resourceGroup]="<RESOURCE GROUP>"

@@ -92,7 +92,7 @@ if [[ "<USE AVAILABILITY ZONES>" == "Yes" ]]; then
 fi
 
 # verify vm id output
-id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.vmID.value)
+id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.vmId.value)
 vm_settings[vmId]="${id}"
 
 # Run arrays through function

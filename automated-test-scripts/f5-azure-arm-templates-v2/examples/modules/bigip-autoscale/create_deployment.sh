@@ -29,13 +29,13 @@ else
 fi
 
 if [ <NUMBER PUBLIC MGMT IP ADDRESSES> = 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" != "none" ]; then
-    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerID.value)\"}]}"
+    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerId.value)\"}]}"
 elif [ <NUMBER PUBLIC MGMT IP ADDRESSES> != 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" != "none" ]; then
-    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerID.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerID.value)\"}]}"
+    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerId.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.internalBackEndLoadBalancerId.value)\"}]}"
 elif [ <NUMBER PUBLIC MGMT IP ADDRESSES> != 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" == "none" ]; then
-    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerID.value)\"}]}"
+    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)\"},{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndMgmtLoadBalancerId.value)\"}]}"
 else
-    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerID.value)\"}]}"
+    LOADBALANCERBACKENDADDRESSPOOLSARRAY="\"loadBalancerBackendAddressPoolsArray\":{\"value\":[{\"id\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalBackEndLoadBalancerId.value)\"}]}"
 fi
 
 if [[ "<USE NAT POOLS>" == "Yes" ]]; then
@@ -53,7 +53,7 @@ else
 fi
 
 if [[ "<USE ROLLING UPGRADE>" == "Yes" ]] && [ "<EXTERNAL LOAD BALANCER NAME>" != "none" ]; then
-    INSTANCEHEALTHPROBEID="\"instanceHealthProbeId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalLoadBalancerProbesID.value[0])\"},"
+    INSTANCEHEALTHPROBEID="\"instanceHealthProbeId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalLoadBalancerProbesId.value[0])\"},"
 else 
     INSTANCEHEALTHPROBEID=""
 fi

@@ -140,13 +140,13 @@
 			"type": "array",
 			"value": "[reference('bigipTemplate').outputs.selfPrivateIp3.value]"
 		},
-        "roleAssignmentID": {
+        "roleAssignmentId": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.roleAssignmentID.value]"
+			"value": "[reference('bigipTemplate').outputs.roleAssignmentId.value]"
 		},
-		"vmID": {
+		"vmId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmID.value]"
+			"value": "[reference('bigipTemplate').outputs.vmId.value]"
 		}
 	}
 }

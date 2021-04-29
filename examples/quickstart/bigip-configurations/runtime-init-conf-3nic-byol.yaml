@@ -60,7 +60,7 @@ extension_services:
           BYOL license
         Common:
           class: Tenant
-          dbVars:
+          My_DbVariables:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true

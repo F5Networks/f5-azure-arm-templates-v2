@@ -31,7 +31,7 @@ declare -A insight_compnents
 if [[ "<APP INSIGHTS>" == "" ]]; then
     echo "Microsoft.Insight compnent not being created, INSIGHT COMPONENT CREATION PASSED"
 else
-    id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.appInsightsComponentID.value)
+    id=$(az deployment group show -n <RESOURCE GROUP> -g <RESOURCE GROUP> | jq -r .properties.outputs.appInsightsComponentId.value)
     insight_compnents[resourceGroup]="<RESOURCE GROUP>"
     insight_compnents[id]="${id}"
 fi

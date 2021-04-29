@@ -535,17 +535,17 @@
 			},
 			"type": "array"
 		},
-		"externalBackEndLoadBalancerID": {
+		"externalBackEndLoadBalancerId": {
 			"condition": "[not(equals(toLower(parameters('externalLoadBalancerName')), string('none')))]",
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
 		},
-		"externalBackEndMgmtLoadBalancerID": {
+		"externalBackEndMgmtLoadBalancerId": {
 			"condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), greater(parameters('numberPublicMgmtIpAddresses'), 0))]",
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
 		},
-		"externalFrontEndLoadBalancerID": {
+		"externalFrontEndLoadBalancerId": {
 			"condition": "[not(equals(toLower(parameters('externalLoadBalancerName')), string('none')))]",
 			"copy": {
 				"count": "[parameters('numberPublicExternalIpAddresses')]",
@@ -553,12 +553,12 @@
 			},
 			"type": "array"
 		},
-		"externalFrontEndLoadBalancerInboundID": {
+		"externalFrontEndLoadBalancerInboundId": {
 			"condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), equals(parameters('numberPublicMgmtIpAddresses'), 0))]",
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName')), '/frontendIPConfigurations/loadBalancerMgmtFrontEnd')]"
 		},
-		"externalFrontEndMgmtLoadBalancerID": {
+		"externalFrontEndMgmtLoadBalancerId": {
 			"condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), greater(parameters('numberPublicMgmtIpAddresses'), 0))]",
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName')), '/frontendIPConfigurations/loadBalancerMgmtFrontEnd')]"
@@ -568,7 +568,7 @@
 			"type": "string",
 			"value": "[resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName'))]"
 		},
-		"externalLoadBalancerProbesID": {
+		"externalLoadBalancerProbesId": {
 			"condition": "[not(equals(toLower(parameters('externalLoadBalancerName')), string('none')))]",
 			"copy": {
 				"count": "[variables('loadBalancerRulePortsLength')]",
@@ -576,7 +576,7 @@
 			},
 			"type": "array"
 		},
-		"externalLoadBalancerRulesID": {
+		"externalLoadBalancerRulesId": {
 			"condition": "[not(equals(toLower(parameters('externalLoadBalancerName')), string('none')))]",
 			"copy": {
 				"count": "[variables('loadBalancerRulePortsLength')]",
@@ -594,17 +594,17 @@
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName')), '/inboundNatPools/sshnatpool')]"
 		},
-		"internalBackEndLoadBalancerID": {
+		"internalBackEndLoadBalancerId": {
 			"condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('internalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
 		},
-		"internalFrontEndLoadBalancerIP": {
+		"internalFrontEndLoadBalancerIp": {
 			"condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",
 			"type": "string",
 			"value": "[reference(parameters('internalLoadBalancerName')).frontendIPConfigurations[0].properties.privateIPAddress]"
 		},
-		"internalLoadBalancerProbeID": {
+		"internalLoadBalancerProbeId": {
 			"condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",
 			"type": "string",
 			"value": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('internalLoadBalancerName')), '/probes/tcp-probe-', parameters('internalLoadBalancerProbePort'))]"

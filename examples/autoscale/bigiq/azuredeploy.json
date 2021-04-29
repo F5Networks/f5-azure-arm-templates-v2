@@ -348,9 +348,9 @@
 					"image":{ "value": "[variables('image')]" },
 					"inboundMgmtNatPoolId":{ "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundMgmtNatPool.value, '')]" },
 					"inboundSshNatPoolId":{ "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundSshNatPool.value, '')]" },
-					"instanceHealthProbeId":{ "value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesID.value[0]]" },
+					"instanceHealthProbeId":{ "value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesId.value[0]]" },
 					"instanceType":{ "value": "[variables('instanceType')]" },
-					"loadBalancerBackendAddressPoolsArray":{ "value": [{ "id": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerID.value]" }] },
+					"loadBalancerBackendAddressPoolsArray":{ "value": [{ "id": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value]" }] },
 					"nsgId":{ "value": "[reference('dagTemplate').outputs.nsg0Id.value]" },
 					"provisionPublicIp":{ "value": "[variables('provisionPublicIpBigip')]" },
 					"roleDefinitionId":{ "value": "[variables('roleDefinitionId')]" },
@@ -388,7 +388,7 @@
 					"contentVersion": "[variables('contentVersion')]"
 				},
 				"parameters": {
-					"vmssId":{ "value": "[reference('bigipTemplate').outputs.vmssID.value]" },
+					"vmssId":{ "value": "[reference('bigipTemplate').outputs.vmssId.value]" },
 					"bigIqAddress":{ "value": "[parameters('bigIqAddress')]" },
 					"bigIqUsername":{ "value": "[parameters('bigIqUsername')]" },
 					"bigIqPassword":{ "value": "[parameters('bigIqPassword')]" },
@@ -418,7 +418,7 @@
             "type": "string",
             "value": "[reference('appTemplate').outputs.vmssId.value]"
         },
-		"wafPublicIPs": {
+		"wafPublicIps": {
 			"condition": "[variables('provisionApp')]",
             "type": "array",
             "value": "[reference('dagTemplate').outputs.externalIps.value]"
@@ -434,9 +434,9 @@
         },
 		"vmssId": {
             "type": "string",
-            "value": "[reference('bigipTemplate').outputs.vmssID.value]"
+            "value": "[reference('bigipTemplate').outputs.vmssId.value]"
         },
-		"bigipUsername": {
+		"bigIpUsername": {
             "type": "string",
             "value": "[variables('adminUsername')]"
         }

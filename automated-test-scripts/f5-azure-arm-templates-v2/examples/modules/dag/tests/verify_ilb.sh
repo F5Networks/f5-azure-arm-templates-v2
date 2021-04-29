@@ -27,8 +27,8 @@ if [[ "<INTERNAL LOAD BALANCER NAME>" == "None" ]]; then
     response="ILB not created for test."
 else
     declare -A ilb
-    ilb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.internalBackEndLoadBalancerID.value)
-    ilb[frontendIpConfigurations\[\].privateIpAddress]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.internalFrontEndLoadBalancerIP.value)
+    ilb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.internalBackEndLoadBalancerId.value)
+    ilb[frontendIpConfigurations\[\].privateIpAddress]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.internalFrontEndLoadBalancerIp.value)
     ilb[probes\[\].port]=<INTERNAL LOAD BALANCER PROBE PORT>
     ilb[loadBalancingRules\[\].protocol]=All
     # Run array's through function
