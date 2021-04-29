@@ -1,0 +1,19 @@
+---
+name: Azure Examples - DAG
+onStart:
+- ../../../common/helper_init.sh
+- ../../../common/create_resource_group.sh
+- ./create_network_environment.sh
+- ./verify_create_env.sh
+- ./create_deployment.sh
+- ../../../common/verify_create.sh
+- ./tests/verify_public_ip.sh
+- ./tests/verify_elb.sh
+- ./tests/verify_ilb.sh
+- ./tests/verify_nsg.sh
+- ../../../common/delete_deployment.sh
+- ../../../common/verify_delete.sh
+onFail:
+- ../../../common/capture_deployment_status.sh
+- ../../../common/delete_deployment.sh
+- ../../../common/verify_delete.sh

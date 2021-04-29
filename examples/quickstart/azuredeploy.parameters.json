@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"templateBaseUrl": {
+			"value": "https://cdn.f5.com/product/cloudsolutions/"
+		},
+		"artifactLocation": {
+			"value": "f5-azure-arm-templates-v2/v1.2.0.0/examples/"
+		},
+		"uniqueString": {
+			"value": ""
+		},
+		"sshKey": {
+            "value": ""
+        },
+        "image": {
+            "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-f5:16.0.101000"
+        },
+        "instanceType": {
+            "value": "Standard_DS3_v2"
+        },
+		"appContainerName": {
+			"value": "f5devcentral/f5-demo-app:latest"
+		},
+		"numNics": {
+			"value": 3
+		},
+		"numberPublicExternalIpAddresses": {
+			"value": 3
+		},
+		"bigIpRuntimeInitConfig": {
+			"value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v0.0.2/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+		},
+		"bigIpRuntimeInitPackageUrl": {
+			"value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run"
+		},
+		"restrictedSrcAddressApp": {
+			"value": ""
+		},
+		"restrictedSrcAddressMgmt": {
+			"value": ""
+		},
+		"useAvailabilityZones": {
+			"value": false
+		},
+		"tagValues": {
+			"value": {
+				"application": "APP",
+				"cost": "COST",
+				"environment": "ENV",
+				"group": "GROUP",
+				"owner": "OWNER"
+			}
+		}
+	}
+}

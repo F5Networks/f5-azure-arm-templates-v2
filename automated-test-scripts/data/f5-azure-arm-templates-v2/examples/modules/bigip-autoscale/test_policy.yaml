@@ -1,0 +1,18 @@
+# Bigip Module Tests 
+azure-arm-bigip-module-test:
+    test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/daily_test.yaml"
+    run: "all"
+    parameters-files:
+# Using different zones and images for each test
+# Create all resources:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters.yaml"
+# Use json references and resource ID's where permitted:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters1.yaml"
+# Use empty parameters where permitted:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters2.yaml"
+# Provision with User Assigned Identity only, no av zones, use nat pools:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters3.yaml"
+# Provision with System and User Assigned Identity, reference Insight Component:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters4.yaml"
+# Provision with System Assigned Identity only, use custom image ID:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters5.yaml"

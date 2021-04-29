@@ -1,0 +1,104 @@
+---
+NSG0 MGMT PORTS: 
+  - '["22","8443"]'
+NSG0 EXT PORTS: 
+  - '["80","443"]'
+NSG0 SOURCE: 
+  - "*"
+NSG1 PORTS: '
+  - ["80","443"]'
+NSG1 SOURCE: 
+  - "*"
+NSG2 PORTS: 
+  - '["80","443"]'
+NSG2 SOURCE: 
+  - "*"
+NSG0:
+  - '[{"destinationPortRanges": <NSG0 MGMT PORTS>,"sourceAddressPrefix": "<NSG0 SOURCE>"},{"destinationPortRanges": <NSG0 EXT PORTS>,"sourceAddressPrefix": "<NSG0 SOURCE>"}]'
+  - '[]'
+NSG1:
+  - '[{"destinationPortRanges": <NSG1 PORTS>,"sourceAddressPrefix": "<NSG1 SOURCE>"}]'
+  - '[]'
+NSG2:
+  - '[{"destinationPortRanges": <NSG2 PORTS>,"sourceAddressPrefix": "<NSG2 SOURCE>"}]'
+  - '[]'
+NUMBER PUBLIC MGMT IP ADDRESSES:
+  - 0
+  - 1
+  - 2
+  - any_int_up_to_azure_limits
+NUMBER PUBLIC EXT IP ADDRESSES:
+  - 0
+  - 1
+  - 2
+  - any_int_up_to_azure_limits
+NUM SUBNETS:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+DNSLABEL:
+  - some_unique_dns_label
+EXTERNAL LOAD BALANCER NAME:
+  - some_unique_elb_name
+  - None
+LOAD BALANCER RULE PORTS:
+  - 80,443,445
+  - 443,3889
+  - any,valid,set,of,comma,separated,tcp,ports
+INTERNAL LOAD BALANCER NAME:
+  - some_unique_ilb_name
+  - None
+INTERNAL LOAD BALANCER PROBE PORT:
+  - 3456
+  - any_int
+RESOURCE GROUP:
+  - some_resource_group
+TEMPLATE URL:
+  - file://$PWD/examples/modules/dag/dag.json
+  - https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/dag/dag.json
+REGION:
+  - eastasia
+  - southeastasia
+  - centralus
+  - eastus
+  - eastus2
+  - westus
+  - northcentralus
+  - southcentralus
+  - northeurope
+  - westeurope
+  - japanwest
+  - japaneast
+  - brazilsouth
+  - australiaeast
+  - australiasoutheast
+  - southindia
+  - centralindia
+  - westindia
+  - canadacentral
+  - canadaeast
+  - uksouth
+  - ukwest
+  - westcentralus
+  - westus2
+  - koreacentral
+  - koreasouth
+  - francecentral
+  - francesouth
+  - australiacentral
+  - australiacentral2
+  - uaecentral
+  - uaenorth
+  - southafricanorth
+  - southafricawest
+  - switzerlandnorth
+  - switzerlandwest
+  - germanynorth
+  - germanywestcentral
+  - norwaywest
+  - norwayeast

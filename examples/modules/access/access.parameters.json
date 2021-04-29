@@ -1,0 +1,54 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.2.0.0",
+	"parameters": {
+		"builtInRoleType": {
+			"value": "Reader"
+		},
+		"customRolePermissions": {
+			"value": []
+		},
+		"customRoleAssignableScopes": {
+			"value": []
+		},
+		"customRoleDescription": {
+			"value": ""
+		},
+		"customRoleName": {
+			"value": ""
+		},
+		"keyVaultName": {
+			"value": ""
+		},
+		"keyVaultPermissionsKeys": {
+			"value": [
+				"get",
+				"list"
+			]
+		},
+		"keyVaultPermissionsSecrets": {
+			"value": [
+				"get",
+				"list"
+			]
+		},
+		"secretName": {
+			"value": ""
+		},
+		"secretValue": {
+			"value": ""
+		},
+		"userAssignedIdentityName": {
+			"value": ""
+		},
+		"tagValues": {
+			"value": {
+				"application": "APP",
+				"cost": "COST",
+				"environment": "ENV",
+				"group": "GROUP",
+				"owner": "OWNER"
+			}
+		}
+	}
+}

@@ -1,0 +1,201 @@
+pre_onboard_enabled:
+  - name: provision_rest
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.extramb 1000
+      - /usr/bin/setdb restjavad.useextramb true
+runtime_parameters:
+  - name: HOST_NAME
+    type: metadata
+    metadataProvider:
+      type: compute
+      environment: azure
+      field: name
+  - name: BIGIP_PASSWORD
+    type: url
+    query: vmId
+    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2017-08-01'
+    headers:
+      - name: Metadata
+        value: true
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 1
+  - name: SELF_IP_INTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 2
+bigip_ready_enabled: []
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.19.0
+      extensionHash: 15c1b919954a91b9ad1e469f49b7a0915b20de494b7a032da9eb258bbb7b6c49
+    - extensionType: as3
+      extensionVersion: 3.26.0
+      extensionHash: b33a96c84b77cff60249b7a53b6de29cc1e932d7d94de80cc77fb69e0b9a45a0
+    - extensionType: ts
+      extensionVersion: 1.18.0
+      extensionHash: de4c82cafe503e65b751fcacfb2f169912ad5ce1645e13c5135dca972299174a
+    - extensionType: fast
+      extensionVersion: 1.7.0
+      extensionHash: 9c617f5bb1bb0d08ec095ce568a6d5d2ef162e504cd183fe3540586200f9d950
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: >-
+          Quickstart 3NIC BIG-IP declaration for Declarative Onboarding with
+          BYOL license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            ui.advisory.enabled: true
+            ui.advisory.color: blue
+            ui.advisory.text: BIG-IP VE Quickstart
+            config.allow.rfc3927: enable
+            dhclient.mgmt: disable
+          myDns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          myLicense:
+            class: License
+            licenseType: regKey
+            regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
+          myNtp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+            timezone: UTC
+          myProvisioning:
+            class: Provision
+            ltm: nominal
+            asm: nominal
+          mySystem:
+            class: System
+            autoPhonehome: true
+            hostname: '{{{HOST_NAME}}}.local'
+          quickstart:
+            class: User
+            userType: regular
+            partitionAccess:
+              all-partitions:
+                role: admin
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: 10.0.1.1
+            network: default
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService: none
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            tag: 4093
+            mtu: 1500
+            interfaces:
+              - name: '1.2'
+                tagged: false
+          internal-self:
+            class: SelfIp
+            address: '{{{SELF_IP_INTERNAL}}}'
+            vlan: internal
+            allowService: default
+            trafficGroup: traffic-group-local-only
+    - extensionType: as3
+      type: inline
+      value:
+        class: ADC
+        schemaVersion: 3.0.0
+        label: Quickstart
+        remark: Quickstart
+        Tenant_1:
+          class: Tenant
+          Shared:
+            class: Application
+            template: shared
+            shared_pool:
+              class: Pool
+              remark: Service 1 shared pool
+              members:
+                - serverAddresses:
+                    - 10.0.3.4
+                  servicePort: 80
+              monitors:
+                - http
+          HTTP_Service:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - 10.0.1.101
+              snat: auto
+              policyWAF:
+                use: WAFPolicy
+              pool: /Tenant_1/Shared/shared_pool
+            WAFPolicy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+          HTTPS_Service:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - 10.0.1.101
+              snat: auto
+              policyWAF:
+                use: WAFPolicy
+              pool: /Tenant_1/Shared/shared_pool
+              serverTLS:
+                bigip: /Common/clientssl
+              redirect80: false
+            WAFPolicy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+post_onboard_enabled: []
