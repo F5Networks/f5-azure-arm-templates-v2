@@ -1,0 +1,21 @@
+---
+ADMIN USERNAME: azureuser
+APP CONTAINER: 'f5devcentral/f5-demo-app:latest'
+ARTIFACT LOCATION: 'templates/'
+AUTOFILL BIGIQ LICENSE KEY: ''
+AUTOFILL CLPV2 LICENSE KEY: ''
+BIGIQ TENANT: <RESOURCE GROUP>-vmss
+DISAGGREGATOR: LB
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.0.101000
+LICENSE TYPE: payg
+PROVISION PUBLIC IP: true
+REGION: westus
+RESOURCE GROUP: dd-auto-<DEWPOINT JOB ID>
+RESTRICTED SRC ADDRESS: '*'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+SCALING MAX: 10
+SCALING MIN: 2
+SECRET VALUE: 'B!giq2017'
+SUBSCRIPTION ID: d18b486a-112d-4402-add2-7fb1006f943a
+TEMPLATE URL: file://$PWD/examples/autoscale/<LICENSE TYPE>/azuredeploy.json
+USE AVAILABILITY ZONES: false

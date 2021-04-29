@@ -1,0 +1,34 @@
+---
+BIGIQ ADDRESS:
+  - '10.0.0.4'
+  - '10.0.0.5'
+  - '10.0.0.6'
+USERNAME:
+  - azureuser
+PASSWORD:
+  - Pass1wordPass1word
+  - P@ssword!P@ssword!
+  - P@ssword!Pass1word
+BIGIQ LICENSE POOL NAME:
+  - clpv2
+  - myPool
+BIGIQ UTILITY SKU:
+  - F5-BIG-MSP-BT-1G
+FUNCTION APP NAME:
+  - <RESOURCE GROUP>
+FUNCTION APP SKU: 
+  - '{"Tier":"ElasticPremium","Name":"EP1"}'
+  - '{"name":"S1","tier":"Standard","size":"S1","family":"S","capacity":1}'
+REGION:
+  - centralus
+  - eastus
+  - eastus2
+  - westus
+  - westcentralus
+  - southcentralus
+  - northcentralus
+RESOURCE GROUP: dd-fn-<DEWPOINT JOB ID>
+TEMPLATE URL: 
+  - file://$PWD/examples/modules/function/function.json
+  - https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/function/function.json
+TENANT: myTenant
