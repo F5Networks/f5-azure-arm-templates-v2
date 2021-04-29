@@ -1,4 +1,4 @@
-REGION: westus
+REGION: australiaeast
 RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
 BUILT IN ROLE TYPE: Reader
 CUSTOM ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
@@ -7,6 +7,4 @@ CUSTOM ROLE PERMISSIONS: >-
   [{"actions":["Microsoft.Resources/subscriptions/resourceGroups/read","Microsoft.Resources/subscriptions/resourceGroups/write"],"notActions":["Microsoft.Resources/subscriptions/resourceGroups/delete"]}]
 KEY VAULT NAME: keyvault-<DEWPOINT JOB ID>
 USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
-SECRET NAME: secert-<DEWPOINT JOB ID>
-SECRET VALUE: StrongPassword212+
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/access/access.json

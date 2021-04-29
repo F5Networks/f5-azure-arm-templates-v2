@@ -1,9 +1,0 @@
-# Daily Scheduled test plan
-
-# Azure function module tests
-azure-function-module-test:
-  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/daily_test.yaml"
-  run: "all"
-  parameters-files:
-    - "automated-test-scripts/data/examples/modules/function/postpub_parameters.yaml"
-    - "automated-test-scripts/data/examples/modules/function/postpub_parameters.yaml"

@@ -28,13 +28,14 @@ azure-access-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/daily_test.yaml"
   run: "all"
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters3.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters4.yaml"
-
-# Azure application module tests
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters1.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters2.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters3.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters4.yaml
+  random-num-of-tests: 1
+  run: random
+  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/daily_test.yaml'
 azure-application-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/daily_test.yaml"
   run: "all"

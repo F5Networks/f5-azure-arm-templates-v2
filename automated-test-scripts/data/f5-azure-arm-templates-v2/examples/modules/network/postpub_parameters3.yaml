@@ -1,8 +1,8 @@
 ---
-REGION: westus
+REGION: centralus
 RESOURCE GROUP: dd-network-<DEWPOINT JOB ID>
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/network/network.json
 VIRTUAL NETWORK NAME: dd_vnet_<DEWPOINT JOB ID>
-NUM SUBNETS: 1
-VNET ADDRESS PREFIX: '10.0'
-CREATE NAT GATEWAY: true
+NUM SUBNETS: 4
+VNET ADDRESS PREFIX: '192.168'
+CREATE NAT GATEWAY: false
