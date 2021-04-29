@@ -9,7 +9,7 @@ DISAGGREGATOR: LB
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.0.101000
 LICENSE TYPE: payg
 PROVISION PUBLIC IP: true
-REGION: westus
+REGION: westus2
 RESOURCE GROUP: dd-auto-<DEWPOINT JOB ID>
 RESTRICTED SRC ADDRESS: '*'
 BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'

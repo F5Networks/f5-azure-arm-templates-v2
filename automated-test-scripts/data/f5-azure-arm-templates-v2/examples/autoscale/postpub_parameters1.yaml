@@ -4,10 +4,11 @@ APP CONTAINER: 'f5devcentral/f5-demo-app:latest'
 ARTIFACT LOCATION: 'templates/'
 AUTOFILL BIGIQ LICENSE KEY: ''
 AUTOFILL CLPV2 LICENSE KEY: ''
-BIGIQ TENANT: <RESOURCE GROUP>-vmss
+BIGIQ ADDRESS: <RESOURCE GROUP>-bigiq.<REGION>.cloudapp.azure.com
+BIGIQ TENANT: myTenant
 DISAGGREGATOR: LB
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.0.101000
-LICENSE TYPE: payg
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000
+LICENSE TYPE: bigiq
 PROVISION PUBLIC IP: true
 REGION: westus
 RESOURCE GROUP: dd-auto-<DEWPOINT JOB ID>
@@ -16,6 +17,7 @@ BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-big
 SCALING MAX: 10
 SCALING MIN: 2
 SECRET VALUE: 'B!giq2017'
+SEQUENCE NUMBER: 1
 SUBSCRIPTION ID: d18b486a-112d-4402-add2-7fb1006f943a
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/<LICENSE TYPE>/azuredeploy.json
-USE AVAILABILITY ZONES: true
+USE AVAILABILITY ZONES: false
