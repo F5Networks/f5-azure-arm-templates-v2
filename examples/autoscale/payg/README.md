@@ -216,7 +216,7 @@ ex. from azuredeploy.parameters.json
 
 ```
 
-**IMPORTANT**: Notice the "raw.githubusercontent.com". Any URLs pointing to github must use the raw convention.  
+**IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to github **must** use the raw file format. 
 
 The F5 BIG-IP Runtime Init configuration file can also be formatted in json and/or passed directly inline:
 
@@ -471,10 +471,14 @@ If a new configuration update fails (ex. invalid config, typo, etc) and Rolling 
         az deployment group cancel -n ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP}
         ```
 2. [Cancel](https://docs.microsoft.com/en-us/cli/azure/vmss/rolling-upgrade?view=azure-cli-latest#az_vmss_rolling_upgrade_cancel) the Rolling Update
-    ```bash 
-    az vmss rolling-upgrade get-latest -n ${uniqueId}-vmss  --resource-group ${RESOURCE_GROUP}
-    az vmss rolling-upgrade cancel -n ${uniqueId}-vmss  --resource-group ${RESOURCE_GROUP}
-    ```
+    - **Console**: 
+      - Navigate to Resource Groups->**RESOURCE_GROUP**->**${uniqueId}-vmss**->Click the "View details" link at the end of the banner at the top of the screen "A Rolling Upgrade is in progress. To update the virtual machine scale set, you must wait until the upgrade is done or cancel the upgrade operation. View details"
+          - Hit "Cancel"
+    - **Azure CLI**: 
+      ```bash 
+      az vmss rolling-upgrade get-latest -n ${uniqueId}-vmss  --resource-group ${RESOURCE_GROUP}
+      az vmss rolling-upgrade cancel -n ${uniqueId}-vmss  --resource-group ${RESOURCE_GROUP}
+      ```
 3. Modify parameters to update the model
     - Modify the parameter that resulted in failure (ex. a previous or working **bigIpRuntimeInitConfig** value or image)
     - Modify Scaling Size to deploy new instances 
