@@ -132,9 +132,9 @@ By default, this solution creates a Vnet with four subnets, an example Web Appli
 | bigIpManagementPublicIpId | Management Public IP Address | Dag Template | string |
 | bigIpManagementPublicUrl | Management Public IP Address | Dag Template | string |
 | bigIpUsername | BIG-IP user name | BIG-IP Template | string |
-| vip1PrivateIp | Service (VIP) Private IP Address | BIG-IP Template | string |
-| vip1PrivateUrlHttp | Service (VIP) Private HTTP URL | BIG-IP Template | string |
-| vip1PrivateUrlHttps | Service (VIP) Private HTTPS URL | BIG-IP Template | string |
+| vip1PrivateIp | Service (VIP) Private IP Address | Application Template | string |
+| vip1PrivateUrlHttp | Service (VIP) Private HTTP URL | Application Template | string |
+| vip1PrivateUrlHttps | Service (VIP) Private HTTPS URL | Application Template | string |
 | vip1PublicIp | Service (VIP) Public IP Address | Dag Template | string |
 | vip1PublicIpDns | Service (VIP) Public DNS | Dag Template | string |
 | vip1PublicUrlHttp | Service (VIP) Public HTTP URL | Dag Template | string |
@@ -210,7 +210,7 @@ ex. from azuredeploy.parameters.json
     },
 ```
 
-**IMPORTANT**: Notice the "raw.githubusercontent.com". Any URLs pointing to github must use the raw convention.  
+**IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to github **must** use the raw file format. 
 
 The F5 BIG-IP Runtime Init configuration file can also be formatted in json and/or passed directly inline:
 
@@ -261,7 +261,7 @@ In order to deploy a **BYOL** instance:
 
 ex.
 ```yaml
-          myLicense:
+          My_License:
             class: License
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
@@ -319,14 +319,14 @@ SSH:
 
 WebUI: 
 - Obtain the URL address of the BIG-IP Mangement Port:
-  - **Console**: Navigate to Resource Groups->**RESOURCE_GROUP**->Deployments->**DEPLOYMENT_NAME**->Outputs->bigIpManagementPublicUrl
-  - **Azure CLI**: ```az group deployment show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o json --query properties.outputs.bigIpManagementPublicUrl.value```
+  - **Console**: Navigate to Resource Groups->**RESOURCE_GROUP**->Deployments->**DEPLOYMENT_NAME**->Outputs->bigIpMgmtPublicUrl
+  - **Azure CLI**: ```az group deployment show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o json --query properties.outputs.bigIpMgmtPublicUrl.value```
 
 - Open a browser to the Management IP:
   - NOTE: By default the BIG-IP's WebUI starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (ex. If using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue").
   - Provide 
     - username: quickstart
-    - password: **vmId** (obtain from arm deployment template "Outputs")
+    - password: **vmID** (obtain from arm deployment template "Outputs")
 
 
 ### Further Exploring

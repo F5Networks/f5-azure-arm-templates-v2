@@ -43,7 +43,7 @@ Templates are grouped into the following categories:
 
   - **Failover Cluster (Planned)**: <br> These parent templates deploys more than one BIG-IP VE in a ScaleN cluster (a traditional High Availability Pair in most cases), as well as the full stack of resources required by the solution. Failover clusters are primarily used to replicate traditional Active/Standy BIG-IP deployments. In these deployments an individual BIG-IP VE in the cluster owns or is Active for) a particular IP address. For example, the BIG-IP VEs will fail over services from one instance to another by remapping IP addresses, routes, etc. based on Active/Standby status. Failover is implemented either via API (API calls to the cloud platform vs network protocols like Gratuitous ARP, route updates, and so on), or via an upstream service (like a native loud balancer) which will only send traffic to the active instance for that service based on a health monitor. In all cases, a single BIG-IP VE will be active for a single IP address.
 
-  - **Autoscale** <br> These parent templates deploy a collection of linked child templates to create a Virtual Machine Scale Set (VMSS) of BIG-IP VE instances that scale in and out based on thresholds you configure in the template, as well as the full stack of resources required by the solution. The BIG-IP VEs are "All Active" and are primarily used to scale an L7 service on a single wildcard virtual (although you can add additional services using ports).<br> Unlike previous solutions, this solution leverages the more traditional autoscale configuration management pattern where each instance is created with an identical configuration as defined in the Scale Set's "model". Scale Set sizes are no longer restricted to the smaller limitations of the BIG-IP's cluster. The BIG-IP's configuration, now defined in a single convenient yaml-based [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code. For instance, if you need to change the configuration on the instances in the deployment, you update the the "model" by passing the new config version via the template's *bigIpRuntimeInitConfig* input parameter. The Scale Set provider will update the instances to the new model according to its rolling update policy.
+  - **Autoscale** <br> These parent templates deploy a collection of linked child templates to create a Virtual Machine Scale Set (VMSS) of BIG-IP VE instances as well as the full stack of resources required by the solution. The BIG-IP VEs are "All Active" and are primarily used to scale an L7 service on a single wildcard virtual (although you can add additional services using ports).<br> Unlike previous solutions, this solution leverages the more traditional autoscale configuration management pattern where each instance is created with an identical configuration as defined in the Scale Set's "model". Scale Set sizes are no longer restricted to the smaller limitations of the BIG-IP's cluster. The BIG-IP's configuration, now defined in a single convenient yaml-based [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code. For instance, if you need to change the configuration on the instances in the deployment, you update the the "model" by passing the new config version via the template's *bigIpRuntimeInitConfig* input parameter. The Scale Set provider will update the instances to the new model according to its rolling update policy.
 
 ### Modules
 
@@ -162,12 +162,15 @@ A high level overview of customizing the templates may look like:
           ```
       - ***WARNING: This particular example will upload the entire git repository folder to Azure storage. If containing any sensitive information (ex. from .gitignore, custom files), you should remove those.***
 
- 1. Update the template parameters ``templateBaseUrl`` and ``artifactLocation`` to reference the custom location. These must combine to resolve to the location containing the ``modules/`` folder.
+ 1. Update the template parameters ``templateBaseUrl`` and ``artifactLocation`` to reference the custom location. These strings must combine to resolve to the location containing the ``modules/`` location.
 
     Examples:
 
     #### Github
-    Modules location: https://raw.githubusercontent.com/myAccount/f5-azure-arm-templates-v2/customizations/examples/modules
+    Modules location: https://www.github.com/myAccount/f5-azure-arm-templates-v2/customizations/examples/modules
+    
+    **IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to github **must** use the raw file format. 
+
       ```json
           "templateBaseUrl": {
             "value": "https://raw.githubusercontent.com/myAccount/f5-azure-arm-templates-v2/"
@@ -176,6 +179,7 @@ A high level overview of customizing the templates may look like:
             "value": "customizations/examples/"
           },
       ```
+     
 
     #### Azure Storage
     Modules location: https://customtmpltsacct.blob.core.windows.net/customizations/examples/modules
