@@ -10,8 +10,8 @@ github_response=`curl https://status.github.com/api/status.json?callback-apiStat
 
 # get the private key from key vault via file
 SSH_PORT='22'
-IP1=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vmss | jq -r .[0].ipAddress)
-IP2=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vmss | jq -r .[1].ipAddress)
+IP1=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vmss | jq -r .[0].ipAddress)
+IP2=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vmss | jq -r .[1].ipAddress)
 
 echo "Verify IP1=$IP1"
 echo "Verify IP2=$IP2"

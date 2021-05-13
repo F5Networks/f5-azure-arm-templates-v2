@@ -21,3 +21,5 @@ STACK TYPE: existing-stack
 SUBNET ID: /subscriptions/d18b486a-112d-4402-add2-7fb1006f943a/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/existingStackVnet/subnets/internal
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/application/application.json
 VM NAME: <RESOURCE GROUP>
+VM SCALE SET MAX COUNT: 2
+VM SCALE SET MIN COUNT: 1

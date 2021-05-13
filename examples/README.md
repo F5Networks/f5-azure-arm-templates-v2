@@ -80,7 +80,7 @@ OR
 2. Edit the *paramaters.json file and launch via CLI.
   ex.
   ```bash
-  az group create -l westus -n my-rg
+  az group create -l eastus -n my-rg
   az deployment group create --name my-parent --resource-group my-rg --template-file azuredeploy.json  --parameters azuredeploy.parameters.json
   ```
 
@@ -155,8 +155,8 @@ A high level overview of customizing the templates may look like:
 
           ex.
           ```bash
-          az group create -l westus -n custom-templates-group
-          az storage account create -n customtmpltsacct -g custom-templates-group -l westus --sku Standard_LRS
+          az group create -l eastus -n custom-templates-group
+          az storage account create -n customtmpltsacct -g custom-templates-group -l eastus --sku Standard_LRS
           az storage container create --name customizations --account-name customtmpltsacct --public-access container
           az storage blob upload-batch -s f5-azure-arm-templates-v2/ -d https://customtmpltsacct.blob.core.windows.net/customizations
           ```

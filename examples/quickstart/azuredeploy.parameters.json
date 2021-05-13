@@ -26,10 +26,10 @@
         "bigIpRuntimeInitPackageUrl":{
             "value":"https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run"
         },
-        "image":{
+        "bigIpImage":{
             "value":"f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.0.101000"
         },
-        "instanceType":{
+        "bigIpInstanceType":{
             "value":"Standard_DS3_v2"
         },
         "numNics":{

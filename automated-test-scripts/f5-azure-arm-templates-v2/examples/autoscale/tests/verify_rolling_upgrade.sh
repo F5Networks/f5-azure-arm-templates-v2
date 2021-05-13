@@ -3,7 +3,7 @@
 #  replayEnabled = true
 #  replayTimeout = 180
 
-RESPONSE=$(az vmss rolling-upgrade get-latest -g <RESOURCE GROUP> --name <RESOURCE GROUP>-vmss | jq -r .runningStatus.code)
+RESPONSE=$(az vmss rolling-upgrade get-latest -g <RESOURCE GROUP> --name <RESOURCE GROUP>-bigip-vmss | jq -r .runningStatus.code)
 
 echo "Upgrade status: ${RESPONSE}"
 
