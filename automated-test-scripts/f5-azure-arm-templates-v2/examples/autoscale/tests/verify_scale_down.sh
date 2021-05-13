@@ -3,7 +3,7 @@
 #  replayEnabled = true
 #  replayTimeout = 180
 
-CAPACITY=$(az vmss show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vmss | jq -r .sku.capacity)
+CAPACITY=$(az vmss show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vmss | jq -r .sku.capacity)
 echo "CAPACITY: ${CAPACITY}"
 
 # Check that only one device is present in the scale set

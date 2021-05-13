@@ -17,29 +17,59 @@
         "restrictedSrcAddressMgmt":{
             "value":""
         },
+        "restrictedSrcAddressApp":{
+            "value":""
+        },
         "bigIpRuntimeInitConfig":{
             "value":"https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"
         },
         "bigIpRuntimeInitPackageUrl":{
             "value":"https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run"
         },
-        "image":{
-            "value":"f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.0.101000"
+        "bigIpImage":{
+            "value":"f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000"
+        },
+        "bigIpInstanceType":{
+            "value":"Standard_DS3_v2"
         },
         "bigIpScalingMinSize":{
-            "value":2
+            "value":1
         },
         "bigIpScalingMaxSize":{
             "value":10
         },
-        "workspaceId":{
-            "value":""
+        "bigIpScaleInCpuThreshold":{
+            "value":20
+        },
+        "bigIpScaleInThroughputThreshold":{
+            "value":10000000
+        },
+        "bigIpScaleInTimeWindow":{
+            "value":10
+        },
+        "bigIpScaleOutCpuThreshold":{
+            "value":80
+        },
+        "bigIpScaleOutThroughputThreshold":{
+            "value":20000000
+        },
+        "bigIpScaleOutTimeWindow":{
+            "value":10
         },
         "useAvailabilityZones":{
             "value":true
         },
+        "workspaceId":{
+            "value":""
+        },
         "appContainerName":{
             "value":"f5devcentral/f5-demo-app:latest"
+        },
+        "appScalingMinSize":{
+            "value":1
+        },
+        "appScalingMaxSize":{
+            "value":10
         },
         "tagValues":{
             "value":{
