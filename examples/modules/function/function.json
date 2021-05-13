@@ -101,17 +101,13 @@
 		"functionStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
 		"functionWorkerRuntime": "python",
 		"hostingPlanName": "[concat(parameters('functionAppName'), '-plan')]",
-		"identityApiVersion": "2018-11-30",
-		"identityName": "[concat(parameters('functionAppName'), '-identity')]",
 		"keyVaultApiVersion": "2018-02-14",
 		"keyVaultName": "[concat(parameters('functionAppName'), 'fv')]",
 		"location": "[resourceGroup().location]",
 		"vmssName": "[last(split(parameters('vmssId'),'/'))]",
 		"resourceGroupName": "[split(parameters('vmssId'),'/')[4]]",
 		"secretName": "[concat(parameters('functionAppName'), 'bigiq')]",
-		"serverFarmApiVersion": "2018-02-01",
-		"storageApiVersion": "2017-10-01",
-		"subscriptionID": "[subscription().subscriptionId]"			
+		"storageApiVersion": "2017-10-01"
 	},
 	"resources": [
 		{
@@ -122,6 +118,7 @@
 			"sku": {
 				"name": "Standard_LRS"
 			},
+			"tags":"[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
 			"type": "Microsoft.Storage/storageAccounts"
 		},
 		{

@@ -135,6 +135,7 @@
         "description": "The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). Required when customAutoscaleRules parameter not used."
       },
       "minValue": 1,
+      "maxValue": 60,
       "type": "int"
     },
     "scaleOutCpuThreshold": {
@@ -159,6 +160,7 @@
         "description": "The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). Required when customAutoscaleRules parameter not used."
       },
       "minValue": 1,
+      "maxValue": 60,
       "type": "int"
     },
     "sshKey": {
@@ -332,7 +334,6 @@
     "extSettingsRef": {
       "commandToExecute": "[concat('echo -e ', variables('customData'), ' > /var/lib/waagent/customData; bash -c \"base64 -d /var/lib/waagent/customData | bash\"')]"
     },
-    "functionAppName": "[concat(parameters('uniqueString'), '-function')]",
     "healthProbe": {
       "id": "[parameters('instanceHealthProbeId')]"
     },

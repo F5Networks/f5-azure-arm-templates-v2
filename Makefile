@@ -5,6 +5,7 @@ PROJECT_DIR := .
 LINK_CHECK_DIR := cloud-tools/link_checker
 CRAWLER_DIR := cloud-tools/crawler
 SMOKE_TEST_DIR := tests/smoke
+LINTER_DIR := cloud-tools/arm-ttk
 PARSER_DIR := cloud-tools/parameter-parser
 DIFF_VAR :=`diff automated-test-scripts/parameters_diff_expected.yaml ${PARSER_DIR}/parameters_diff.yaml`
 DIFF_VAR_OUTPUTS :=`diff automated-test-scripts/outputs_diff_expected.yaml ${PARSER_DIR}/outputs_diff.yaml`
@@ -18,6 +19,12 @@ link_check:
 	echo "Running link checker against all markdown files";
 	cd ${LINK_CHECK_DIR} && npm install && cd ${CUR_DIR};
 	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived"
+
+run_linter:
+	echo "Running arm-ttk against templates";
+	cd ${LINTER_DIR} && bash ./lint.sh && cd ${CUR_DIR};
+	echo "Finished linting ARM templates"
+
 run_crawler:
 	echo "Running crawler against cloud factory artifacts";
 	cd ${CRAWLER_DIR} && bash ./run_crawler.sh && cd ${CUR_DIR};

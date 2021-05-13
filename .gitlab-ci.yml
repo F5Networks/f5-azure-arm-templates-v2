@@ -5,7 +5,6 @@ services:
 
 
 stages:
-  - lint-tests
   - smoke-tests
   - release_test_prep
   - sprinkle-tests
@@ -59,6 +58,21 @@ template2_prep_release_testing:
     - git commit -m "Release committed examples/modules/bigip-autoscale/bigip.json and examples/modules/bigip-standalone/bigip.json to $CI_COMMIT_REF_NAME branch" || echo "No changes, nothing to commit!"
     - git remote rm origin && git remote add origin ${GIT_USER}:$CI_PROJECT_PATH.git
     - git push origin HEAD:$CI_COMMIT_REF_NAME
+
+# run arm-ttk against all templates
+run_arm_lint:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/hawaku/arm-ttk
+  stage: smoke-tests
+  tags:
+    - docker-executor
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+  script:
+    - templates=$(find examples -name *.json ! -name *.parameters.json ! -name sample_linked.json)
+    - for t in $templates; do echo "Testing template $t"; bash /arm-ttk/Test-AzTemplate.sh -TemplatePath $t -Test \"adminUsername Should Not Be A Literal\",\"Deployment Resources Must Not Be Debug\",\"Dynamic Variable References Should Not Use Concat\",\"Min And Max Value Are Numbers\",\"Outputs Must Not Contain Secrets\",\"Parameters Must Be Referenced\",\"Parameters Property Must Exist\",\"providers apiVersions Is Not Permitted\",\"Resources Should Have Location\",\"Secure String Parameters Cannot Have Default\",\"Variables Must Be Referenced\",\"Virtual Machines Should Not Be Preview\",\"VM Size Should Be A Parameter\" || continue; done
 
 # validate README file(s) only contain links that respond with 200 OK
 run_link_checker:

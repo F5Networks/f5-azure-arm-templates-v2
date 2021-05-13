@@ -30,13 +30,6 @@
       },
       "type": "string"
     },
-    "loadBalancerBackendAddressPoolsArray": {
-      "defaultValue": [],
-      "metadata": {
-        "description": "Array of pools where BIG-IP instances are to be added."
-      },
-      "type": "array"
-    },
     "mgmtSubnetId": {
       "metadata": {
         "description": "The resource ID of the management subnet."
@@ -165,13 +158,6 @@
         "description": "Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key."
       },
       "type": "object"
-    },
-    "updateTag": {
-      "defaultValue": "[utcNow()]",
-      "metadata": {
-        "description": "Creates a unique timestamp for this deployment. Do not modify this value."
-      },
-      "type": "string"
     },
     "uniqueString": {
       "metadata": {
