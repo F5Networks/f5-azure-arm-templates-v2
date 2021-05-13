@@ -239,7 +239,6 @@
                     "adminUsername":{ "value": "[variables('adminUsername')]" },
                     "image":{ "value": "[parameters('bigIpImage')]" },
                     "instanceType":{ "value": "[parameters('bigIpInstanceType')]" },
-                    "loadBalancerBackendAddressPoolsArray":{ "value": [] },
                     "mgmtSubnetId":{ "value": "[reference('networkTemplate').outputs.subnets.value[0]]" },
                     "mgmtNsgID":{ "value": "[reference('dagTemplate').outputs.nsg0Id.value]" },
                     "mgmtPublicIpId":{ "value": "[reference('dagTemplate').outputs.mgmtIpIds.value[0]]" },

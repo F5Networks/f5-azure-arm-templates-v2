@@ -108,6 +108,7 @@
                 "description":"The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes)."
             },
             "minValue":1,
+            "maxValue":60,
             "type":"int"
         },
         "bigIpScaleOutCpuThreshold":{
@@ -132,6 +133,7 @@
                 "description":"The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes)."
             },
             "minValue":1,
+            "maxValue":60,
             "type":"int"
         },
         "useAvailabilityZones":{
@@ -206,7 +208,6 @@
         "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
 
         "numSubnets": 2,
-        "restrictedSrcMgmtPort": "8443",
         "vnetAddressPrefix": "10.0",
         "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
 

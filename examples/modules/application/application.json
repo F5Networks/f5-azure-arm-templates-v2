@@ -110,10 +110,8 @@
         "networkSecurityGroup":{
             "id":"[parameters('nsgId')]"
         },
-        "publicIPAddressType":"Static",
         "storageAccountType":"Standard_LRS",
         "storageName":"[concat(uniqueString(resourceGroup().name, resourceGroup().id, deployment().name), 'data000')]",
-        "subscriptionID":"[subscription().subscriptionId]",
         "vmName":"[concat(parameters('instanceName'), '-app-vm')]",
         "vmssName":"[concat(parameters('instanceName'), '-app-vmss')]"
     },
