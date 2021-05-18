@@ -60,7 +60,7 @@ RESOURCE GROUP:
   - some_resource_group
 TEMPLATE URL:
   - file://$PWD/examples/modules/dag/dag.json
-  - https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/dag/dag.json
+  - https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/dag/dag.json
 REGION:
   - eastasia
   - southeastasia

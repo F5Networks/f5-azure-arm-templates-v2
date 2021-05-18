@@ -7,4 +7,4 @@ CUSTOM ROLE PERMISSIONS: >-
   [{"actions":["Microsoft.Resources/subscriptions/resourceGroups/read","Microsoft.Resources/subscriptions/resourceGroups/write"],"notActions":["Microsoft.Resources/subscriptions/resourceGroups/delete"]}]
 KEY VAULT NAME: keyvault-<DEWPOINT JOB ID>
 USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/access/access.json
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/access/access.json

@@ -65,7 +65,7 @@ outputs[vip1PublicIp]=$vip_1_public_ip
 outputs[vip1PublicUrlHttp]="http://${vip_1_public_ip}/"
 outputs[vip1PublicUrlHttps]="https://${vip_1_public_ip}/"
 outputs[virtualNetworkId]="/subscriptions/${subscription}/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/<RESOURCE GROUP>-vnet"
-outputs[vmId]="${id}"
+outputs[bigIpVmId]="${id}"
 
 # Run array through function
 response=$(verify_outputs "outputs")

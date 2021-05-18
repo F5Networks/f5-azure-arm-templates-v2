@@ -22,4 +22,4 @@ INTERNAL LOAD BALANCER NAME: None
 INTERNAL LOAD BALANCER PROBE PORT: 5465
 REGION: eastus2
 RESOURCE GROUP: dd-dag-<DEWPOINT JOB ID>
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/dag/dag.json
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/dag/dag.json
