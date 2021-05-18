@@ -39,14 +39,14 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 
  - How to find outbound IP addresses for Azure function: If you specified a public IP address for the bigIqAddress parameter, you may need to configure the Azure network security group(s) for BIG-IQ management access to allow requests from the IP addresses allocated to the Azure function. In the Azure portal, you can find the list of function source IP addresses by clicking on the function app name, then clicking **Settings > Properties > Additional Outbound IP Addresses**. This list includes all possible source IP addresses used by the Azure function. 
 
-- Disable SSL warnings in Azure function: By default, the Azure function is created with the F5_DISABLE_SSL_WARNINGS environment variable set to "False". When revoking licenses from a BIG-IQ License Manager device that is configured to use a self-signed certificate, you can set F5_DISABLE_SSL_WARNINGS to "True" to suppress insecure connection warning messages (this is not recommended for production deployments). You can configure this setting in the Azure portal by clicking on the function app name, then clicking Settings > Configuration > App Settings and changing the value for  F5_DISABLE_SSL_WARNINGS to "True".
+- Disable SSL warnings in Azure function: By default, the Azure function is created with the F5_DISABLE_SSL_WARNINGS environment variable set to "False". When revoking licenses from a BIG-IQ License Manager device that is configured to use a self-signed certificate, you can set F5_DISABLE_SSL_WARNINGS to "True" to suppress insecure connection warning messages (this is not recommended for production deployments). You can configure this setting in the Azure portal by clicking on the function app name, then clicking **Settings > Configuration > App Settings** and changing the value for F5_DISABLE_SSL_WARNINGS to "True".
 
 
 ### Template Input Parameters
 
 | Parameter | Required | Description |
 | --- | --- | --- |
-| bigIqAddress | No | The public or private IP address of the BIG-IQ to be used when revoking licenses from the BIG-IP.  Note: The Azure function will make a REST call to the BIG-IQ (already existing) to let it know a BIG-IP needs to be revoked. It will then revoke the license of the BIG-IP using the provided BIG-IQ credentials and license pool name/utility license info. |
+| bigIqAddress | No | The public or private IP address of the BIG-IQ to be used when revoking licenses from the BIG-IP. Note: The Azure function will make a REST call to the BIG-IQ (already existing) to let it know a BIG-IP needs to be revoked. It will then revoke the license of the BIG-IP using the provided BIG-IQ credentials and license pool name/utility license info. |
 | bigIqLicensePool | No | The BIG-IQ license pool used during BIG-IP licensing via BIG-IQ. |
 | bigIqPassword | No | The BIG-IQ password to use during BIG-IP license revocation via BIG-IQ. This password will be securely stored in an Azure KeyVault secret. |
 | bigIqTenant | No | The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. This limits the scope of licenses eligible for revocation to those that were licensed with the specified tenant value. |
@@ -71,7 +71,7 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/master/examples/images/azure-function-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.0.0/examples/images/azure-function-module.png)
 
 
 ### Contributor License Agreement

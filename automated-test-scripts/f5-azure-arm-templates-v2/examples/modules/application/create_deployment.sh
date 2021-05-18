@@ -13,7 +13,7 @@ echo "TEMPLATE URI: <TEMPLATE URL>"
 
 SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public | jq .value --raw-output)
 
-DEPLOY_PARAMS='{"adminUsername":{"value":"dewdrop"},"sshKey":{"value":"'"${SSH_KEY}"'"},"createAutoscaleGroup":{"value":<CREATE AUTOSCALE>},"instanceName":{"value":"<VM NAME>"},"instanceType":{"value":"<INSTANCE TYPE>"},"subnetId":{"value":"<SUBNET ID>"},"appContainerName":{"value":"<APP CONTAINER>"},"cloudInitUrl":{"value":"<CLOUD INIT URL>"}}'
+DEPLOY_PARAMS='{"adminUsername":{"value":"dewdrop"},"sshKey":{"value":"'"${SSH_KEY}"'"},"createAutoscaleGroup":{"value":<CREATE AUTOSCALE>},"instanceName":{"value":"<VM NAME>"},"instanceType":{"value":"<INSTANCE TYPE>"},"subnetId":{"value":"<SUBNET ID>"},"appContainerName":{"value":"<APP CONTAINER>"},"cloudInitUrl":{"value":"<CLOUD INIT URL>"},"vmScaleSetMinCount":{"value":<VM SCALE SET MIN COUNT>},"vmScaleSetMaxCount":{"value":<VM SCALE SET MAX COUNT>}}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

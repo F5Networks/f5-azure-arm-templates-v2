@@ -10,7 +10,7 @@ PASSWORD='<SECRET VALUE>'
 MGMT_PORT='8443'
 SSH_PORT='22'
 
-IP1=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vmss | jq -r .[0].ipAddress)
+IP1=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vmss | jq -r .[0].ipAddress)
 echo "IP1: ${IP1}"
 
 ssh-keygen -R ${IP1} 2>/dev/null
@@ -26,7 +26,7 @@ else
     IP1_LOGIN='Failed'
 fi
 
-IP2=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vmss | jq -r .[1].ipAddress)
+IP2=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vmss | jq -r .[1].ipAddress)
 echo "IP2: ${IP2}"
 
 ssh-keygen -R ${IP2} 2>/dev/null

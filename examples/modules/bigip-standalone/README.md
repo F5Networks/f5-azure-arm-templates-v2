@@ -22,7 +22,7 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 
 ## Prerequisites
 
- - F5-bigip-runtime-init configuration file required. See https://github.com/F5Networks/f5-bigip-runtime-init for more details on F5-bigip-runtime-init SDK. See runtime-init-conf.yaml examples  in the repository.
+ - F5-bigip-runtime-init configuration file required. See https://github.com/F5Networks/f5-bigip-runtime-init for more details on F5-bigip-runtime-init SDK. See runtime-init-conf.yaml examples in the repository.
  - Declarative Onboaring (DO) declaration: See quickstart_do_*.json examples in the repository.
  - AS3 declaration: See quickstart_a3.json example in the repository.
  - Telemetry Streaming (TS) declaration if using custom metrics. See quickstart_ts.json example in the repository.
@@ -42,7 +42,7 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 | adminUsername | No | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
 | bigIpRuntimeInitConfig | Yes | Url to bigip-runtime-init configuration file or json string to use for configuration file. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
-| image | No |  There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
+| image | No | There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
 | instanceType | No | Enter a valid instance type. |
 | loadBalancerBackendAddressPoolsArray | No | Enter an array of pools where BIG-IP instance is to be added. |
 | mgmtNsgId | No | The resource ID of a network security group to apply to the management network interface. |
@@ -85,7 +85,7 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 - See \<Add URL to f5-bigip-runtime-init readme.md\> for additional examples.
 - Note: All quotes are escaped as parameter type expected is string.
 - Note: Self IP address order in the runtime_parameters network metadata provider index is determined by the network interface assignment order in the ARM template; for example, the primary IP address on the first non-management network interface assigned to the virtual machine will always be accessed using an index of 1, the second using an index of 2, etc. 
-Example on one line:   
+Example on one line:  
 ```json
 {\"runtime_parameters\":[{\"name\":\"HOST_NAME\",\"type\":\"metadata\",\"metadataProvider\":{\"environment\":\"azure\",\"type\":\"compute\",\"field\":\"name\"}},{\"name\":\"SELF_IP_INTERNAL\",\"type\":\"metadata\",\"metadataProvider\":{\"environment\":\"azure\",\"type\":\"network\",\"field\":\"ipv4\",\"index\":1}},{\"name\":\"SELF_IP_EXTERNAL\",\"type\":\"metadata\",\"metadataProvider\":{\"environment\":\"azure\",\"type\":\"network\",\"field\":\"ipv4\",\"index\":2}}],\"pre_onboard_enabled\":[],\"post_onboard_enabled\":[{\"name\":\"sleep300\",\"type\":\"inline\",\"commands\":[\"sleep300\"]}],\"extension_packages\":{\"install_operations\":[{\"extensionType\":\"do\",\"extensionVersion\":\"1.16.0\",\"extensionHash\":\"536eccb9dbf40aeabd31e64da8c5354b57d893286ddc6c075ecc9273fcca10a1\"},{\"extensionType\":\"as3\",\"extensionVersion\":\"3.23.0\",\"extensionHash\":\"de615341b91beaed59195dceefc122932580d517600afce1ba8d3770dfe42d28\"},{\"extensionType\":\"ts\",\"extensionVersion\":\"1.15.0\",\"extensionHash\":\"333e11a30ba88699ac14bc1e9546622540a5e889c415d5d53a8aeaf98f6f872e\"}]},\"extension_services\":{\"service_operations\":[{\"extensionType\":\"do\",\"type\":\"url\",\"value\":\"https://cdn.f5.com/product/cloudsolutions/declarations/template2-0/quickstart-waf/quickstart.json\"},{\"extensionType\":\"as3\",\"type\":\"url\",\"value\":\"https://cdn.f5.com/product/cloudsolutions/declarations/template2-0/quickstart-waf/quickstart.json\"},{\"extensionType\":\"ts\",\"type\":\"url\",\"value\":\"https://cdn.f5.com/product/cloudsolutions/declarations/template2-0/quickstart-waf/quickstart.json\"}]}}
 ```
@@ -328,7 +328,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -370,5 +370,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/master/examples/images/azure-bigip-standalone-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.0.0/examples/images/azure-bigip-standalone-module.png)
 

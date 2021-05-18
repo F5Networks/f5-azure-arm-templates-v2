@@ -8,5 +8,5 @@ FUNCTION APP NAME: <RESOURCE GROUP>
 FUNCTION APP SKU: '{"name":"S1","tier":"Standard","size":"S1","family":"S","capacity":1}'
 REGION: westus
 RESOURCE GROUP: dd-fn-<DEWPOINT JOB ID>
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/function/function.json
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/function/function.json
 TENANT: myTenant

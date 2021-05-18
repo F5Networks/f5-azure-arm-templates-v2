@@ -4,7 +4,7 @@
 #  replayTimeout = 180
 
 # supports utility license only atm
-RUNNING_MACS=`az vmss nic list -g <RESOURCE GROUP> --vmss-name <RESOURCE GROUP>-vmss | jq -r '.[] | select(.provisioningState=="Succeeded")' | jq -r .macAddress | tr -s '-' ':' | sort -f`
+RUNNING_MACS=`az vmss nic list -g <RESOURCE GROUP> --vmss-name <RESOURCE GROUP>-bigip-vmss | jq -r '.[] | select(.provisioningState=="Succeeded")' | jq -r .macAddress | tr -s '-' ':' | sort -f`
 echo "Running MACs: ${RUNNING_MACS}"
 
 if [[ <LICENSE TYPE> == "bigiq" ]]; then
