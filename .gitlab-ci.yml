@@ -572,8 +572,10 @@ publish_to_github:
   only:
     - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
   script:
-    - apk add --no-cache jq
-    # Execute Release script to push source to github
+    # install jq
+    - apt-get update
+    - apt-get install -y jq
+    # Execute Release script to push source to github repo
     - ./cloud-tools/release-tool/publish_github.sh "$ALLOWED_DIRS" "$ALLOWED_FILES"
   variables:
     ALLOWED_DIRS: "examples .github images"
