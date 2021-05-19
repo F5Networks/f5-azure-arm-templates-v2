@@ -567,6 +567,7 @@ dewdrop_test_run:
     - python /dewdrop/dewdrop-docker.py
 
 publish_to_github:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
   stage: release
   only:
     - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
