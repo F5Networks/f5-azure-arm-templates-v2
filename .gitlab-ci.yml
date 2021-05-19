@@ -509,30 +509,30 @@ scheduled_test_job:
 
 
 # Push the examples/ folder to CDN when a tag in the form of "publish-v9.0.0.0" is added to the main branch
-publish_azure_modules_cdn:
-  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
-  stage: publish
-  only:
-    - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
-  script:
-    # publish azure modules to F5 CDN into $VERSION directory
-    # install jq
-    - apt-get update
-    - apt-get install -y jq
-    - VERSION=$(cat f5-azure-arm-templates-v2/examples/autoscale/payg/azuredeploy.json | jq -r ".contentVersion")
-    - echo "Version:${VERSION}"
-    - CDN_FOLDER="f5-azure-arm-templates-v2"
-    - AUTH_OPTS="--username ${CDN_SVC_ACCOUNT_USER} --password ${CDN_SVC_ACCOUNT_PWD} --non-interactive"
-    - svn co ${F5_CDN_SVN_ROOT}/cloudsolutions/${CDN_FOLDER} ${AUTH_OPTS}
-    - mkdir -p ${CDN_FOLDER}/v${VERSION}
-    - cp -r f5-azure-arm-templates-v2/examples ${CDN_FOLDER}/v${VERSION}
-    - cd ${CDN_FOLDER}
-    - status=$(svn status)
-    - if echo "$status" | grep -F '?'; then svn add v${VERSION}; else echo "No new directory to add"; fi
-    - changed_files_count=$(svn diff --summarize | wc -l)
-    - if [[ $changed_files_count -ge 1 ]]; then svn add --force v${VERSION}/*; svn commit -m "F5 automation templates project automation - ${CI_COMMIT_REF_NAME}" ${AUTH_OPTS}; else echo "RPM files unchanged"; fi
-  tags:
-    - cm-official-docker-executor
+# publish_azure_modules_cdn:
+#   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
+#   stage: publish
+#   only:
+#     - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
+#   script:
+#     # publish azure modules to F5 CDN into $VERSION directory
+#     # install jq
+#     - apt-get update
+#     - apt-get install -y jq
+#     - VERSION=$(cat f5-azure-arm-templates-v2/examples/autoscale/payg/azuredeploy.json | jq -r ".contentVersion")
+#     - echo "Version:${VERSION}"
+#     - CDN_FOLDER="f5-azure-arm-templates-v2"
+#     - AUTH_OPTS="--username ${CDN_SVC_ACCOUNT_USER} --password ${CDN_SVC_ACCOUNT_PWD} --non-interactive"
+#     - svn co ${F5_CDN_SVN_ROOT}/cloudsolutions/${CDN_FOLDER} ${AUTH_OPTS}
+#     - mkdir -p ${CDN_FOLDER}/v${VERSION}
+#     - cp -r f5-azure-arm-templates-v2/examples ${CDN_FOLDER}/v${VERSION}
+#     - cd ${CDN_FOLDER}
+#     - status=$(svn status)
+#     - if echo "$status" | grep -F '?'; then svn add v${VERSION}; else echo "No new directory to add"; fi
+#     - changed_files_count=$(svn diff --summarize | wc -l)
+#     - if [[ $changed_files_count -ge 1 ]]; then svn add --force v${VERSION}/*; svn commit -m "F5 automation templates project automation - ${CI_COMMIT_REF_NAME}" ${AUTH_OPTS}; else echo "RPM files unchanged"; fi
+#   tags:
+#     - cm-official-docker-executor
 
 # This job gets triggered by the sprinkler.py script that get ran by the 'master_test_job' it ingests TEMPLATE_URL
 # and TEMPLATE_PARAMETERS which are passed down by the sprinkler.py script. Using the variables runs dewdrop with
@@ -572,7 +572,7 @@ publish_to_github:
     - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
   script:
     - apk add --no-cache jq
-    # Execute Release script to push source to github repo
+    # Execute Release script to push source to github
     - ./release-tool/publish_github.sh "$ALLOWED_DIRS" "$ALLOWED_FILES"
   variables:
     ALLOWED_DIRS: "examples .github images"
