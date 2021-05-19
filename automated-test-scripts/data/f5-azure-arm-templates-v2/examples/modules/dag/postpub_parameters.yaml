@@ -22,4 +22,4 @@ INTERNAL LOAD BALANCER NAME: None
 INTERNAL LOAD BALANCER PROBE PORT: 3456
 REGION: westus
 RESOURCE GROUP: dd-dag-<DEWPOINT JOB ID>
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/dag/dag.json
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/dag/dag.json

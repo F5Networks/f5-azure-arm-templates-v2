@@ -1,4 +1,3 @@
-
 # Deploying Access Template
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/releases)
@@ -19,7 +18,7 @@
 
 ## Introduction
 
-This solution uses an ARM template to launch a stack for provisioning Access related items. This template can be deployed as a standalone; however the main intention is to use as a module for provisioning Access related resources:
+This solution uses an ARM template to launch a stack for provisioning Access related items. This template can be deployed as a standalone; however, the main intention is to use as a module for provisioning Access related resources:
 
   - Built-in Role Definition
   - Custom Role Definition
@@ -82,13 +81,13 @@ This solution uses an ARM template to launch a stack for provisioning Access rel
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| builtInRoleId | Built-in role resource ID | None | string |
-| customRoleDefinitionId | Custom role definition resource ID | Custom Role Definition | string |
-| keyVaultName | Key Vault name | Key Vault | string |
-| secretName | Secret name | Secret | string |
-| userAssignedIdentityName | User assigned identity name | User Assigned Identity | string |
+| builtInRoleId | Built-in role resource ID | None | String |
+| customRoleDefinitionId | Custom role definition resource ID | Custom Role Definition | String |
+| keyVaultName | Key Vault name | Key Vault | String |
+| secretName | Secret name | Secret | String |
+| userAssignedIdentityName | User assigned identity name | User Assigned Identity | String |
 
 ## Resource Creation Flow Chart
 
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/master/examples/images/azure-access-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.0.0/examples/images/azure-access-module.png)

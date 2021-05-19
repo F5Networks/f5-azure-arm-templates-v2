@@ -30,5 +30,5 @@ REGION:
 RESOURCE GROUP: dd-fn-<DEWPOINT JOB ID>
 TEMPLATE URL: 
   - file://$PWD/examples/modules/function/function.json
-  - https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/modules/function/function.json
+  - https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/function/function.json
 TENANT: myTenant

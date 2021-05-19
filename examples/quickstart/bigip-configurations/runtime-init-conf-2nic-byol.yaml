@@ -155,7 +155,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/v1.3.0.0/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTPS_Service:
@@ -175,7 +175,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/v1.3.0.0/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
 post_onboard_enabled: []

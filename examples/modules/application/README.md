@@ -24,12 +24,12 @@ This template deploys a simple example application. It launches a linux VM used 
 
 ## Prerequisites
 
-- Requires existing network infrastructure and subnet
+- Requires existing network infrastructure and subnet.
 - Accept any Marketplace "License/Terms and Conditions" for the [image](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/canonical.0001-com-ubuntu-server-focal?tab=Overview) used for the application. For more information, see Azure [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms).
 
 ## Important Configuration Notes
 
-- Public IPs won't be provisioned for this template.
+- Public IPs will not be provisioned for this template.
 - This template downloads and renders custom configs (i.e. cloud-init or bash script) as external files and therefore, the custom configs must be reachable from the Virtual Machine (i.e. routing to any remotely hosted files must be provided for outside of this template).
 - Examples of custom configs are provided under scripts directory.
 - This template uses the Linux Ubuntu Server 20.04 LTS as Virtual Machine operational system.

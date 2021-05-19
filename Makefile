@@ -18,7 +18,7 @@ help:
 link_check:
 	echo "Running link checker against all markdown files";
 	cd ${LINK_CHECK_DIR} && npm install && cd ${CUR_DIR};
-	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived"
+	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived automated-test-scripts"
 
 run_linter:
 	echo "Running arm-ttk against templates";

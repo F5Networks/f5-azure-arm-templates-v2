@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
-	"contentVersion": "1.2.0.0",
+	"contentVersion": "1.3.0.0",
 	"parameters": {
 		"vmssId": {
 			"defaultValue": "",
@@ -96,7 +96,7 @@
 		"functionAppApiVersion": "2018-11-01",
 		"functionAppName": "[concat(parameters('functionAppName'), '-function')]",
 		"functionAppVnetName": "[last(split(parameters('functionAppVnetId'),'/'))]",
-		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/develop/v1.2.0/timer_trigger_revoke.zip",
+		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/v1.2.0/timer_trigger_revoke.zip",
 		"functionStorageAccountId": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
 		"functionStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
 		"functionWorkerRuntime": "python",
