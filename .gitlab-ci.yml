@@ -569,7 +569,7 @@ dewdrop_test_run:
 publish_to_github:
   stage: release
   only:
-    - /(^publish-(\d+\.){1,2}(\d)-(\d+)?$)/
+    - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
   script:
     - apk add --no-cache jq
     # Execute Release script to push source to github repo
