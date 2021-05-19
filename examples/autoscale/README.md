@@ -1,4 +1,4 @@
-## Auto Scale
+## Autoscale
 
   - **payg** <br>Contains the Autoscale PAYG parent solution template.
 

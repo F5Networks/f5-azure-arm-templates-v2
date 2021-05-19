@@ -18,7 +18,7 @@
 
 ## Introduction
 
-This template creates various cloud resources to get traffic to BIG-IP solutions, including; Public IPs (for accessing management and dataplane/VIP addresses), load balancers (for example, a standard sku external load balancer and/or a standard SKU internal load balancer) to distribute or disaggregate traffic, and network security groups, etc.
+This template creates various cloud resources to get traffic to BIG-IP solutions, including; Public IPs (for accessing management and dataplane/VIP addresses), load balancers (for example, a standard SKU external load balancer and/or a standard SKU internal load balancer) to distribute or disaggregate traffic, and network security groups, etc.
 
 ## Prerequisites
 
@@ -76,4 +76,4 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/master/examples/images/azure-dag-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.0.0/examples/images/azure-dag-module.png)

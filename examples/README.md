@@ -14,16 +14,16 @@
 
 ## Introduction
 
-The examples here leverage the modular [linked templates](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates) design to provide maximum flexibility when authoring solutions using F5 BIG-IP.  
+The examples here leverage the modular [linked templates](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates) design to provide maximum flexibility when authoring solutions using F5 BIG-IP.
 
 Example deployments use parent templates to deploy child templates (or modules) to facilitate quickly standing up entire stacks (complete with **example** network, application, and BIG-IP tiers). 
 
 As a basic framework, an example full stack deployment may consist of: 
 
-- **(Parent) Solution Template** (ex. Quickstart, Failover or Autoscale)
+- **(Parent) Solution Template** (for example, Quickstart, Failover, or Autoscale)
   -  **(Child) Network Template** - which creates virtual networks, subnets, and route tables. 
   -  **(Child) Application Template** - which creates a generic application, based on the f5-demo-app container, for demonstrating live traffic through the BIG-IP.
-  -  **(Child) DAG/Ingress Template** -  which creates resources required to get traffic to the BIG-IP, including network security groups, public IP addresses, and load balancers.
+  -  **(Child) DAG/Ingress Template** - which creates resources required to get traffic to the BIG-IP, including network security groups, public IP addresses, and load balancers.
   -  **(Child) Access Template** - which creates Identity and Acccess related resources, like a secret in cloud vault that can be referenced by F5 BIG-IP.
   -  **(Child) Function Template** - which creates an Azure function to manage licenses for an Azure Virtual Machine Scale Set of BIG-IP instances licensed with BIG-IQ.
   -  **(Child) BIG-IP Template** *(existing-stack)* - which creates a BIG-IP instance or instances in an VM Scale Set, failover cluster, etc.
@@ -43,7 +43,7 @@ Templates are grouped into the following categories:
 
   - **Failover Cluster (Planned)**: <br> These parent templates deploys more than one BIG-IP VE in a ScaleN cluster (a traditional High Availability Pair in most cases), as well as the full stack of resources required by the solution. Failover clusters are primarily used to replicate traditional Active/Standy BIG-IP deployments. In these deployments an individual BIG-IP VE in the cluster owns or is Active for) a particular IP address. For example, the BIG-IP VEs will fail over services from one instance to another by remapping IP addresses, routes, etc. based on Active/Standby status. Failover is implemented either via API (API calls to the cloud platform vs network protocols like Gratuitous ARP, route updates, and so on), or via an upstream service (like a native loud balancer) which will only send traffic to the active instance for that service based on a health monitor. In all cases, a single BIG-IP VE will be active for a single IP address.
 
-  - **Autoscale** <br> These parent templates deploy a collection of linked child templates to create a Virtual Machine Scale Set (VMSS) of BIG-IP VE instances as well as the full stack of resources required by the solution. The BIG-IP VEs are "All Active" and are primarily used to scale an L7 service on a single wildcard virtual (although you can add additional services using ports).<br> Unlike previous solutions, this solution leverages the more traditional autoscale configuration management pattern where each instance is created with an identical configuration as defined in the Scale Set's "model". Scale Set sizes are no longer restricted to the smaller limitations of the BIG-IP's cluster. The BIG-IP's configuration, now defined in a single convenient yaml-based [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code. For instance, if you need to change the configuration on the instances in the deployment, you update the the "model" by passing the new config version via the template's *bigIpRuntimeInitConfig* input parameter. The Scale Set provider will update the instances to the new model according to its rolling update policy.
+  - **Autoscale** <br> These parent templates deploy a collection of linked child templates to create a Virtual Machine Scale Set (VMSS) of BIG-IP VE instances as well as the full stack of resources required by the solution. The BIG-IP VEs are "All Active" and are primarily used to scale an L7 service on a single wildcard virtual (although you can add additional services using ports).<br> Unlike previous solutions, this solution leverages the more traditional Autoscale configuration management pattern where each instance is created with an identical configuration as defined in the Scale Set's "model". Scale Set sizes are no longer restricted to the smaller limitations of the BIG-IP's cluster. The BIG-IP's configuration, now defined in a single convenient yaml-based [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code. For instance, if you need to change the configuration on the instances in the deployment, you update the the "model" by passing the new config version via the template's *bigIpRuntimeInitConfig* input parameter. The Scale Set provider will update the instances to the new model according to its rolling update policy.
 
 ### Modules
 
@@ -54,11 +54,11 @@ Templates are grouped into the following categories:
       - **Network**: Use this template to create a reference network stack. This template creates virtual networks, subnets, and network security groups. 
       - **Application**: Use this template to deploy an example application. This template creates a generic application, based on the f5-demo-app container, for demonstrating live traffic through the BIG-IP. You can specify a different container or application to use when deploying the example template.
       - **Disaggregation/Ingress** (DAG): Use this template to create resources required to get or distribute traffic to the BIG-IP instance(s). For example: Azure Public IP Addresses, internal/external Load Balancers, and accompanying resources such as load balancing rules, NAT rules, and probes.
-      - **Access**: Use this template to create a Identity and Access related resources required for the solution.  These templates create an Azure Managed User Identity, KeyVault, and secret that can be referenced in the F5 BIG-IP Runtime Init configuration file. The secret can store sensitive information such as the BIG-IP password, BIG-IQ password, or Azure service principal access key for use in service discovery. 
+      - **Access**: Use this template to create a Identity and Access related resources required for the solution. These templates create an Azure Managed User Identity, KeyVault, and secret that can be referenced in the F5 BIG-IP Runtime Init configuration file. The secret can store sensitive information such as the BIG-IP password, BIG-IQ password, or Azure service principal access key for use in service discovery. 
       - **Function**: Use this template to create an Azure function, hosting plan, and other resources required to automatically revoke a BIG-IP license assignment from BIG-IQ when the capacity of the Virtual Machine Scale Set is reduced due to deallocation of a BIG-IP instance.
-      - **BIG-IP**: Use these templates to create the BIG-IP Virtual Machine instance(s). For example, a standalone VM or a Virtual Machine Scale Set. In the Autoscale example, the required Autoscale Settings and Application Insights resources are also created. The BIG-IP modules can be used independently from the linked stack examples here (ex. in an "existing-stack"). The BIG-IP's configuration, now defined in a single convenient yaml-based [F5 BIG-IP Runtime Init](https://github.com/f5devcentral/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code.
+      - **BIG-IP**: Use these templates to create the BIG-IP Virtual Machine instance(s). For example, a standalone VM or a Virtual Machine Scale Set. In the Autoscale example, the required Autoscale Settings and Application Insights resources are also created. The BIG-IP modules can be used independently from the linked stack examples here (for example, in an "existing-stack"). The BIG-IP's configuration, now defined in a single convenient yaml-based [F5 BIG-IP Runtime Init](https://github.com/f5devcentral/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code.
 
-The guiding principal of composing modules was grouping related resources that fell into different administrative domains and facilitating re-usability without degrading into one-to-one resource mappings. For example, if the team deploying BIG-IP doesn't have permission to create IAM roles, they can point a security team to the ACCESS module section for an example of the minimal permissions needed. If customizing, users may certainly choose to decompose or recomposes even further into simpler single templates.  For example, depending on what resource creation permissions users have, that same team may want to instead create a single dependencies module of resources they do have permissions for, found in various dependency modules like DAG and FUNCTION, and just reference the existing role the security team provided, security group the network provided, etc. Or if ALL the dependencies are pre-provided, a user can potentially even use the BIG-IP module by itself. See customizing section [below](#cloud-configuration).
+The guiding principal of composing modules was grouping related resources that fell into different administrative domains and facilitating re-usability without degrading into one-to-one resource mappings. For example, if the team deploying BIG-IP does not have permission to create IAM roles, they can point a security team to the ACCESS module section for an example of the minimal permissions needed. If customizing, users may certainly choose to decompose or recomposes even further into simpler single templates. For example, depending on what resource creation permissions users have, that same team may want to instead create a single dependencies module of resources they do have permissions for, found in various dependency modules like DAG and FUNCTION, and just reference the existing role the security team provided, security group the network provided, etc. Or if ALL the dependencies are pre-provided, a user can potentially even use the BIG-IP module by itself. See customizing section [below](#cloud-configuration).
 
 
 ## Usage
@@ -78,7 +78,7 @@ To launch the parent template, either
 OR
 
 2. Edit the *paramaters.json file and launch via CLI.
-  ex.
+  Example:
   ```bash
   az group create -l eastus -n my-rg
   az deployment group create --name my-parent --resource-group my-rg --template-file azuredeploy.json  --parameters azuredeploy.parameters.json
@@ -93,54 +93,54 @@ These solutions also aim to enable much more flexibility with customizing BIG-IP
 
 You will most likely want or need to change the BIG-IP configuration. This involves customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the `bigIpRuntimeInitConfig` template parameter as a URL. See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more details on how to customize the configuration. 
  
-Example Runtime Init config files are provided in the solution's `/bigip-configurations` directory. In some cases (ex. PAYG licensed solutions), you can often start with default example config URL from this public github repo directly.  However, in most cases (ex. any BYOL or BIG-IQ licensed solutions), this requires customizing the config file and publishing to a location accessible from the BIG-IP at deploy time (typically: a version control system, local/private file server/service, etc). See individual solution README for details.
+Example Runtime Init config files are provided in the solution's `/bigip-configurations` directory. In some cases (for example, PAYG licensed solutions), you can often start with default example config URL from this public GitHub repo directly. However, in most cases (for example, any BYOL or BIG-IQ licensed solutions), this requires customizing the config file and publishing to a location accessible from the BIG-IP at deploy time (typically: a version control system, local/private file server/service, etc). See individual solution README for details.
 
 ## Cloud Configuration 
 
-In addition to changing the BIG-IP Configuration, you may want to customize the cloud resources, which involves editing the templates themselves.  
+In addition to changing the BIG-IP Configuration, you may want to customize the cloud resources, which involves editing the templates themselves.
 
 A high level overview of customizing the templates may look like:
 
 
-1. Clone or fork the repository
+1. Clone or fork the repository.
     ```
     git clone git@github.com:f5networks/f5-azure-arm-templates-v2.git  
     ```
-    *Optional*: Create a custom branch
+    *Optional*: Create a custom branch.
     
     git checkout -b \<branch\>
     ```
     git checkout -b customizations
     ```
 
-2. Edit the templates themselves
+2. Edit the templates themselves.
 
-    Commit changes
+    Commit changes.
     ```
     git add <FILES_MODIFIED>
     git commit -m "customizations added"
     ```
 
-3. Publish the templates to an HTTP or HTTPS location reachable by Azure Resource Manager (ex. github, Azure Storage, etc). See URI requirements here: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template and your hosting service's publishing documentation.
+3. Publish the templates to an HTTP or HTTPS location reachable by Azure Resource Manager (for example, GitHub, Azure Storage, etc.). See URI requirements here: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates#linked-template and your hosting service's publishing documentation.
 
     Examples:
 
-    #### Github
+    #### GitHub
 
-      - If you cloned the repo, create a repo in your own account
+      - If you cloned the repo, create a repo in your own account.
         ```
         curl -u USERNAME:PASSWORD https://api.github.com/user/repos -d '{"name":"f5-azure-arm-templates-v2"}'
         ```
-      - Add your newly created repo as a remote
+      - Add your newly created repo as a remote.
         ```
         git remote add myRemote git@github.com:<YOUR_ACCOUNT_HERE>/f5-azure-arm-templates-v2.git
         ```
-      - Publish to your new remote repo
+      - Publish to your new remote repo.
         ```
         git push myRemote <branch>
         ```
     
-      For more details, see [here](https://docs.github.com/en/free-pro-team@latest/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line) or github's [documentation](https://docs.github.com/).
+      For more details, see [here](https://docs.github.com/en/free-pro-team@latest/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line) or GitHub's [documentation](https://docs.github.com/).
 
 
     #### Azure Storage
@@ -153,23 +153,23 @@ A high level overview of customizing the templates may look like:
           az storage blob upload-batch -s f5-azure-arm-templates-v2/ -d https://${STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${CONTAINER NAME}
           ```
 
-          ex.
+          Example:
           ```bash
           az group create -l eastus -n custom-templates-group
           az storage account create -n customtmpltsacct -g custom-templates-group -l eastus --sku Standard_LRS
           az storage container create --name customizations --account-name customtmpltsacct --public-access container
           az storage blob upload-batch -s f5-azure-arm-templates-v2/ -d https://customtmpltsacct.blob.core.windows.net/customizations
           ```
-      - ***WARNING: This particular example will upload the entire git repository folder to Azure storage. If containing any sensitive information (ex. from .gitignore, custom files), you should remove those.***
+      - ***WARNING: This particular example will upload the entire git repository folder to Azure storage. If containing any sensitive information (for example, from .gitignore, custom files), you should remove those.***
 
  1. Update the template parameters ``templateBaseUrl`` and ``artifactLocation`` to reference the custom location. These strings must combine to resolve to the location containing the ``modules/`` location.
 
     Examples:
 
-    #### Github
-    Modules location: https://www.github.com/myAccount/f5-azure-arm-templates-v2/customizations/examples/modules
+    #### GitHub
+    Modules location: ```https://www.github.com/myAccount/f5-azure-arm-templates-v2/customizations/examples/modules```
     
-    **IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to github **must** use the raw file format. 
+    **IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to GitHub **must** use the raw file format. 
 
       ```json
           "templateBaseUrl": {
@@ -182,7 +182,7 @@ A high level overview of customizing the templates may look like:
      
 
     #### Azure Storage
-    Modules location: https://customtmpltsacct.blob.core.windows.net/customizations/examples/modules
+    Modules location: ```https://customtmpltsacct.blob.core.windows.net/customizations/examples/modules```
       ```json
           "templateBaseUrl": {
             "value": "https://customtmpltsacct.blob.core.windows.net/"
@@ -197,7 +197,7 @@ A high level overview of customizing the templates may look like:
 
 ## Style Guide
 
-Variables that are meant to be customized by users are often encased in `<>`, are prefixed or contain `YOUR`, and are CAPITALIZED in order to stand out. Replace anything in `<>` with **YOUR_VALUE**. For example,
+Variables that are meant to be customized by users are often encased in `<>`, are prefixed or contain `YOUR`, and are CAPITALIZED to stand out. Replace anything in `<>` with **YOUR_VALUE**. For example,
   - In config files, replace:
       ```yaml
       resourceGroup: <YOUR_RESOURCE_GROUP>
@@ -215,7 +215,7 @@ Variables that are meant to be customized by users are often encased in `<>`, ar
       create auth user myCustomUser password ...
       ```
 
-For convience, for some examples that are often run in bash (ex. aws cli) have values that should be replaced in bash variable format. Replace anything in `${}` with **YOUR_VALUE**. For example,
+For convience, for some examples that are often run in bash (for example, AWS CLI) have values that should be replaced in bash variable format. Replace anything in `${}` with **YOUR_VALUE**. For example,
   - replace: 
       ```bash 
       az group create -n ${RESOURCE_GROUP} -l ${REGION}

@@ -1,12 +1,12 @@
 {
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.1.0.0",
+    "contentVersion": "1.3.0.0",
     "parameters": {
         "adminUsername": {
             "value": "my-admin"
         },
         "bigIpRuntimeInitPackageUrl": {
-            "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.0-1.gz.run"
+            "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run"
         },
         "image": {
             "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.0.101000"

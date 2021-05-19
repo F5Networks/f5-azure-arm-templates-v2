@@ -18,7 +18,7 @@
 
 ## Introduction
 
-This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures autoscale settings, creates an optional application insight component, and optionally associates specified role definition with system assigned managed identity. Link this template to create BIG-IP VMSS required for F5 deployments.
+This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures Autoscale settings, creates an optional application insight component, and optionally associates specified role definition with system assigned managed identity. Link this template to create BIG-IP VMSS required for F5 deployments.
 
 ## Prerequisites
 
@@ -30,9 +30,9 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 ## Important Configuration Notes
 
  - A sample template, 'sample_linked.json', has been included in this project. Use this example to see how to add bigip.json as a linked template into your templated solution.
- - Rolling upgrades: This template configures a rolling upgrade policy to upgrade the VMSS instances in batches when the autoscale model changes.  By default, when the deployment is healthy, twenty percent of the instances will be upgraded in each batch, with a pause of zero seconds (Azure default) between batches. F5 recommends modifying this policy to suit your environment. Any change to the value of the runtimeConfig input parameter will trigger a rolling upgrade of instances.
-- Reimaging not recommended: When using BIG-IQ to license BIG-IP images, F5 recommends against using the Reimage feature of the Azure VM Scale Set. In this situation, you should redeploy the template while specifying an updated runtimeConfig parameter value. If you are not using an upgrade policy, to upgrade VMSS instances, you should delete each instance in the scale set so that each will be recreated using the updated autoscale model.
-- New vs existing Azure App Insights: When specifying a value for the appInsights input parameter, a new Azure App Insights resource is created. If you are also specifying autoscale rules that use custom F5 metrics in the customAutoscaleRules input parameter **and** reference the new Azure App Insights resource name specified in appInsights, the template will create an Azure deploymentScript resource to pre-populate common custom metrics. This resource is only available in regions that support the Azure Container Service; therefore, the App Insights and deploymentScript resources will be created in the West US 2 region.
+ - Rolling upgrades: This template configures a rolling upgrade policy to upgrade the VMSS instances in batches when the Autoscale model changes.  By default, when the deployment is healthy, twenty percent of the instances are upgraded in each batch, with a pause of zero seconds (Azure default) between batches. F5 recommends modifying this policy to suit your environment. Any change to the value of the runtimeConfig input parameter will trigger a rolling upgrade of instances.
+- Reimaging not recommended: When using BIG-IQ to license BIG-IP images, F5 recommends against using the Reimage feature of the Azure VM Scale Set. In this situation, you should redeploy the template while specifying an updated runtimeConfig parameter value. If you are not using an upgrade policy, to upgrade VMSS instances, you should delete each instance in the scale set so that each are recreated using the updated Autoscale model.
+- New vs existing Azure App Insights: When specifying a value for the appInsights input parameter, a new Azure App Insights resource is created. If you are also specifying Autoscale rules that use custom F5 metrics in the customAutoscaleRules input parameter **and** reference the new Azure App Insights resource name specified in appInsights, the template will create an Azure deploymentScript resource to pre-populate common custom metrics. This resource is only available in regions that support the Azure Container Service; therefore, the App Insights and deploymentScript resources will be created in the West US 2 region.
 - Troubleshooting: The log location for f5-bigip-runtime-init onboarding is ``/var/log/cloud/bigIpRuntimeInit.log``. By default, the log level is set to info; however, you can set a custom log level by exporting the F5_BIGIP_RUNTIME_INIT_LOG_LEVEL environment variable before invoking f5-bigip-runtime-init in commandToExecute: 
 ```export F5_BIGIP_RUNTIME_INIT_LOG_LEVEL=silly && bash ', variables('runtimeConfigPackage'), ' azure 2>&1```
 
@@ -362,7 +362,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -404,5 +404,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/master/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.0.0/examples/images/azure-bigip-autoscale-module.png)
 
