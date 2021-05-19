@@ -1,5 +1,0 @@
-REGION: westus
-RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
-BUILT IN ROLE TYPE: Reader
-USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
-TEMPLATE URL: file://$PWD/examples/modules/access/access.json
