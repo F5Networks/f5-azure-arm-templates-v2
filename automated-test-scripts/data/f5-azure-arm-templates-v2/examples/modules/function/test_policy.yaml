@@ -1,5 +1,5 @@
 ---
-# Function Module Tests 
+# Function Module Tests
 azure-arm-function-module-test:
     test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/daily_test.yaml"
     run: "all"

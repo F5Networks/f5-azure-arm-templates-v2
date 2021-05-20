@@ -57,7 +57,7 @@
             "value":10
         },
         "useAvailabilityZones":{
-            "value":true
+            "value":false
         },
         "workspaceId":{
             "value":""
