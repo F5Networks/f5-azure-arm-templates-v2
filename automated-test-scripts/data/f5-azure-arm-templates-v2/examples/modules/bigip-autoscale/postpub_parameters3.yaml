@@ -33,7 +33,7 @@ SCALE OUT THROUGHPUT THRESHOLD: 20000000
 SCALE OUT TIME WINDOW: 10
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/bigip-autoscale/bigip.json
 THROUGHPUT METRIC NAME: Network In
-USE AVAILABILITY ZONES: No
+USE AVAILABILITY ZONES: false
 USE NAT POOLS: 'Yes'
 USE ROLE DEFINITION ID: 'No'
 USE ROLLING UPGRADE: 'No'

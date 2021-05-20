@@ -84,7 +84,7 @@
             "value": "[utcNow()]"
         },
         "useAvailabilityZones": {
-            "value": "Yes"
+            "value": false
         },
         "userAssignManagedIdentity": {
             "value": ""
