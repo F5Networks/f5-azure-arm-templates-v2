@@ -1,4 +1,4 @@
-# Application Module Tests 
+# Application Module Tests
 azure-arm-application-module-test:
     test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/daily_test.yaml"
     run: "all"

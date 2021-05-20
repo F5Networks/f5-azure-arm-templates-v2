@@ -138,7 +138,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set 'No'. If the region does not support availability zones the input should be set to No. |
+| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
 | workspaceId | No | Azure Logging Workspace ID. for example, "0ad61913-8c82-4d58-b93c-89d612812c84" |
 
 ### Template Outputs
@@ -200,7 +200,7 @@ RESOURCE_GROUP="myGroupName"
 REGION="eastus"
 DEPLOYMENT_NAME="parentTemplate"
 TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/payg/azuredeploy.json"
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v1.3.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_DS4_v2"},"bigIpImage":{"value":"f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"},"useAvailabilityZones":{"value":False},"workspaceId":{"value":"<YOUR_VALUE>"},"tagValues":{"value":{"application":"APP","cost":"COST","environment":"ENV","group":"GROUP","owner":"OWNER"}}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v1.3.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_DS4_v2"},"bigIpImage":{"value":"f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"},"useAvailabilityZones":{"value":false},"workspaceId":{"value":"<YOUR_VALUE>"},"tagValues":{"value":{"application":"APP","cost":"COST","environment":"ENV","group":"GROUP","owner":"OWNER"}}}'
 DEPLOY_PARAMS_FILE=deploy_params.json
 echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 

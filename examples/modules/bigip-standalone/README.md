@@ -63,7 +63,7 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 | sshKey | Yes | Supply the SSH public key you want to use to connect to the BIG-IP. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
 | uniqueString | Yes | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
-| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set 'No'. If the region does not support availability zones, the input should be set to 'No'. |
+| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set false. If the region does not support availability zones, the input should be set to false. |
 | userAssignManagedIdentity | No | Enter user assigned management identity Id to be associated to VM. Leave default if not used. |
 | vmName | No | Name to use for Virtual Machine. |
 
