@@ -15,6 +15,7 @@ CUSTOM ROLE PERMISSIONS: >-
   "notDataActions": []}]
 CUSTOM ROLE DESCRIPTION: 'Allows for read, write and delete access to Azure Storage blob containers and data'
 CUSTOM ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
+CREATE WORKSPACE: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-1g-best-hourly:15.1.201000

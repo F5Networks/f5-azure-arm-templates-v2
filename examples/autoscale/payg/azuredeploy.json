@@ -143,6 +143,13 @@
             },
             "type":"bool"
         },
+        "createWorkspace": {
+            "defaultValue":true,
+            "metadata":{
+                "description":"This deployment will create workspace and workbook as part of Telemetry module"
+            },
+            "type":"bool"
+        },
         "workspaceId":{
             "metadata":{
                 "description":"Log Analytics workspace ID used by Telemetry Streaming for sending logs"
@@ -194,7 +201,6 @@
         "contentVersion": "[deployment().properties.template.contentVersion]",
         "uniqueString": "[toLower(parameters('uniqueString'))]",
         "adminUsername": "azureuser",
-
         "assignManagedIdentity": "[not(empty(variables('customAutoscaleRules')))]",
         "builtInRoleType": "Contributor",
         "customRoleAssignableScopes": [],
@@ -240,7 +246,6 @@
         "customEmail": [],
         "provisionPublicIpBigip": {"name":"publicIp01","properties":{"idleTimeoutInMinutes":15}},
         "roleDefinitionId": "",
-        "runtimeInitTag": {"workspaceId":"[parameters('workspaceId')]","uniqueString":"[parameters('uniqueString')]"},
         "scaleInCpuThreshold": "[parameters('bigIpScaleInCpuThreshold')]",
         "scaleInThroughputThreshold": "[parameters('bigIpScaleInThroughputThreshold')]",
         "scaleInTimeWindow": "[parameters('bigIpScaleInTimeWindow')]",
@@ -251,6 +256,27 @@
         "vmssName": "[concat(variables('uniqueString'), '-bigip-vmss')]"
     },
     "resources":[
+        {
+            "type":"Microsoft.Resources/deployments",
+            "apiVersion":"[variables('deploymentApiVersion')]",
+            "condition":"[parameters('createWorkspace')]",
+            "name":"telemetryTemplate",
+            "properties":{
+                "mode":"Incremental",
+                "templateLink":{
+                    "uri":"[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/telemetry/telemetry.json')]",
+                    "contentVersion":"[variables('contentVersion')]"
+                },
+                "parameters":{
+                    "uniqueString":{
+                        "value":"[variables('uniqueString')]"
+                    },
+                    "tagValues":{
+                        "value":"[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
         {
             "type":"Microsoft.Resources/deployments",
             "apiVersion":"[variables('deploymentApiVersion')]",
@@ -443,7 +469,8 @@
             "dependsOn":[
                 "accessTemplate",
                 "networkTemplate",
-                "dagTemplate"
+                "dagTemplate",
+                "telemetryTemplate"
             ],
             "properties":{
                 "mode":"Incremental",
@@ -532,7 +559,7 @@
                         "value":"[reference('networkTemplate').outputs.subnets.value[0]]"
                     },
                     "tagValues":{
-                        "value":"[union(variables('runtimeInitTag'), parameters('tagValues'))]"
+                        "value":"[parameters('tagValues')]"
                     },
                     "throughputMetricName":{
                         "value":"[variables('throughputMetricName')]"
@@ -551,6 +578,12 @@
                     },
                     "vmssName":{
                         "value":"[variables('vmssName')]"
+                    },
+                    "vmssName":{
+                        "value":"[variables('vmssName')]"
+                    },
+                    "workspaceId":{
+                        "value":"[if(parameters('createWorkspace'), reference('telemetryTemplate').outputs.workspaceId.value, parameters('workspaceId'))]"
                     }
                 }
             }

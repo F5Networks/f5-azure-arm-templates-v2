@@ -185,6 +185,13 @@
         "description": "Name to use for Virtual Machine."
       },
       "type": "string"
+    },
+    "workspaceId":{
+      "metadata":{
+        "description":"Log Analytics workspace ID used by Telemetry Streaming for sending logs"
+      },
+      "type":"string",
+      "defaultValue":"WORKSPACE_ID"
     }
   },
   "variables": {
@@ -342,7 +349,8 @@
     },
     "useCustomImage": "[contains(tolower(parameters('image')), 'microsoft.compute')]",
     "versionToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[3])]",
-    "vmId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+    "vmId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
+    "runtimeInitTag": {"workspaceId":"[parameters('workspaceId')]","uniqueString":"[parameters('uniqueString')]"}
   },
   "resources": [
     {
@@ -444,7 +452,7 @@
             },
             "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
         },
-        "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+        "tags": "[union(variables('runtimeInitTag'), parameters('tagValues'))]",
         "zones": "[if(parameters('useAvailabilityZones'), createArray(1), json('null'))]",
         "type": "Microsoft.Compute/virtualMachines"
     },
