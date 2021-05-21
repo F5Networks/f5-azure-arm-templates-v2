@@ -28,7 +28,7 @@ SELF IP NIC1: "10.0.1.4"
 SELF IP NIC2: "10.0.2.4"
 SERVICE IPS NIC1: '[{"publicIpId":"PIP0","privateIpAddress":"10.0.1.10"},{"publicIpId":"","privateIpAddress":"10.0.1.11"}]'
 SERVICE IPS NIC2: '[{"privateIpAddress":"10.0.2.10"},{"privateIpAddress":"10.0.2.11"}]'
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/bigip.json
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/bigip-standalone/bigip.json
 USE AVAILABILITY ZONES: true
 USE ROLE DEFINITION ID: 'Yes'
 USER ASSIGN MANAGED IDENTITY: 'Yes'

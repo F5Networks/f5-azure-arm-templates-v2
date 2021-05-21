@@ -74,7 +74,7 @@
             "type": "string"
         },
         "bigIpRuntimeInitConfig": {
-            "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-payg.yaml",
+            "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml",
             "metadata": {
                 "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
             },
@@ -90,7 +90,7 @@
         "useAvailabilityZones": {
             "defaultValue": false,
             "metadata": {
-                "description": "This deployment can deploy resources into Azure Availability Zones (if the region supports it).  If that is not desired the input should be set 'No'. If the region does not support availability zones the input should be set to No."
+                "description": "This deployment can deploy resources into Azure Availability Zones (if the region supports it).  If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false."
             },
             "type": "bool"
         },
