@@ -242,6 +242,13 @@
         "description": "Name to use for Virtual Machine Scale Set."
       },
       "type": "string"
+    },
+    "workspaceId":{
+      "metadata":{
+        "description":"Log Analytics workspace ID used by Telemetry Streaming for sending logs"
+      },
+      "type":"string",
+      "defaultValue":"WORKSPACE_ID"
     }
   },
   "variables": {
@@ -410,7 +417,8 @@
     "useInboundMgmtNatPool": "[if(contains(tolower(parameters('inboundMgmtNatPoolId')), 'inboundnatpools'), variables('inboundMgmtNatPool'), parameters('inboundMgmtNatPoolId'))]",
     "useInboundSshNatPool": "[if(contains(tolower(parameters('inboundSshNatPoolId')), 'inboundnatpools'), variables('inboundSshNatPool'), parameters('inboundSshNatPoolId'))]",
     "versionToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[3])]",
-    "vmssId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('vmssName'))]"
+    "vmssId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('vmssName'))]",
+    "runtimeInitTag": {"workspaceId":"[parameters('workspaceId')]","uniqueString":"[parameters('uniqueString')]"}
   },
   "resources": [
     {
@@ -497,7 +505,7 @@
         "name": "[parameters('instanceType')]",
         "tier": "Standard"
       },
-      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "tags": "[union(variables('runtimeInitTag'), parameters('tagValues'))]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "zones": "[if(parameters('useAvailabilityZones'), createArray(1, 2, 3), json('null'))]"
     },

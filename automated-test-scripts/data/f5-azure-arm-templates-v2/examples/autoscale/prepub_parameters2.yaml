@@ -7,6 +7,7 @@ ARTIFACT LOCATION: 'templates/'
 AUTOFILL BIGIQ LICENSE KEY: ''
 AUTOFILL CLPV2 LICENSE KEY: ''
 BIGIQ TENANT: <RESOURCE GROUP>-vmss
+CREATE WORKSPACE: true
 DISAGGREGATOR: LB
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.0.101000
 INSTANCE TYPE: Standard_DS3_v2
