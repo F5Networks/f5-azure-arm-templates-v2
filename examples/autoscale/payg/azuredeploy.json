@@ -146,7 +146,7 @@
         "createWorkspace": {
             "defaultValue":true,
             "metadata":{
-                "description":"This deployment will create workspace and workbook as part of Telemetry module"
+                "description":"This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace."
             },
             "type":"bool"
         },

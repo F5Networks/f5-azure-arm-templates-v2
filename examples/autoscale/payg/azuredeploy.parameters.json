@@ -59,6 +59,9 @@
         "useAvailabilityZones":{
             "value":false
         },
+        "createWorkspace": {
+            "value":true
+        },
         "workspaceId":{
             "value":""
         },
