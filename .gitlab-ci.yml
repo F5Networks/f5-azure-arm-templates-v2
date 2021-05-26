@@ -556,7 +556,7 @@ dewdrop_test_run:
     variables:
       - $RUN_SCHEDULED_DEWDROP_TEST == "true"
   script:
-    # the dewdrop image itself does not contain any test files, so ensure dewdrop
+    # The dewdrop image itself does not contain any test files, so ensure dewdrop
     # is run from the known location where test policies expect it to be
     # location: root of the cloud factory repository
     - if [ "$CLOUD_PROVIDER_ENVIRONMENT" == "aws_china" ]; then
