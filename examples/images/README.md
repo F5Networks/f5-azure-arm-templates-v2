@@ -362,7 +362,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -404,5 +404,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.0.0/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.1.0/examples/images/azure-bigip-autoscale-module.png)
 
