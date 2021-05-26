@@ -1,6 +1,6 @@
 {
     "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-    "contentVersion":"1.3.0.0",
+    "contentVersion":"1.3.1.0",
     "parameters":{
         "templateBaseUrl":{
             "defaultValue":"https://cdn.f5.com/product/cloudsolutions/",
@@ -55,7 +55,7 @@
             "type":"string"
         },
         "bigIpRuntimeInitConfig":{
-            "defaultValue":"https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
+            "defaultValue":"https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
             "metadata":{
                 "description":"Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
             },
@@ -257,7 +257,6 @@
         "keyVaultPermissionsSecrets": [],
         "secretName": "",
         "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
-
         "numSubnets": 2,
         "vnetAddressPrefix": "10.0",
         "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
