@@ -86,6 +86,42 @@
       },
       "type": "array"
     },
+    "maxBatchInstancePercent": {
+      "defaultValue": 20,
+      "maxValue": 100,
+      "metadata": {
+        "description": "The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch."
+      },
+      "minValue": 1,
+      "type": "int"
+    },
+    "maxUnhealthyInstancePercent": {
+      "defaultValue": 20,
+      "maxValue": 100,
+      "metadata": {
+        "description": "The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy."
+      },
+      "minValue": 1,
+      "type": "int"
+    },
+    "maxUnhealthyUpgradedInstancePercent": {
+      "defaultValue": 20,
+      "maxValue": 100,
+      "metadata": {
+        "description": "The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state."
+      },
+      "minValue": 1,
+      "type": "int"
+    },
+    "pauseTimeBetweenBatches": {
+      "defaultValue": 0,
+      "maxValue": 120,
+      "metadata": {
+        "description": "The wait time between completing the update for all virtual machines in one batch and starting the next batch."
+      },
+      "minValue": 0,
+      "type": "int"
+    },
     "nsgId": {
       "defaultValue": "",
       "metadata": {
@@ -407,10 +443,10 @@
     "upgradePolicyRolling": {
       "mode": "Rolling",
       "rollingUpgradePolicy": {
-        "maxBatchInstancePercent": 20,
-        "maxUnhealthyInstancePercent": 20,
-        "maxUnhealthyUpgradedInstancePercent": 20,
-        "pauseTimeBetweenBatches": "PT0S"
+        "maxBatchInstancePercent": "[parameters('maxBatchInstancePercent')]",
+        "maxUnhealthyInstancePercent": "[parameters('maxUnhealthyInstancePercent')]",
+        "maxUnhealthyUpgradedInstancePercent": "[parameters('maxUnhealthyUpgradedInstancePercent')]",
+        "pauseTimeBetweenBatches": "[concat('PT', parameters('pauseTimeBetweenBatches'), 'S')]"
       }
     },
     "useCustomImage": "[contains(tolower(parameters('image')), 'microsoft.compute')]",

@@ -123,6 +123,10 @@ This solution leverages more traditional Autoscale configuration management prac
 | artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | Enter a valid instance type. |
+| bigIpMaxBatchInstancePercent | No | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
+| bigIpMaxUnhealthyInstancePercent | No | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
+| bigIpMaxUnhealthyUpgradedInstancePercent | No | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
+| bigIpPauseTimeBetweenBatches | No | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
 | bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package |
 | bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
@@ -134,6 +138,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutThroughputThreshold | No | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. |
 | bigIpScaleOutTimeWindow | No | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
 | createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
+| provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes | When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
