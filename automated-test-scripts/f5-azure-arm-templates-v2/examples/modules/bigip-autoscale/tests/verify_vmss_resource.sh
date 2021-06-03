@@ -90,6 +90,10 @@ if [[ "<USE ROLLING UPGRADE>" == "Yes" ]] && [ "<EXTERNAL LOAD BALANCER NAME>" !
     upgrade_policy="Rolling"
     vmss_settings[virtualMachineProfile.networkProfile.healthProbe.id]="${health_probe_id}"
     vmss_settings[upgradePolicy.mode]="${upgrade_policy}"
+    vmss_settings[upgradePolicy.rollingUpgradePolicy.maxBatchInstancePercent]=<UPGRADE MAX BATCH>
+    vmss_settings[upgradePolicy.rollingUpgradePolicy.maxUnhealthyInstancePercent]=<UPGRADE MAX UNHEALTHY>
+    vmss_settings[upgradePolicy.rollingUpgradePolicy.maxUnhealthyUpgradedInstancePercent]=<UPGRADE MAX UNHEALTHY UPGRADED>
+    vmss_settings[upgradePolicy.rollingUpgradePolicy.pauseTimeBetweenBatches]="PT<UPGRADE PAUSE TIME>S"
 else
     upgrade_policy="Manual"
     vmss_settings[upgradePolicy.mode]="${upgrade_policy}"

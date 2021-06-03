@@ -32,6 +32,18 @@
         "bigIpInstanceType":{
             "value":"Standard_DS3_v2"
         },
+        "bigIpMaxBatchInstancePercent": {
+            "value": 20
+        },
+        "bigIpMaxUnhealthyInstancePercent": {
+            "value": 20
+        },
+        "bigIpMaxUnhealthyUpgradedInstancePercent": {
+            "value": 20
+        },
+        "bigIpPauseTimeBetweenBatches": {
+            "value": 0
+        },
         "bigIpScalingMinSize":{
             "value":1
         },
@@ -55,6 +67,9 @@
         },
         "bigIpScaleOutTimeWindow":{
             "value":10
+        },
+        "provisionPublicIp":{
+            "value":true
         },
         "useAvailabilityZones":{
             "value":false

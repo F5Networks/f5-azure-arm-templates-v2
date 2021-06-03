@@ -68,6 +68,42 @@
             },
             "type":"string"
         },
+        "bigIpMaxBatchInstancePercent": {
+            "defaultValue": 20,
+            "maxValue": 100,
+            "metadata": {
+                "description": "The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch."
+            },
+            "minValue": 1,
+            "type": "int"
+        },
+        "bigIpMaxUnhealthyInstancePercent": {
+            "defaultValue": 20,
+            "maxValue": 100,
+            "metadata": {
+                "description": "The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy."
+            },
+            "minValue": 1,
+            "type": "int"
+        },
+        "bigIpMaxUnhealthyUpgradedInstancePercent": {
+            "defaultValue": 20,
+            "maxValue": 100,
+            "metadata": {
+                "description": "The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state."
+            },
+            "minValue": 1,
+            "type": "int"
+        },
+        "bigIpPauseTimeBetweenBatches": {
+            "defaultValue": 0,
+            "maxValue": 120,
+            "metadata": {
+                "description": "The wait time between completing the update for all virtual machines in one batch and starting the next batch."
+            },
+            "minValue": 0,
+            "type": "int"
+        },
         "bigIpScalingMinSize":{
             "defaultValue":1,
             "metadata":{
@@ -135,6 +171,13 @@
             "minValue":1,
             "maxValue":60,
             "type":"int"
+        },
+        "provisionPublicIp":{
+            "defaultValue":true,
+            "metadata":{
+                "description":"Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s)."
+            },
+            "type":"bool"
         },
         "useAvailabilityZones":{
             "defaultValue":false,
@@ -289,7 +332,11 @@
         "cpuMetricName": "Percentage CPU",
         "customAutoscaleRules": [{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"GreaterThan","statistic":"Average","threshold":"[variables('scaleOutCpuThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"[concat('PT', parameters('bigIpScaleOutTimeWindow'), 'M')]","Dimensions":[],"dividePerInstance":false}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"LessThan","statistic":"Average","threshold":"[variables('scaleInCpuThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"[concat('PT', parameters('bigIpScaleInTimeWindow'), 'M')]","Dimensions":[],"dividePerInstance":false}},{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"GreaterThan","statistic":"Average","threshold":"[variables('scaleOutThroughputThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"[concat('PT', parameters('bigIpScaleOutTimeWindow'), 'M')]","Dimensions":[],"dividePerInstance":false}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"[variables('appInsightsId')]","operator":"LessThan","statistic":"Average","threshold":"[variables('scaleInThroughputThreshold')]","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"[concat('PT', parameters('bigIpScaleInTimeWindow'), 'M')]","Dimensions":[],"dividePerInstance":false}}],
         "customEmail": [],
-        "provisionPublicIpBigip": {"name":"publicIp01","properties":{"idleTimeoutInMinutes":15}},
+        "maxBatchInstancePercent": "[parameters('bigIpMaxBatchInstancePercent')]",
+        "maxUnhealthyInstancePercent": "[parameters('bigIpMaxUnhealthyInstancePercent')]",
+        "maxUnhealthyUpgradedInstancePercent": "[parameters('bigIpMaxUnhealthyUpgradedInstancePercent')]",
+        "pauseTimeBetweenBatches": "[parameters('bigIpPauseTimeBetweenBatches')]",
+        "publicIpConfig": {"name":"publicIp01","properties":{"idleTimeoutInMinutes":15}},
         "roleDefinitionId": "",
         "scaleInCpuThreshold": "[parameters('bigIpScaleInCpuThreshold')]",
         "scaleInThroughputThreshold": "[parameters('bigIpScaleInThroughputThreshold')]",
@@ -567,7 +614,7 @@
                         "value":"[reference('dagTemplate').outputs.nsg0Id.value]"
                     },
                     "provisionPublicIp":{
-                        "value":"[variables('provisionPublicIpBigip')]"
+                        "value":"[if(parameters('provisionPublicIp'), variables('publicIpConfig'), json('null'))]"
                     },
                     "roleDefinitionId":{
                         "value":"[variables('roleDefinitionId')]"
@@ -577,6 +624,18 @@
                     },
                     "bigIpRuntimeInitPackageUrl":{
                         "value":"[parameters('bigIpRuntimeInitPackageUrl')]"
+                    },
+                    "maxBatchInstancePercent":{
+                        "value":"[variables('maxBatchInstancePercent')]"
+                    },
+                    "maxUnhealthyInstancePercent":{
+                        "value":"[variables('maxUnhealthyInstancePercent')]"
+                    },
+                    "maxUnhealthyUpgradedInstancePercent":{
+                        "value":"[variables('maxUnhealthyUpgradedInstancePercent')]"
+                    },
+                    "pauseTimeBetweenBatches":{
+                        "value":"[variables('pauseTimeBetweenBatches')]"
                     },
                     "scaleInCpuThreshold":{
                         "value":"[variables('scaleInCpuThreshold')]"

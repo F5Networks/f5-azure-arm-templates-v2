@@ -75,6 +75,18 @@
 					"bigIpRuntimeInitConfig": {
 						"value": ""
 					},
+					"maxBatchInstancePercent": {
+						"value": 20
+					},
+					"maxUnhealthyInstancePercent": {
+						"value": 20
+					},
+					"maxUnhealthyUpgradedInstancePercent": {
+						"value": 20
+					},
+					"pauseTimeBetweenBatches": {
+						"value": 0
+					},
 					"scaleInCpuThreshold": {
 						"value": 20
 					},
