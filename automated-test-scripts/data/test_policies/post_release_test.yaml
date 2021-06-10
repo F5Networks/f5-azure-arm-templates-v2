@@ -5,6 +5,12 @@ azure-autoscale-example-test:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters.yaml
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters2.yaml
 
+azure-autoscale-example-defaults-test:
+  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/defaults_test.yaml'
+  run: all
+  parameters-files:
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/parameters.yaml
+
 azure-quickstart-byol-example-test:
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml'
   run: all
@@ -13,8 +19,20 @@ azure-quickstart-byol-example-test:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/postpub_parameters1.yaml
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/postpub_parameters2.yaml
 
+azure-quickstart-byol-example-defaults-test:
+  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/defaults_test.yaml'
+  run: all
+  parameters-files:
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/parameters.yaml
+
 azure-quickstart-payg-example-test:
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml'
+  run: all
+  parameters-files:
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/postpub_parameters.yaml
+
+azure-quickstart-payg-example-defaults-test:
+  test-url: 'file://automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/parameters.yaml'
   run: all
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/postpub_parameters.yaml
