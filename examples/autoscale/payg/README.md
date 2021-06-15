@@ -332,7 +332,7 @@ This section describes how to validate the template deployment, test the WAF ser
 
 ### Validating the Deployment
 
-To view the status of the example and module template deployments, navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments**. You should see a series of deployments, including one each for the example templates as well as the accessTemplate, appTemplate, networkTemplate, dagTemplate, and bigipTemplate. The deployment status for each template deployment should be "Succeeded".
+To view the status of the example and module template deployments, navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments**. You should see a series of deployments, including one each for the example templates as well as the accessTemplate, appTemplate, networkTemplate, dagTemplate, and bigIpTemplate. The deployment status for each template deployment should be "Succeeded".
 
 Expected Deploy time for entire stack =~ 13-15 minutes.
 
