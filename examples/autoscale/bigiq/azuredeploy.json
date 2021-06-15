@@ -557,7 +557,7 @@
         {
             "type":"Microsoft.Resources/deployments",
             "apiVersion":"[variables('deploymentApiVersion')]",
-            "name":"bigipTemplate",
+            "name":"bigIpTemplate",
             "dependsOn":[
                 "accessTemplate",
                 "networkTemplate",
@@ -693,7 +693,7 @@
             "apiVersion":"[variables('deploymentApiVersion')]",
             "name":"functionTemplate",
             "dependsOn":[
-                "bigipTemplate"
+                "bigIpTemplate"
             ],
             "properties":{
                 "mode":"Incremental",
@@ -703,7 +703,7 @@
                 },
                 "parameters":{
                     "vmssId":{
-                        "value":"[reference('bigipTemplate').outputs.vmssId.value]"
+                        "value":"[reference('bigIpTemplate').outputs.vmssId.value]"
                     },
                     "bigIqAddress":{
                         "value":"[parameters('bigIqAddress')]"
@@ -761,11 +761,11 @@
         },
         "bigIpVmssId":{
             "type":"string",
-            "value":"[reference('bigipTemplate').outputs.vmssId.value]"
+            "value":"[reference('bigIpTemplate').outputs.vmssId.value]"
         },
         "bigIpVmssName":{
             "type":"string",
-            "value":"[reference('bigipTemplate').outputs.vmssName.value]"
+            "value":"[reference('bigIpTemplate').outputs.vmssName.value]"
         },
         "virtualNetworkId":{
             "type":"string",

@@ -23,7 +23,7 @@
 	"resources": [
 		{
 			"apiVersion": "[variables('deploymentApiVersion')]",
-			"name": "bigipTemplate",
+			"name": "bigIpTemplate",
 			"properties": {
 				"mode": "Incremental",
 				"parameters": {
@@ -153,23 +153,23 @@
 	"outputs": {
 		"appInsightsComponentId": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.appInsightsComponentId.value]"
+			"value": "[reference('bigIpTemplate').outputs.appInsightsComponentId.value]"
 		},
 		"appIps": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.roleAssignmentId.value]"
+			"value": "[reference('bigIpTemplate').outputs.roleAssignmentId.value]"
 		},
 		"autoscaleSettingsId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.autoscaleSettingsId.value]"
+			"value": "[reference('bigIpTemplate').outputs.autoscaleSettingsId.value]"
 		},
 		"vmssId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmssId.value]"
+			"value": "[reference('bigIpTemplate').outputs.vmssId.value]"
 		},
 		"vmssName": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmssName.value]"
+			"value": "[reference('bigIpTemplate').outputs.vmssName.value]"
 		}
 	}
 }

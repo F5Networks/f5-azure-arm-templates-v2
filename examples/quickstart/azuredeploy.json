@@ -141,7 +141,7 @@
         "nic2SelfIp": "10.0.2.11",
         "nic1ServiceIPSubnetIndex": "[if(equals(parameters('numNics'), 1), '0', '1')]",
         "nic1ServiceIP1": "[concat('10.0.', variables('nic1ServiceIPSubnetIndex'), '.101')]",
-        "vmName": "[concat(variables('uniqueString'), '-vm')]"
+        "vmName": "[concat(variables('uniqueString'), '-bigip-vm')]"
     },
     "resources": [
         {
@@ -224,7 +224,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "[variables('deploymentApiVersion')]",
-            "name": "bigipTemplate",
+            "name": "bigIpTemplate",
             "dependsOn": [
                 "networkTemplate",
                 "dagTemplate"
@@ -277,7 +277,7 @@
         },
         "bigIpVmId": {
             "type": "string",
-            "value": "[reference('bigipTemplate').outputs.vmId.value]"
+            "value": "[reference('bigIpTemplate').outputs.vmId.value]"
         },
         "bigIpManagementPublicIp": {
             "type": "string",

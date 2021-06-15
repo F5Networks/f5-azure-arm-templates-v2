@@ -6,7 +6,7 @@
 # SSH login for <ADMIN USERNAME> is set when we provision the instances, the actual admin user password is configured by runtime init
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
 SSH_KEY=${TMP_DIR}/<RESOURCE GROUP>-private
-PASSWORD=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vm | jq -r .vmId)
+PASSWORD=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .vmId)
 SSH_PORT='22'
 if [[ <NIC COUNT> -eq 1 ]]; then
     MGMT_PORT='8443'
