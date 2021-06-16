@@ -2,7 +2,7 @@
 BIGIQ ADDRESS: '10.0.0.5'
 USERNAME: azureuser
 PASSWORD: P@ssword!P@ssword!
-BIGIQ LICENSE POOL NAME: clpv2
+BIGIQ LICENSE POOL NAME: production
 BIGIQ UTILITY SKU: ""
 FUNCTION APP NAME: <RESOURCE GROUP>
 FUNCTION APP SKU: '{"name":"S1","tier":"Standard","size":"S1","family":"S","capacity":1}'

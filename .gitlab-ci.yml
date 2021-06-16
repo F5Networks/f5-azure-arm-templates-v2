@@ -11,6 +11,7 @@ stages:
   - droplets
   - publish
   - release
+  - merge
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -615,3 +616,19 @@ publish_to_github:
     GITLAB_API_URL: "$AZURE_V2_URL"
     GITHUB_API_TOKEN: "$AZURE_V2_GITHUB_API_TOKEN"
     GITLAB_PRIVATE_TOKEN: "$AZURE_V2_GITLAB_API_TOKEN"
+
+# Create a merge request develop into staging
+create_merge_request:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
+  stage: merge
+  only:
+    - develop
+  script:
+    - apt-get update
+    - apt-get install -y jq
+    - ./cloud-tools/merge-request/merge-request.sh
+  variables:
+    GIT_LAB_API_URL: "$AZURE_V2_URL"
+    GIT_LAB_PRIVATE_TOKEN: "$AZURE_V2_GITLAB_API_TOKEN"
+    MR_SOURCE_BRANCH: "$CI_COMMIT_REF_NAME"
+    MR_TARGET_BRANCH: staging
