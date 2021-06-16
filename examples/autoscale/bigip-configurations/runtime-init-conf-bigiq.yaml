@@ -13,13 +13,6 @@ runtime_parameters:
     headers:
       - name: Metadata
         value: true
-  - name: SUBSCRIPTION_ID
-    type: url
-    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2020-09-01'
-    query: subscriptionId
-    headers:
-      - name: Metadata
-        value: true
   - name: UNIQUE_STRING
     type: url
     value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
@@ -31,6 +24,13 @@ runtime_parameters:
     type: url
     value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
     query: "[?name=='workspaceId'].value|[0]"
+    headers:
+      - name: Metadata
+        value: true
+  - name: SUBSCRIPTION_ID
+    type: url
+    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2020-09-01'
+    query: subscriptionId
     headers:
       - name: Metadata
         value: true
