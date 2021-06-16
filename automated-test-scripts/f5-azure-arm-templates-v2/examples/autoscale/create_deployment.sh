@@ -18,7 +18,7 @@ STORAGE_ACCOUNT_FQDN=$(az storage account show -n ${STORAGE_ACCOUNT_NAME} -g <RE
 if [[ <LICENSE TYPE> == "bigiq" ]]; then
     BIGIQ_ADDRESS=`az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-env | jq '.properties.outputs["bigiqIp"].value' --raw-output | cut -d' ' -f1`
     BIGIQ_VNET_ID=$(az network vnet show -g <RESOURCE GROUP> -n existingStackVnet | jq -r .id)
-    BIGIQ_PARAMS=',"bigIqAddress":{"value":"'"${BIGIQ_ADDRESS}"'"},"bigIqUsername":{"value":"azureuser"},"bigIqPassword":{"value":"B!giq2017"},"bigIqLicensePool":{"value":"clpv2"},"bigIqTenant":{"value":"<BIGIQ TENANT>"},"bigIqUtilitySku":{"value":"F5-BIG-MSP-BT-1G"},"bigIqVnetId":{"value":"'"${BIGIQ_VNET_ID}"'"}'
+    BIGIQ_PARAMS=',"bigIqAddress":{"value":"'"${BIGIQ_ADDRESS}"'"},"bigIqUsername":{"value":"azureuser"},"bigIqPassword":{"value":"B!giq2017"},"bigIqLicensePool":{"value":"production"},"bigIqTenant":{"value":"<BIGIQ TENANT>"},"bigIqUtilitySku":{"value":"F5-BIG-MSP-BT-1G"},"bigIqVnetId":{"value":"'"${BIGIQ_VNET_ID}"'"}'
 else
     BIGIQ_PARAMS=''
 fi
@@ -38,6 +38,7 @@ if [[ <LICENSE TYPE> == "bigiq" ]]; then
     /usr/bin/yq e ".runtime_parameters.[5].secretProvider.vaultUrl = \"<RESOURCE GROUP>fnfv\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters.[5].secretProvider.secretId = \"<RESOURCE GROUP>fnbigiq\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"${BIGIQ_ADDRESS}\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
 fi
 
 cp <DEWPOINT JOB ID>.yaml update_<DEWPOINT JOB ID>.yaml

@@ -4,7 +4,7 @@ azure-autoscale-example-test:
   run: "all"
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters.yaml"
-    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters1.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters2.yaml"
 
 azure-quickstart-byol-example-test:
