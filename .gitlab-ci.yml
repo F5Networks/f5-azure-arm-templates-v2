@@ -632,3 +632,22 @@ create_merge_request:
     GIT_LAB_PRIVATE_TOKEN: "$AZURE_V2_GITLAB_API_TOKEN"
     MR_SOURCE_BRANCH: "$CI_COMMIT_REF_NAME"
     MR_TARGET_BRANCH: staging
+
+# verifies all examples use the latest AT Components versions
+check_at_components_metadata:
+  stage: smoke-tests
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+  script:
+    - curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt-get install -yq nodejs build-essential
+    - apt-get install -y jq
+    - pip3 install yq
+    - if [[ ! -z ${RUNTIME_INIT_PACKAGE_URL} && ! $CI_COMMIT_BRANCH == "main" ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure --runtime-init-package-url $RUNTIME_INIT_PACKAGE_URL; fi
+    - if [[ -z $RUNTIME_INIT_PACKAGE_URL ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure; fi
+    - if git diff | grep 'diff --git'; then exit 1; else exit 0; fi
+  tags:
+    - cm-official-docker-executor

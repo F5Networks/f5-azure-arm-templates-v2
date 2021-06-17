@@ -186,12 +186,12 @@
       },
       "type": "string"
     },
-    "workspaceId":{
-      "metadata":{
-        "description":"Log Analytics workspace ID used by Telemetry Streaming for sending logs"
+    "workspaceId": {
+      "metadata": {
+        "description": "Log Analytics workspace ID used by Telemetry Streaming for sending logs"
       },
-      "type":"string",
-      "defaultValue":"WORKSPACE_ID"
+      "type": "string",
+      "defaultValue": "WORKSPACE_ID"
     }
   },
   "variables": {
@@ -225,80 +225,80 @@
       "version": "[variables('versionToUse')]"
     },
     "copy": [
-        {
-            "count": "[length(parameters('nic1ServiceIPs'))]",
-            "input": {
-                "name": "[concat(parameters('vmName'), '-ipconfig-nic1-secondary', copyIndex('constructNic1ServiceIpConfigs'))]",
-                "properties": {
-                    "publicIpAddress": "[if(and(contains(parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')], 'publicIpId'), not(empty(parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')].publicIpId))), json(concat('{\"id\": \"', parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')].publicIpId, '\"}')), json('null'))]",
-                    "primary": false,
-                    "privateIpAddress": "[parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')].privateIpAddress]",
-                    "privateIpAllocationMethod": "Static",
-                    "subnet": {
-                        "id": "[if(equals(variables('networkInterfaceCount'), 1), parameters('mgmtSubnetId'), parameters('nic1SubnetId'))]"
-                    }
-                }
-            },
-            "name": "constructNic1ServiceIpConfigs"
+      {
+        "count": "[length(parameters('nic1ServiceIPs'))]",
+        "input": {
+          "name": "[concat(parameters('vmName'), '-ipconfig-nic1-secondary', copyIndex('constructNic1ServiceIpConfigs'))]",
+          "properties": {
+            "publicIpAddress": "[if(and(contains(parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')], 'publicIpId'), not(empty(parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')].publicIpId))), json(concat('{\"id\": \"', parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')].publicIpId, '\"}')), json('null'))]",
+            "primary": false,
+            "privateIpAddress": "[parameters('nic1ServiceIPs')[copyIndex('constructNic1ServiceIpConfigs')].privateIpAddress]",
+            "privateIpAllocationMethod": "Static",
+            "subnet": {
+              "id": "[if(equals(variables('networkInterfaceCount'), 1), parameters('mgmtSubnetId'), parameters('nic1SubnetId'))]"
+            }
+          }
         },
-        {
-            "count": "[length(parameters('nic2ServiceIPs'))]",
-            "input": {
-                "name": "[concat(parameters('vmName'), '-ipconfig-nic2-secondary', copyIndex('constructNic2ServiceIpConfigs'))]",
-                "properties": {
-                    "publicIpAddress": "[if(and(contains(parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')], 'publicIpId'), not(empty(parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')].publicIpId))), json(concat('{\"id\": \"', parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')].publicIpId, '\"}')), json('null'))]",
-                    "primary": false,
-                    "privateIpAddress": "[parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')].privateIpAddress]",
-                    "privateIpAllocationMethod": "Static",
-                    "subnet": {
-                        "id": "[if(equals(variables('networkInterfaceCount'), 1), parameters('mgmtSubnetId'), parameters('nic2SubnetId'))]"
-                    }
-                }
-            },
-            "name": "constructNic2ServiceIpConfigs"
-        }
+        "name": "constructNic1ServiceIpConfigs"
+      },
+      {
+        "count": "[length(parameters('nic2ServiceIPs'))]",
+        "input": {
+          "name": "[concat(parameters('vmName'), '-ipconfig-nic2-secondary', copyIndex('constructNic2ServiceIpConfigs'))]",
+          "properties": {
+            "publicIpAddress": "[if(and(contains(parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')], 'publicIpId'), not(empty(parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')].publicIpId))), json(concat('{\"id\": \"', parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')].publicIpId, '\"}')), json('null'))]",
+            "primary": false,
+            "privateIpAddress": "[parameters('nic2ServiceIPs')[copyIndex('constructNic2ServiceIpConfigs')].privateIpAddress]",
+            "privateIpAllocationMethod": "Static",
+            "subnet": {
+              "id": "[if(equals(variables('networkInterfaceCount'), 1), parameters('mgmtSubnetId'), parameters('nic2SubnetId'))]"
+            }
+          }
+        },
+        "name": "constructNic2ServiceIpConfigs"
+      }
     ],
     "ipConfigurationMgmtPrimary": [
-        {
-            "name": "[concat(parameters('vmName'), '-ipconfig-primary0')]",
-            "properties": {
-                "publicIpAddress": "[if(empty(parameters('mgmtPublicIpId')), json('null'), json(concat('{\"id\": \"', parameters('mgmtPublicIpId'), '\"}')))]",
-                "primary": true,
-                "privateIpAddress": "[if(empty(parameters('mgmtSelfIP')), json('null'), parameters('mgmtSelfIP'))]",
-                "privateIpAllocationMethod": "[if(empty(parameters('mgmtSelfIP')), 'Dynamic', 'Static')]",
-                "subnet": {
-                    "id": "[parameters('mgmtSubnetId')]"
-                }
-            }
+      {
+        "name": "[concat(parameters('vmName'), '-ipconfig-primary0')]",
+        "properties": {
+          "publicIpAddress": "[if(empty(parameters('mgmtPublicIpId')), json('null'), json(concat('{\"id\": \"', parameters('mgmtPublicIpId'), '\"}')))]",
+          "primary": true,
+          "privateIpAddress": "[if(empty(parameters('mgmtSelfIP')), json('null'), parameters('mgmtSelfIP'))]",
+          "privateIpAllocationMethod": "[if(empty(parameters('mgmtSelfIP')), 'Dynamic', 'Static')]",
+          "subnet": {
+            "id": "[parameters('mgmtSubnetId')]"
+          }
         }
+      }
     ],
     "ipConfigurationNic1Primary": [
-        {
-            "name": "[concat(parameters('vmName'), '-ipconfig-primary0')]",
-            "properties": {
-                "publicIpAddress": "[if(empty(parameters('nic1PrimaryPublicId')), json('null'), json(concat('{\"id\": \"', parameters('nic1PrimaryPublicId'), '\"}')))]",
-                "primary": true,
-                "privateIpAddress": "[if(empty(parameters('nic1SelfIp')), json('null'), parameters('nic1SelfIp'))]",
-                "privateIpAllocationMethod": "[if(empty(parameters('nic1SelfIp')), 'Dynamic', 'Static')]",
-                "subnet": {
-                    "id": "[parameters('nic1SubnetId')]"
-                }
-            }
+      {
+        "name": "[concat(parameters('vmName'), '-ipconfig-primary0')]",
+        "properties": {
+          "publicIpAddress": "[if(empty(parameters('nic1PrimaryPublicId')), json('null'), json(concat('{\"id\": \"', parameters('nic1PrimaryPublicId'), '\"}')))]",
+          "primary": true,
+          "privateIpAddress": "[if(empty(parameters('nic1SelfIp')), json('null'), parameters('nic1SelfIp'))]",
+          "privateIpAllocationMethod": "[if(empty(parameters('nic1SelfIp')), 'Dynamic', 'Static')]",
+          "subnet": {
+            "id": "[parameters('nic1SubnetId')]"
+          }
         }
+      }
     ],
     "ipConfigurationNic2Primary": [
-        {
-            "name": "[concat(parameters('vmName'), '-ipconfig-primary0')]",
-            "properties": {
-                "publicIpAddress": "[if(empty(parameters('nic2PrimaryPublicId')), json('null'), json(concat('{\"id\": \"', parameters('nic2PrimaryPublicId'), '\"}')))]",
-                "primary": true,
-                "privateIpAddress": "[if(empty(parameters('nic2SelfIp')), json('null'), parameters('nic2SelfIp'))]",
-                "privateIpAllocationMethod": "[if(empty(parameters('nic2SelfIp')), 'Dynamic', 'Static')]",
-                "subnet": {
-                    "id": "[parameters('nic2SubnetId')]"
-                }
-            }
+      {
+        "name": "[concat(parameters('vmName'), '-ipconfig-primary0')]",
+        "properties": {
+          "publicIpAddress": "[if(empty(parameters('nic2PrimaryPublicId')), json('null'), json(concat('{\"id\": \"', parameters('nic2PrimaryPublicId'), '\"}')))]",
+          "primary": true,
+          "privateIpAddress": "[if(empty(parameters('nic2SelfIp')), json('null'), parameters('nic2SelfIp'))]",
+          "privateIpAllocationMethod": "[if(empty(parameters('nic2SelfIp')), 'Dynamic', 'Static')]",
+          "subnet": {
+            "id": "[parameters('nic2SubnetId')]"
+          }
         }
+      }
     ],
     "ipConfigurationsMgmt": "[if(equals(variables('networkInterfaceCount'), 1), union(variables('ipConfigurationMgmtPrimary'), variables('constructNic1ServiceIpConfigs'), variables('constructNic2ServiceIpConfigs')), variables('ipConfigurationMgmtPrimary'))]",
     "ipConfigurationsNic1": "[union(variables('ipConfigurationNic1Primary'), variables('constructNic1ServiceIpConfigs'))]",
@@ -310,24 +310,24 @@
     "networkInterfaceName2": "[concat(parameters('uniqueString'), '-nic2')]",
     "networkInterfaces": "[union(createArray(variables('networkInterfacesArray')[0]), if(empty(parameters('nic1SubnetId')), variables('emptyArray'), createArray(variables('networkInterfacesArray')[1])), if(empty(parameters('nic2SubnetId')), variables('emptyArray'), createArray(variables('networkInterfacesArray')[2])))]",
     "networkInterfacesArray": [
-        {
-            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName0'))]",
-            "properties": {
-                "primary": true
-            }
-        },
-        {
-            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName1'))]",
-            "properties": {
-                "primary": false
-            }
-        },
-        {
-            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName2'))]",
-            "properties": {
-                "primary": false
-            }
+      {
+        "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName0'))]",
+        "properties": {
+          "primary": true
         }
+      },
+      {
+        "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName1'))]",
+        "properties": {
+          "primary": false
+        }
+      },
+      {
+        "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName2'))]",
+        "properties": {
+          "primary": false
+        }
+      }
     ],
     "offerToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[1])]",
     "roleAssignmentsApiVersion": "2017-09-01",
@@ -350,142 +350,145 @@
     "useCustomImage": "[contains(tolower(parameters('image')), 'microsoft.compute')]",
     "versionToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[3])]",
     "vmId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
-    "runtimeInitTag": {"workspaceId":"[parameters('workspaceId')]","uniqueString":"[parameters('uniqueString')]"}
+    "runtimeInitTag": {
+      "workspaceId": "[parameters('workspaceId')]",
+      "uniqueString": "[parameters('uniqueString')]"
+    }
   },
   "resources": [
     {
-        "apiVersion": "[variables('storageApiVersion')]",
-        "kind": "Storage",
-        "location": "[resourceGroup().location]",
-        "name": "[variables('diagnosticsStorageAccountName')]",
-        "properties": {
-            "supportsHttpsTrafficOnly": true
-        },
-        "sku": {
-            "name": "Standard_LRS",
-            "tier": "Standard"
-        },
-        "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
-        "type": "Microsoft.Storage/storageAccounts"
+      "apiVersion": "[variables('storageApiVersion')]",
+      "kind": "Storage",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('diagnosticsStorageAccountName')]",
+      "properties": {
+        "supportsHttpsTrafficOnly": true
+      },
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "type": "Microsoft.Storage/storageAccounts"
     },
     {
-        "apiVersion": "[variables('networkApiVersion')]",
-        "location": "[resourceGroup().location]",
-        "name": "[variables('networkInterfaceName0')]",
-        "properties": {
-            "ipConfigurations": "[variables('ipConfigurationsMgmt')]",
-            "networkSecurityGroup": {
-                "id": "[parameters('mgmtNsgId')]"
-            }
-        },
-        "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
-        "type": "Microsoft.Network/networkInterfaces"
+      "apiVersion": "[variables('networkApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('networkInterfaceName0')]",
+      "properties": {
+        "ipConfigurations": "[variables('ipConfigurationsMgmt')]",
+        "networkSecurityGroup": {
+          "id": "[parameters('mgmtNsgId')]"
+        }
+      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "type": "Microsoft.Network/networkInterfaces"
     },
     {
-        "apiVersion": "[variables('networkApiVersion')]",
-        "condition": "[not(empty(parameters('nic1SubnetId')))]",
-        "location": "[resourceGroup().location]",
-        "name": "[variables('networkInterfaceName1')]",
-        "properties": {
-            "ipConfigurations": "[variables('ipConfigurationsNic1')]",
-            "networkSecurityGroup": {
-                "id": "[parameters('nic1NsgId')]"
-            }
-        },
-        "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
-        "type": "Microsoft.Network/networkInterfaces"
+      "apiVersion": "[variables('networkApiVersion')]",
+      "condition": "[not(empty(parameters('nic1SubnetId')))]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('networkInterfaceName1')]",
+      "properties": {
+        "ipConfigurations": "[variables('ipConfigurationsNic1')]",
+        "networkSecurityGroup": {
+          "id": "[parameters('nic1NsgId')]"
+        }
+      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "type": "Microsoft.Network/networkInterfaces"
     },
     {
-        "apiVersion": "[variables('networkApiVersion')]",
-        "condition": "[not(empty(parameters('nic2SubnetId')))]",
-        "location": "[resourceGroup().location]",
-        "name": "[variables('networkInterfaceName2')]",
-        "properties": {
-            "ipConfigurations": "[variables('ipConfigurationsNic2')]",
-            "networkSecurityGroup": {
-                "id": "[parameters('nic2NsgId')]"
-            }
-        },
-        "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
-        "type": "Microsoft.Network/networkInterfaces"
+      "apiVersion": "[variables('networkApiVersion')]",
+      "condition": "[not(empty(parameters('nic2SubnetId')))]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('networkInterfaceName2')]",
+      "properties": {
+        "ipConfigurations": "[variables('ipConfigurationsNic2')]",
+        "networkSecurityGroup": {
+          "id": "[parameters('nic2NsgId')]"
+        }
+      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "type": "Microsoft.Network/networkInterfaces"
     },
     {
-        "apiVersion": "[variables('computeApiVersion')]",
-        "dependsOn": [
-            "[variables('diagnosticsStorageAccountName')]",
-            "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName0'))]",
-            "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName1'))]",
-            "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName2'))]"
-        ],
-        "location": "[resourceGroup().location]",
-        "identity": "[if(and(empty(parameters('userAssignManagedIdentity')), empty(parameters('roleDefinitionId'))), json('null'), variables('identity'))]",
-        "name": "[parameters('vmName')]",
-        "plan": "[if(variables('useCustomImage'), json('null'), variables('imagePlan'))]",
-        "properties": {
-            "diagnosticsProfile": {
-                "bootDiagnostics": {
-                    "enabled": true,
-                    "storageUri": "[concat('https://', variables('diagnosticsStorageAccountName'), '.blob.core.windows.net')]"
+      "apiVersion": "[variables('computeApiVersion')]",
+      "dependsOn": [
+        "[variables('diagnosticsStorageAccountName')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName0'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName1'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName2'))]"
+      ],
+      "location": "[resourceGroup().location]",
+      "identity": "[if(and(empty(parameters('userAssignManagedIdentity')), empty(parameters('roleDefinitionId'))), json('null'), variables('identity'))]",
+      "name": "[parameters('vmName')]",
+      "plan": "[if(variables('useCustomImage'), json('null'), variables('imagePlan'))]",
+      "properties": {
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('https://', variables('diagnosticsStorageAccountName'), '.blob.core.windows.net')]"
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('instanceType')]"
+        },
+        "networkProfile": {
+          "networkInterfaces": "[variables('networkInterfaces')]"
+        },
+        "osProfile": {
+          "adminUsername": "[parameters('adminUsername')]",
+          "computerName": "[parameters('vmName')]",
+          "customData": "[json('null')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "keyData": "[parameters('sshKey')]",
+                  "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]"
                 }
-            },
-            "hardwareProfile": {
-                "vmSize": "[parameters('instanceType')]"
-            },
-            "networkProfile": {
-                "networkInterfaces": "[variables('networkInterfaces')]"
-            },
-            "osProfile": {
-                "adminUsername": "[parameters('adminUsername')]",
-                "computerName": "[parameters('vmName')]",
-                "customData": "[json('null')]",
-                "linuxConfiguration": {
-                    "disablePasswordAuthentication": true,
-                    "ssh": {
-                        "publicKeys": [
-                            {
-                                "keyData": "[parameters('sshKey')]",
-                                "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]"
-                            }
-                        ]
-                    }
-                }
-            },
-            "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
+              ]
+            }
+          }
         },
-        "tags": "[union(variables('runtimeInitTag'), parameters('tagValues'))]",
-        "zones": "[if(parameters('useAvailabilityZones'), createArray(1), json('null'))]",
-        "type": "Microsoft.Compute/virtualMachines"
+        "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
+      },
+      "tags": "[union(variables('runtimeInitTag'), parameters('tagValues'))]",
+      "zones": "[if(parameters('useAvailabilityZones'), createArray(1), json('null'))]",
+      "type": "Microsoft.Compute/virtualMachines"
     },
     {
-        "apiVersion": "[variables('roleAssignmentsApiVersion')]",
-        "condition": "[not(empty(parameters('roleDefinitionId')))]",
-        "dependsOn": [
-            "[variables('vmId')]"
-        ],
-        "name": "[guid(resourceGroup().id, 'roleId')]",
-        "properties": {
-            "principalId": "[reference(variables('vmId'), variables('computeApiVersion'), 'Full').identity.principalId]",
-            "roleDefinitionId": "[parameters('roleDefinitionId')]",
-            "scope": "[resourceGroup().id]"
-        },
-        "type": "Microsoft.Authorization/roleAssignments"
+      "apiVersion": "[variables('roleAssignmentsApiVersion')]",
+      "condition": "[not(empty(parameters('roleDefinitionId')))]",
+      "dependsOn": [
+        "[variables('vmId')]"
+      ],
+      "name": "[guid(resourceGroup().id, 'roleId')]",
+      "properties": {
+        "principalId": "[reference(variables('vmId'), variables('computeApiVersion'), 'Full').identity.principalId]",
+        "roleDefinitionId": "[parameters('roleDefinitionId')]",
+        "scope": "[resourceGroup().id]"
+      },
+      "type": "Microsoft.Authorization/roleAssignments"
     },
     {
-        "apiVersion": "[variables('computeApiVersion')]",
-        "dependsOn": [
-            "[variables('vmId')]",
-            "[guid(resourceGroup().id, 'roleId')]"
-        ],
-        "location": "[resourceGroup().location]",
-        "name": "[concat(parameters('vmName'),'/onboarder')]",
-        "properties": {
-            "publisher": "Microsoft.Azure.Extensions",
-            "settings": "[variables('extSettingsRef')]",
-            "type": "CustomScript",
-            "typeHandlerVersion": "2.0"
-        },
-        "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
-        "type": "Microsoft.Compute/virtualMachines/extensions"
+      "apiVersion": "[variables('computeApiVersion')]",
+      "dependsOn": [
+        "[variables('vmId')]",
+        "[guid(resourceGroup().id, 'roleId')]"
+      ],
+      "location": "[resourceGroup().location]",
+      "name": "[concat(parameters('vmName'),'/onboarder')]",
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "settings": "[variables('extSettingsRef')]",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0"
+      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "type": "Microsoft.Compute/virtualMachines/extensions"
     }
   ],
   "outputs": {
