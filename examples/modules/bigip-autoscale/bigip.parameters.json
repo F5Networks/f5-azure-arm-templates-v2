@@ -3,9 +3,12 @@
   "contentVersion": "1.3.1.0",
   "parameters": {
     "adminUsername": {
-      "value": "my-admin"
+      "value": "azureuser"
     },
     "appInsights": {
+      "value": ""
+    },
+    "bigIpRuntimeInitConfig": {
       "value": ""
     },
     "bigIpRuntimeInitPackageUrl": {
@@ -20,9 +23,6 @@
     "customEmail": {
       "value": []
     },
-    "uniqueString": {
-      "value": ""
-    },
     "image": {
       "value": "f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000"
     },
@@ -36,22 +36,10 @@
       "value": ""
     },
     "instanceType": {
-      "value": "Standard_D2s_v3"
+      "value": "Standard_DS2_v2"
     },
     "loadBalancerBackendAddressPoolsArray": {
       "value": []
-    },
-    "nsgId": {
-      "value": ""
-    },
-    "provisionPublicIp": {
-      "value": {}
-    },
-    "roleDefinitionId": {
-      "value": ""
-    },
-    "bigIpRuntimeInitConfig": {
-      "value": ""
     },
     "maxBatchInstancePercent": {
       "value": 20
@@ -62,8 +50,17 @@
     "maxUnhealthyUpgradedInstancePercent": {
       "value": 20
     },
+    "nsgId": {
+      "value": ""
+    },
     "pauseTimeBetweenBatches": {
       "value": 0
+    },
+    "provisionPublicIp": {
+      "value": {}
+    },
+    "roleDefinitionId": {
+      "value": ""
     },
     "scaleInCpuThreshold": {
       "value": 20
@@ -101,6 +98,9 @@
     "throughputMetricName": {
       "value": "Network In"
     },
+    "uniqueString": {
+      "value": ""
+    },
     "updateTag": {
       "value": "[utcNow()]"
     },
@@ -111,13 +111,16 @@
       "value": ""
     },
     "vmScaleSetMaxCount": {
-      "value": 10
+      "value": 50
     },
     "vmScaleSetMinCount": {
       "value": 1
     },
     "vmssName": {
       "value": "bigip-vmss"
+    },
+    "workspaceId": {
+      "value": "WORKSPACE_ID"
     }
   }
 }

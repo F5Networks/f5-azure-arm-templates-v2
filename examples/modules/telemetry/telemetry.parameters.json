@@ -2,17 +2,8 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.3.1.0",
   "parameters": {
-    "uniqueString": {
-      "value": ""
-    },
-    "workspaceName": {
-      "value": ""
-    },
-    "workbookDisplayName": {
-      "value": ""
-    },
-    "workbookType": {
-      "value": ""
+    "sku": {
+      "value": "PerGB2018"
     },
     "tagValues": {
       "value": {
@@ -22,6 +13,18 @@
         "group": "GROUP",
         "owner": "OWNER"
       }
+    },
+    "uniqueString": {
+      "value": ""
+    },
+    "workbookDisplayName": {
+      "value": "F5 BIG-IP WAF View"
+    },
+    "workbookType": {
+      "value": "workbook"
+    },
+    "workspaceName": {
+      "value": "f5telemetry"
     }
   }
 }

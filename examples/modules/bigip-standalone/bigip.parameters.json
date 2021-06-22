@@ -3,22 +3,19 @@
   "contentVersion": "1.3.1.0",
   "parameters": {
     "adminUsername": {
-      "value": "my-admin"
+      "value": "azureuser"
+    },
+    "bigIpRuntimeInitConfig": {
+      "value": ""
     },
     "bigIpRuntimeInitPackageUrl": {
       "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run"
     },
     "image": {
-      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.0.101000"
+      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000"
     },
     "instanceType": {
-      "value": "Standard_D2s_v3"
-    },
-    "loadBalancerBackendAddressPoolsArray": {
-      "value": []
-    },
-    "mgmtSubnetId": {
-      "value": ""
+      "value": "Standard_DS2_v2"
     },
     "mgmtNsgId": {
       "value": ""
@@ -29,7 +26,7 @@
     "mgmtSelfIp": {
       "value": ""
     },
-    "nic1SubnetId": {
+    "mgmtSubnetId": {
       "value": ""
     },
     "nic1NsgId": {
@@ -44,7 +41,7 @@
     "nic1ServiceIPs": {
       "value": []
     },
-    "nic2SubnetId": {
+    "nic1SubnetId": {
       "value": ""
     },
     "nic2NsgId": {
@@ -59,10 +56,10 @@
     "nic2ServiceIPs": {
       "value": []
     },
-    "roleDefinitionId": {
+    "nic2SubnetId": {
       "value": ""
     },
-    "bigIpRuntimeInitConfig": {
+    "roleDefinitionId": {
       "value": ""
     },
     "sshKey": {
@@ -80,9 +77,6 @@
     "uniqueString": {
       "value": ""
     },
-    "updateTag": {
-      "value": "[utcNow()]"
-    },
     "useAvailabilityZones": {
       "value": false
     },
@@ -90,7 +84,10 @@
       "value": ""
     },
     "vmName": {
-      "value": ""
+      "value": "bigip-vm"
+    },
+    "workspaceId": {
+      "value": "WORKSPACE_ID"
     }
   }
 }
