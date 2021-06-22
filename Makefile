@@ -35,9 +35,13 @@ run_smoke_tests: run_crawler
 	pip install -r tests/requirements.txt;
 	pytest ${SMOKE_TEST_DIR} --full-trace -v;
 
-run_parameter_parser:
+run_parameter_generator:
+	echo "Generating v2 input parameters files"
+	cd ${PARSER_DIR} &&	pip install -r requirements.txt && python generate_parameters.py --cloud azure
+
+run_parameter_parser: run_parameter_generator
 	echo "Generating v2 parameter config file"
-	cd ${PARSER_DIR} &&	pip install -r requirements.txt && python parameter_parser.py --cloud azure
+	cd ${PARSER_DIR} && python parameter_parser.py --cloud azure
 
 run_compare_parameters: run_parameter_parser
 	echo "Comparing given outputs config file against golden parameters config file"
