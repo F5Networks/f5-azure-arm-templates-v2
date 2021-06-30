@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<policy integrity_check="7b44123aebd32e90b992056601320432" bigip_version="13.1.0" name="/Common/Rapid_Depolyment_Policy_13_1">
+<policy integrity_check="7b44123aebd32e90b992056601320432" bigip_version="13.1.0" name="/Common/Rapid_Deployment_Policy_13_1">
   <type>Security</type>
   <policy_version>
     <timestamp>2018-05-09T10:23:33Z</timestamp>
     <device_name>asm02.pmlab.com</device_name>
-    <policy_name>/Common/Rapid_Depolyment_Policy_13_1</policy_name>
-    <last_change> Security Policy /Common/Rapid_Depolyment_Policy_13_1 [add]: Type was set to Security.
+    <policy_name>/Common/Rapid_Deployment_Policy_13_1</policy_name>
+    <last_change> Security Policy /Common/Rapid_Deployment_Policy_13_1 [add]: Type was set to Security.
 Encoding Selected was set to true.
 Application Language was set to utf-8.
 Case Sensitivity was set to Case Sensitive.
 Template was set to POLICY_TEMPLATE_RAPID_DEPLOYMENT.
 Active was set to false.
 Differentiate between HTTP and HTTPS URLs was set to Protocol Specific.
-Policy Name was set to /Common/Rapid_Depolyment_Policy_13_1.
-Enforcement Mode was set to Transparent. { audit: policy = /Common/Rapid_Depolyment_Policy_13_1, username = admin, client IP = 192.168.188.33 }</last_change>
+Policy Name was set to /Common/Rapid_Deployment_Policy_13_1.
+Enforcement Mode was set to Transparent. { audit: policy = /Common/Rapid_Deployment_Policy_13_1, username = admin, client IP = 192.168.188.33 }</last_change>
   </policy_version>
   <encoding>utf-8</encoding>
   <description>Rapid Deployment Policy</description>
