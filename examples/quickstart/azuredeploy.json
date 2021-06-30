@@ -421,10 +421,6 @@
       "type": "string",
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
-    "bigIpUsername": {
-      "type": "string",
-      "value": "[variables('adminUsername')]"
-    },
     "bigIpVmId": {
       "type": "string",
       "value": "[reference('bigIpTemplate').outputs.vmId.value]"
