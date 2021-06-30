@@ -132,7 +132,6 @@ By default, this solution creates a Vnet with four subnets, an example Web Appli
 | bigIpManagementPrivateUrl | Management Private IP Address | BIG-IP Template | string |
 | bigIpManagementPublicIpId | Management Public IP Address | Dag Template | string |
 | bigIpManagementPublicUrl | Management Public IP Address | Dag Template | string |
-| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
 | bigIpVmId | Virtual Machine resource ID | BIG-IP Template | string |
 | vip1PrivateIp | Service (VIP) Private IP Address | Application Template | string |
 | vip1PrivateUrlHttp | Service (VIP) Private HTTP URL | Application Template | string |

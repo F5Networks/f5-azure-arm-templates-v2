@@ -2,7 +2,7 @@
 #  expectValue = "OUTPUTS PASSED"
 #  scriptTimeout = 3
 #  replayEnabled = true
-#  replayTimeout = 5
+#  replayTimeout = 10
 
 # Script Requires min BASH Version 4
 # usage: verify_outputs associative_array
@@ -48,7 +48,6 @@ declare -A outputs
 outputs[appPrivateIp]="10.0.<NIC COUNT>.4"
 outputs[appUsername]="azureuser"
 outputs[appVmName]="<RESOURCE GROUP>-app-vm"
-outputs[bigIpUsername]="azureuser"
 outputs[bigIpManagementPrivateIp]=$mgmt_private_ip
 outputs[bigIpManagementPrivateUrl]="https://${mgmt_private_ip}:${mgmt_port}/"
 
