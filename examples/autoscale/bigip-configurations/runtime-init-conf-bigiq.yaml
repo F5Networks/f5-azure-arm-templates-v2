@@ -56,10 +56,10 @@ extension_packages:
       extensionHash: 92c2aa88c6de685a4f40f5cbbde13afacc906cbc418e4b68ba66c98c7eabae4d
     - extensionType: as3
       extensionVersion: 3.29.0
-      extensionHash: 50c0b03d928d7cbfc5f4c24f0b221d4f20a09b233cae4ab6350c557ee8b9486a
+      extensionHash: bcbba79b42b700b8d2b46937b65e6d09b035515a7a7e40aaeebb360fcfe7aa66
     - extensionType: ts
-      extensionVersion: 1.21.0
-      extensionHash: a420c24d9901990a6bab6a2c99710f312911b7c044aa0b94c503405d995474c2
+      extensionVersion: 1.20.1
+      extensionHash: 634dffc49a67c64e9f1221a0f306b62cdd46cb4d57f133a82a4b6992e4b0d58f
 extension_services:
   service_operations:
     - extensionType: do

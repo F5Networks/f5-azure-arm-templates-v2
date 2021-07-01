@@ -42,8 +42,8 @@ extension_packages:
       extensionVersion: 3.29.0
       extensionHash: bcbba79b42b700b8d2b46937b65e6d09b035515a7a7e40aaeebb360fcfe7aa66
     - extensionType: ts
-      extensionVersion: 1.21.0
-      extensionHash: a420c24d9901990a6bab6a2c99710f312911b7c044aa0b94c503405d995474c2
+      extensionVersion: 1.20.1
+      extensionHash: 634dffc49a67c64e9f1221a0f306b62cdd46cb4d57f133a82a4b6992e4b0d58f
     - extensionType: fast
       extensionVersion: 1.10.0
       extensionHash: 30819184406499649b63f8f6a5d5f4eda3a38a89fa8043ecd58c2f190c0eec73

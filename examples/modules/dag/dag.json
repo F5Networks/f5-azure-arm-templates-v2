@@ -173,6 +173,7 @@
                         },
                         "frontendPort": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRule')]]",
                         "idleTimeoutInMinutes": 15,
+                        "loadDistribution": "SourceIP",
                         "probe": {
                             "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('externalLoadBalancerName')), '/probes/tcp_probe_', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRule')])]"
                         },
