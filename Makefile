@@ -7,6 +7,7 @@ CRAWLER_DIR := cloud-tools/crawler
 SMOKE_TEST_DIR := tests/smoke
 LINTER_DIR := cloud-tools/arm-ttk
 PARSER_DIR := cloud-tools/parameter-parser
+SYNC_AT_DIR := cloud-tools/sync-at-components-metadata
 DIFF_VAR :=`diff automated-test-scripts/parameters_diff_expected.yaml ${PARSER_DIR}/parameters_diff.yaml`
 DIFF_VAR_OUTPUTS :=`diff automated-test-scripts/outputs_diff_expected.yaml ${PARSER_DIR}/outputs_diff.yaml`
 
@@ -34,6 +35,10 @@ run_smoke_tests: run_crawler
 	echo "Running smoke tests";
 	pip install -r tests/requirements.txt;
 	pytest ${SMOKE_TEST_DIR} --full-trace -v;
+
+run_sync_at_metadata:
+	echo "Syncing AT component metadata"
+	cd ${SYNC_AT_DIR} && ./sync_at_components_metadata.sh --config-directories ../../examples/autoscale/bigip-configurations,../../examples/quickstart/bigip-configurations --template-directory ../../examples --cloud azure
 
 run_parameter_generator:
 	echo "Generating v2 input parameters files"
