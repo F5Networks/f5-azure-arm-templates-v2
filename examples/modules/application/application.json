@@ -1,5 +1,5 @@
 {
-    "$schema":"https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion":"1.3.1.0",
     "parameters":{
         "adminUsername":{
@@ -95,9 +95,6 @@
         }
     },
     "variables":{
-        "computeApiVersion":"2019-12-01",
-        "networkApiVersion":"2020-06-01",
-        "storageApiVersion":"2017-10-01",
         "cloudInit":"[concat('#include\n',parameters('cloudInitUrl'))]",
         "commandToExecute":"[concat('sleep 60; apt-get update -y; apt-get -y install docker.io; docker run --name f5demo -p 80:80 -p 443:443 -d ', parameters('appContainerName'), '')]",
         "imageReference":{
@@ -117,7 +114,7 @@
     },
     "resources":[
         {
-            "apiVersion":"[variables('storageApiVersion')]",
+            "apiVersion":"2021-04-01",
             "kind":"Storage",
             "location":"[resourceGroup().location]",
             "name":"[variables('storageName')]",
@@ -132,7 +129,7 @@
             "type":"Microsoft.Storage/storageAccounts"
         },
         {
-            "apiVersion":"[variables('networkApiVersion')]",
+            "apiVersion":"2020-06-01",
             "condition":"[not(parameters('createAutoscaleGroup'))]",
             "location":"[resourceGroup().location]",
             "name":"[variables('nicName')]",
@@ -154,11 +151,11 @@
             "type":"Microsoft.Network/networkInterfaces"
         },
         {
-            "apiVersion":"[variables('computeApiVersion')]",
+            "apiVersion":"2019-12-01",
             "condition":"[not(parameters('createAutoscaleGroup'))]",
             "dependsOn":[
-                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
+                "[variables('nicName')]",
+                "[variables('storageName')]"
             ],
             "location":"[resourceGroup().location]",
             "name":"[variables('vmName')]",
@@ -166,7 +163,7 @@
                 "diagnosticsProfile":{
                     "bootDiagnostics":{
                         "enabled":true,
-                        "storageUri":"[concat('https://', variables('storageName'), '.blob.core.windows.net')]"
+                        "storageUri":"[concat('https://', variables('storageName'), '.blob.', environment().suffixes.storage)]"
                     }
                 },
                 "hardwareProfile":{
@@ -207,10 +204,10 @@
             "type":"Microsoft.Compute/virtualMachines"
         },
         {
-            "apiVersion":"[variables('computeApiVersion')]",
+            "apiVersion":"2019-12-01",
             "condition":"[and(not(empty(parameters('appContainerName'))), not(parameters('createAutoscaleGroup')))]",
             "dependsOn":[
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                "[variables('vmName')]"
             ],
             "location":"[resourceGroup().location]",
             "name":"[concat(variables('vmName'),'/vmInit')]",
@@ -225,10 +222,10 @@
             "type":"Microsoft.Compute/virtualMachines/extensions"
         },
         {
-            "apiVersion":"[variables('computeApiVersion')]",
+            "apiVersion":"2019-12-01",
             "condition":"[parameters('createAutoscaleGroup')]",
             "dependsOn":[
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
+                "[variables('storageName')]"
             ],
             "location":"[resourceGroup().location]",
             "name":"[variables('vmssName')]",
@@ -301,7 +298,7 @@
                     "diagnosticsProfile":{
                         "bootDiagnostics":{
                             "enabled":true,
-                            "storageUri":"[concat('https://', variables('storageName'), '.blob.core.windows.net')]"
+                            "storageUri":"[concat('https://', variables('storageName'), '.blob.', environment().suffixes.storage)]"
                         }
                     }
                 }
@@ -321,7 +318,7 @@
             "name":"[concat(variables('vmssName'), '-autoscaleconfig')]",
             "location":"[resourceGroup().location]",
             "dependsOn":[
-                "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('vmssName'))]"
+                "[variables('vmssName')]"
             ],
             "properties":{
                 "name":"[concat(variables('vmssName'), '-autoscaleconfig')]",

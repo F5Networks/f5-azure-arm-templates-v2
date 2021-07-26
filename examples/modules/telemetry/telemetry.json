@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.3.1.0",
   "parameters": {
     "uniqueString": {
@@ -40,13 +40,6 @@
         "description": "The friendly name for the workbook that is used in the Gallery or Saved List.  This name must be unique within a resource group."
       }
     },
-    "workbookType": {
-      "type": "string",
-      "defaultValue": "workbook",
-      "metadata": {
-        "description": "The gallery that the workbook will been shown under. Supported values include workbook, tsg, etc. Usually, this is 'workbook'"
-      }
-    },
     "workspaceName": {
       "type": "String",
       "defaultValue": "f5telemetry",
@@ -56,13 +49,10 @@
     }
   },
   "variables": {
-    "subscriptionID": "[subscription().subscriptionId]",
-    "resourceGroupName": "[resourceGroup().name]",
     "uniqueString": "[toLower(parameters('uniqueString'))]",
     "singleQuote": "'",
-    "networkApiVersion": "2020-10-20",
-    "appInsightsId": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/microsoft.insights/components/',parameters('uniqueString'),'-insights')]",
-    "workspaceId":  "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+    "appInsightsId": "[resourceId('Microsoft.Insights/components', concat(variables('uniqueString'), '-insights'))]",
+    "workspaceId":  "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
   },
   "resources": [
     {
@@ -81,8 +71,8 @@
       "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]"
     },
     {
-      "name": "[guid(resourceGroup().id,parameters('uniqueString'),'waf-view-workbook')]",
-      "type": "microsoft.insights/workbooks",
+      "name": "[guid(resourceGroup().id,variables('uniqueString'),'waf-view-workbook')]",
+      "type": "Microsoft.Insights/workbooks",
       "location": "[resourceGroup().location]",
       "apiVersion": "2020-10-20",
       "kind": "shared",
@@ -114,7 +104,7 @@
     },
     "workbookId": {
       "type": "String",
-      "value": "[resourceId( 'microsoft.insights/workbooks', guid(resourceGroup().id,parameters('uniqueString'),'waf-view-workbook'))]"
+      "value": "[resourceId( 'microsoft.insights/workbooks', guid(resourceGroup().id,variables('uniqueString'),'waf-view-workbook'))]"
     }
   }
 }
