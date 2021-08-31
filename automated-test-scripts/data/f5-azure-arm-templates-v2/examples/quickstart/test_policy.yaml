@@ -10,6 +10,12 @@ azure-arm-quickstart-byol-example-test:
         - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/prepub_parameters1.yaml"
         # 1nic
         - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/prepub_parameters2.yaml"
+        # 3nic - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/prepub_parameters3.yaml"
+        # 2nic - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/prepub_parameters4.yaml"
+        # 1nic - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/prepub_parameters5.yaml"
 
 # quickstart payg example test
 azure-arm-quickstart-payg-example-test:
@@ -22,3 +28,9 @@ azure-arm-quickstart-payg-example-test:
         - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters1.yaml"
         # 1nic
         - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters2.yaml"
+        # 3nic - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters3.yaml"
+        # 2nic - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters4.yaml"
+        # 1nic - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters5.yaml"

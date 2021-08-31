@@ -20,9 +20,6 @@
     "workbookDisplayName": {
       "value": "F5 BIG-IP WAF View"
     },
-    "workbookType": {
-      "value": "workbook"
-    },
     "workspaceName": {
       "value": "f5telemetry"
     }

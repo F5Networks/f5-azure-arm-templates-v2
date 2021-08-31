@@ -1,6 +1,7 @@
 azure-quickstart-payg-example-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/postpub_parameters.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/postpub_parameters3.yaml
   run: all
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml'
 

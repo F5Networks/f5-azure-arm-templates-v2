@@ -1,6 +1,7 @@
 azure-autoscale-example-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters2.yaml
   run: all
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test.yaml'
 

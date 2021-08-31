@@ -9,4 +9,10 @@ azure-arm-autoscale-example-test:
     # bigiq with secret
         # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters1.yaml"
     # payg without secret (does not deploy keyvault or update password)
-        # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters2.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters2.yaml"
+    # payg with secret - prod stack
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters3.yaml"
+    # bigiq with secret - prod stack
+        # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters4.yaml"
+    # payg without secret - prod stack (does not deploy keyvault or update password)
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters5.yaml"

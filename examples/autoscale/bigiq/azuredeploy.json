@@ -62,7 +62,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -344,9 +344,19 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg2": [],
+    "nsg2": [
+      {
+        "destinationPortRanges": [
+          "22"
+        ],
+        "sourceAddressPrefix": "[parameters('restrictedSrcAddressMgmt')]",
+        "protocol": "Tcp"
+      }
+    ],
     "numberPublicExternalIpAddresses": 1,
     "numberPublicMgmtIpAddresses": 0,
+    "bastionInstanceName": "[variables('uniqueString')]",
+    "bastionInstanceType": "Standard_D2s_v3",
     "appInstanceName": "[variables('uniqueString')]",
     "appInstanceType": "Standard_D2s_v3",
     "appVmScaleSetMaxCount": "[parameters('appScalingMaxSize')]",
@@ -607,13 +617,55 @@
             "value": "[variables('nsg1')]"
           },
           "nsg2": {
-            "value": "[variables('nsg2')]"
+            "value": "[if(parameters('provisionPublicIp'), createArray(), variables('nsg2'))]"
           },
           "numberPublicExternalIpAddresses": {
             "value": "[variables('numberPublicExternalIpAddresses')]"
           },
           "numberPublicMgmtIpAddresses": {
             "value": "[variables('numberPublicMgmtIpAddresses')]"
+          },
+          "tagValues": {
+            "value": "[parameters('tagValues')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "condition": "[not(parameters('provisionPublicIp'))]",
+      "name": "bastionTemplate",
+      "dependsOn": [
+        "bigIpTemplate"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/bastion/bastion.json')]",
+          "contentVersion": "[variables('contentVersion')]"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[variables('adminUsername')]"
+          },
+          "createAutoscaleGroup": {
+            "value": "[variables('createAutoscaleGroup')]"
+          },
+          "instanceName": {
+            "value": "[variables('bastionInstanceName')]"
+          },
+          "instanceType": {
+            "value": "[variables('bastionInstanceType')]"
+          },
+          "nsgId": {
+            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+          },
+          "sshKey": {
+            "value": "[parameters('sshKey')]"
+          },
+          "subnetId": {
+            "value": "[reference('networkTemplate').outputs.subnets.value[0]]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -683,7 +735,8 @@
       "dependsOn": [
         "accessTemplate",
         "networkTemplate",
-        "dagTemplate"
+        "dagTemplate",
+        "telemetryTemplate"
       ],
       "properties": {
         "mode": "Incremental",
@@ -736,7 +789,7 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "provisionPublicIp": {
-            "value": "[if(parameters('provisionPublicIp'), variables('publicIpConfig'), json('null'))]"
+            "value": "[if(parameters('provisionPublicIp'), variables('publicIpConfig'), createObject())]"
           },
           "roleDefinitionId": {
             "value": ""
@@ -876,6 +929,16 @@
       "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[reference('appTemplate').outputs.vmssName.value]"
+    },
+    "bastionVmssId": {
+      "condition": "[not(parameters('provisionPublicIp'))]",
+      "type": "string",
+      "value": "[reference('bastionTemplate').outputs.vmssId.value]"
+    },
+    "bastionVmssName": {
+      "condition": "[not(parameters('provisionPublicIp'))]",
+      "type": "string",
+      "value": "[reference('bastionTemplate').outputs.vmssName.value]"
     },
     "bigIpUsername": {
       "type": "string",

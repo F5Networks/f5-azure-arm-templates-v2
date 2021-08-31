@@ -1,0 +1,18 @@
+---
+name: Azure Examples - Bastion
+onStart:
+- ../../../common/helper_init.sh
+- ../../../common/create_resource_group.sh
+- ./create_network_environment.sh
+- ./verify_network_create_env.sh
+- ./create_dag_environment.sh
+- ./verify_dag_create_env.sh
+- ./create_deployment.sh
+- ../../../common/verify_create.sh
+- ./tests/verify_banner.sh
+- ../../../common/delete_deployment.sh
+- ../../../common/verify_delete.sh
+onFail:
+- ../../../common/capture_logs.sh
+- ../../../common/delete_deployment.sh
+- ../../../common/verify_delete.sh
