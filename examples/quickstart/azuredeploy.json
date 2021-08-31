@@ -61,6 +61,13 @@
       },
       "type": "int"
     },
+    "provisionPublicIp": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s)."
+      },
+      "type": "bool"
+    },
     "restrictedSrcAddressMgmt": {
       "metadata": {
         "description": "REQUIRED - When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources."
@@ -81,7 +88,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -115,6 +122,7 @@
     "numSubnets": "[if(variables('provisionApp'), add(parameters('numNics'), 1), parameters('numNics'))]",
     "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
     "vnetAddressPrefix": "10.0",
+    "createAutoscaleGroup": false,
     "externalLoadBalancerName": "None",
     "internalLoadBalancerName": "None",
     "internalLoadBalancerProbePort": "3456",
@@ -168,8 +176,9 @@
     "nsg0": "[if(equals(parameters('numNics'), 1), union(variables('mgmtNsgRulesArray'), variables('nsg1RulesArray'), variables('nsg2RulesArray')), variables('mgmtNsgRulesArray'))]",
     "nsg1": "[if(greaterOrEquals(parameters('numNics'), 2), variables('nsg1RulesArray'), createArray())]",
     "nsg2": "[if(greaterOrEquals(parameters('numNics'), 3), variables('nsg2RulesArray'), createArray())]",
+    "bastionInstanceName": "[variables('uniqueString')]",
+    "bastionInstanceType": "Standard_D2s_v3",
     "provisionApp": "[not(empty(parameters('appContainerName')))]",
-    "createAutoscaleGroup": false,
     "appInstanceName": "[variables('uniqueString')]",
     "appInstanceType": "Standard_D2s_v3",
     "cloudInitUrl": "",
@@ -202,7 +211,7 @@
             "value": "[variables('vnetAddressPrefix')]"
           },
           "createNatGateway": {
-            "value": false
+            "value": "[not(parameters('provisionPublicIp'))]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -315,6 +324,51 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
+      "condition": "[not(parameters('provisionPublicIp'))]",
+      "name": "bastionTemplate",
+      "dependsOn": [
+        "bigIpTemplate"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/bastion/bastion.json')]",
+          "contentVersion": "[variables('contentVersion')]"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[variables('adminUsername')]"
+          },
+          "createAutoscaleGroup": {
+            "value": "[variables('createAutoscaleGroup')]"
+          },
+          "instanceName": {
+            "value": "[variables('bastionInstanceName')]"
+          },
+          "instanceType": {
+            "value": "[variables('bastionInstanceType')]"
+          },
+          "nsgId": {
+            "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
+          },
+          "publicIpId": {
+            "value": "[reference('dagTemplate').outputs.mgmtIpIds.value[0]]"
+          },
+          "sshKey": {
+            "value": "[parameters('sshKey')]"
+          },
+          "subnetId": {
+            "value": "[reference('networkTemplate').outputs.subnets.value[0]]"
+          },
+          "tagValues": {
+            "value": "[parameters('tagValues')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
       "name": "bigIpTemplate",
       "dependsOn": [
         "networkTemplate",
@@ -343,7 +397,7 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "mgmtPublicIpId": {
-            "value": "[reference('dagTemplate').outputs.mgmtIpIds.value[0]]"
+            "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
           },
           "mgmtSelfIp": {
             "value": "[variables('mgmtSelfIp')]"
@@ -432,6 +486,7 @@
       "value": "[variables('mgmtSelfIp')]"
     },
     "bigIpManagementPublicUrl": {
+      "condition": "[parameters('provisionPublicIp')]",
       "type": "string",
       "value": "[if(equals(parameters('numNics'), 1), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':8443/'), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/'))]"
     },

@@ -312,11 +312,18 @@ From Parent Template Outputs:
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o tsv --query properties.outputs" 
     ```
 
-- Obtain the IP address of the BIG-IP Management Port:
+- Obtain the public IP address of the BIG-IP (or bastion host if **provisionPublicIP** = **false**) Management Port:
   - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bigIpManagementPublicIp***.
   - **Azure CLI**: 
     ``` bash 
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpManagementPublicIp.value
+    ```
+
+- Obtain the private IP address of the BIG-IP Management Port:
+  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bigIpManagementPrivateIp***.
+  - **Azure CLI**: 
+    ``` bash 
+    az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpManagementPrivateIp.value
     ```
 
 - Obtain the vmId of the BIG-IP Virtual Machine *(will be used for password later)*:
@@ -327,15 +334,32 @@ From Parent Template Outputs:
     ```
 
 #### SSH
-  - **SSH key authentication**: 
-      ```bash
-      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-      ```
-  - **Password authentication**: 
-      ```bash 
-      ssh quickstart@${IP_ADDRESS_FROM_OUTPUT}
-      ``` 
-      at prompt, enter your **bigIpVmId** (see above to obtain from template "Outputs")
+- NOTE: 
+  - When **false** is selected for **provisionPublicIp**, you must connect to the BIG-IP instance via a bastion host. In this case, the **bigIpManagementPublicIp** template output will return the public IP address of the bastion host.
+  - When connecting to a BIG-IP instance using SSH via a bastion host, you must first copy the private SSH key to the bastion instance and set the correct permissions on the key.
+
+  - **SSH key authentication** (**provisionPublicIP** = **true**): 
+    ```bash
+    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ```
+  - **SSH key authentication** (**provisionPublicIP** = **false**): 
+    ```bash
+    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    vi ${YOUR_PRIVATE_SSH_KEY}
+    # paste private key contents and save file
+    chmod 0600 ${YOUR_PRIVATE_SSH_KEY}
+    ssh azureuser@${PRIVATE_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ```
+  - **Password authentication** (**provisionPublicIP** = **true**): 
+    ```bash 
+    ssh quickstart@${PUBLIC_IP_ADDRESS_FROM_OUTPUT}
+    ```
+  - **Password authentication** (**provisionPublicIP** = **false**): 
+    ```bash 
+    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ssh quickstart@${PRIVATE_IP_ADDRESS_FROM_OUTPUT}
+    ``` 
+    At prompt, enter your **bigIpVmId** (see above to obtain from template "Outputs")
 
 
 #### WebUI

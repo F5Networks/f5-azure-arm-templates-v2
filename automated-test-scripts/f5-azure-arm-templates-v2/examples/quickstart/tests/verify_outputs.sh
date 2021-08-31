@@ -55,6 +55,9 @@ if [[ <PROVISION PUBLIC IP> == True ]]; then
     mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     outputs[bigIpManagementPublicIp]=$mgmt_public_ip
     outputs[bigIpManagementPublicUrl]="https://${mgmt_public_ip}:${mgmt_port}/"
+else
+    bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    outputs[bigIpManagementPublicIp]=$bastion_public_ip
 fi
 
 outputs[vip1PrivateIp]=$vip_1_private_ip

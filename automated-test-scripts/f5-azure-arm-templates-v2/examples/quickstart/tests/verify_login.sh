@@ -15,15 +15,19 @@ else
 fi
 
 if [[ <PROVISION PUBLIC IP> == False ]]; then
-    # skipping this for now until we come up with new create_environment.sh for bastion host in mgmt vNet
-    SSH_RESPONSE="encrypted-password !!"
-    PASSWORD_RESPONSE="quickstart"
+    BASTION_HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
+    echo "Host: $BASTION_HOST"
+    IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPrivateIp"].value')
+    echo "IP: $IP"
+    ssh-keygen -R ${BASTION_HOST} 2>/dev/null
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" azureuser@"${IP}" 'list auth user azureuser')
+    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${BASTION_HOST} "curl -skvvu quickstart:${PASSWORD} --connect-timeout 10 https://${IP}:${MGMT_PORT}/mgmt/tm/auth/user/quickstart" | jq -r .description)
 else
-    HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
-    echo "Host: $HOST"
-    ssh-keygen -R ${HOST} 2>/dev/null
-    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${HOST} -p $SSH_PORT 'list auth user azureuser')
-    PASSWORD_RESPONSE=$(curl -sku quickstart:${PASSWORD} https://${HOST}:${MGMT_PORT}/mgmt/tm/auth/user/quickstart | jq -r .description)
+    IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
+    echo "IP: $IP"
+    ssh-keygen -R ${IP} 2>/dev/null
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${IP} -p $SSH_PORT 'list auth user azureuser')
+    PASSWORD_RESPONSE=$(curl -sku quickstart:${PASSWORD} https://${IP}:${MGMT_PORT}/mgmt/tm/auth/user/quickstart | jq -r .description)
 fi
 echo "SSH_RESPONSE: ${SSH_RESPONSE}"
 echo "PASSWORD_RESPONSE: ${PASSWORD_RESPONSE}"

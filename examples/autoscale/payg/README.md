@@ -145,6 +145,8 @@ This solution leverages more traditional Autoscale configuration management prac
 | appVmssId | Application Virtual Machine Scale Set resource ID | Application Template | string |
 | bigIpUsername | BIG-IP user name | BIG-IP Template | string |
 | virtualNetworkId | Virtual Network resource ID | Network Template | string |
+| bastionVmssName | Bastion Virtual Machine Scale Set name | Bastion Template | String |
+| bastionVmssId | Bastion Virtual Machine Scale Set resource ID | Bastion Template | String |
 | bigIpVmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | string |
 | bigIpVmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | string |
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | array |
@@ -409,21 +411,35 @@ To test the WAF service, perform the following steps:
 ### Accessing the BIG-IP
 
 - Obtain the IP address of the BIG-IP Management Port:
-
-  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > "*uniqueId*-vmss" > Instances > *instance name* > Essentials > Public or Private IP address**.
+  - NOTE: 
+      - When **false** is selected for **provisionPublicIp**, you must connect to the BIG-IP instances via a bastion host. When looking up public IPs, replace *uniqueId*-bigip-vmss with *uniqueId*-bastion-vmss to find the address of the bastion hosts. Once connected to a bastion host, you may then connect via SSH or X11 to the private IP addresses of the BIG-IP instances in *uniqueId*-bigip-vmss.
+      - When connecting to a BIG-IP instance using SSH via a bastion host, you must first copy the private SSH key to the bastion instance and set the correct permissions on the key.
+  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > "*uniqueId*-bigip-vmss" > Instances > *instance name* > Essentials > Public or Private IP address**.
   - **Azure CLI**: 
-    - Public IPs: 
+    - Public IPs (**provisionPublicIP** = **true**): 
       ```shell
       az vmss list-instance-public-ips --name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
+      ```
+    - Public IPs (**provisionPublicIP** = **false**): 
+      ```shell
+      az vmss list-instance-public-ips --name ${uniqueId}-bastion-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
       ```
     - Private IPs: 
       ```shell 
       az vmss nic list --vmss-name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipConfigurations[].privateIpAddress
       ```
 - Login in via SSH:
-  - **SSH key authentication**: 
+  - **SSH key authentication** (**provisionPublicIP** = **true**): 
     ```bash
-    ssh azureuser@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ```
+  - **SSH key authentication** (**provisionPublicIP** = **false**): 
+    ```bash
+    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    vi ${YOUR_PRIVATE_SSH_KEY}
+    # paste private key contents and save file
+    chmod 0600 ${YOUR_PRIVATE_SSH_KEY}
+    ssh azureuser@${PRIVATE_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
     ```
 
 - Login in via WebUI:

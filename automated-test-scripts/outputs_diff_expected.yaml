@@ -16,6 +16,12 @@
 ../../examples/modules/application/sample_linked.json:
 - No Key Diff
 - No Value Diff
+../../examples/modules/bastion/bastion.json:
+- No Key Diff
+- No Value Diff
+../../examples/modules/bastion/sample_linked.json:
+- No Key Diff
+- No Value Diff
 ../../examples/modules/bigip-autoscale/bigip.json:
 - No Key Diff
 - No Value Diff
