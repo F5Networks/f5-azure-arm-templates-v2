@@ -9,7 +9,7 @@
       "value": "f5-azure-arm-templates-v2/v1.3.1.0/examples/"
     },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.0.101000"
+      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
     },
     "bigIpInstanceType": {
       "value": "Standard_DS3_v2"

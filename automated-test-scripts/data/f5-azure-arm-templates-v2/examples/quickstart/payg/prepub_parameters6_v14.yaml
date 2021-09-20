@@ -3,10 +3,10 @@ ADMIN USERNAME: azureuser
 APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
 INSTANCE TYPE: Standard_DS3_v2
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.000000
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:14.1.404001
 LICENSE TYPE: payg
 NIC COUNT: 2
-PROVISION PUBLIC IP: true
+PROVISION PUBLIC IP: false
 REGION: westus
 RESOURCE GROUP: dd-quick-<DEWPOINT JOB ID>
 RESTRICTED SRC ADDRESS: '*'
