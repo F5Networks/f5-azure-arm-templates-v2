@@ -34,3 +34,7 @@ azure-arm-quickstart-payg-example-test:
         - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters4.yaml"
         # 1nic - prod stack
         - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters5.yaml"
+        # v14 public IP
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters6_v14.yaml"
+        # v14 no public IP
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters7_v14.yaml"

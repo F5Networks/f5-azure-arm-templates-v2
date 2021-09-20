@@ -765,8 +765,8 @@ These templates have been tested and validated with the following versions of BI
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.0.101000 | 16.0.1.1 Build 0.0.6 |
-| 14.1.400000 | 14.1.4 Build 0.0.11 |
+| 16.1.000000 | 16.1.0 Build 0.0.0 |
+| 14.1.404001 | 14.1.4.4 Build 0.0.1 |
 
 
 ## Supported Instance Types and Hypervisors
