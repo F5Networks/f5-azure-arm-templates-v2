@@ -114,8 +114,8 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
 | numNics | No | Enter valid number of network interfaces (1-3) to create on the BIG-IP VE instance. |
-| restrictedSrcAddressApp | Yes | When creating application security group, this field restricts application access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources. |
-| restrictedSrcAddressMgmt | Yes | When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation. |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the EC2 instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
@@ -312,20 +312,6 @@ From Parent Template Outputs:
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o tsv --query properties.outputs" 
     ```
 
-- Obtain the public IP address of the BIG-IP (or bastion host if **provisionPublicIP** = **false**) Management Port:
-  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bigIpManagementPublicIp***.
-  - **Azure CLI**: 
-    ``` bash 
-    az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpManagementPublicIp.value
-    ```
-
-- Obtain the private IP address of the BIG-IP Management Port:
-  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bigIpManagementPrivateIp***.
-  - **Azure CLI**: 
-    ``` bash 
-    az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpManagementPrivateIp.value
-    ```
-
 - Obtain the vmId of the BIG-IP Virtual Machine *(will be used for password later)*:
   - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > bigIpVmId**.
   - **Azure CLI**: 
@@ -333,48 +319,86 @@ From Parent Template Outputs:
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o tsv --query properties.outputs.bigIpVmId.value
     ```
 
+- Obtain the public IP address of the BIG-IP Management Port:
+  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bigIpManagementPublicIp***.
+  - **Azure CLI**: 
+    ``` bash 
+    az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpManagementPublicIp.value
+    ```
+
+- Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
+  - Obtain the public IP address of the bastion host:
+    - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bastion-vm > Public IP address**.
+
+
+  - Obtain the private IP address of the BIG-IP Management Port:
+    - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bigIpManagementPrivateIp***.
+    - **Azure CLI**: 
+      ``` bash 
+      az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpManagementPrivateIp.value
+      ```
+
+
 #### SSH
-- NOTE: 
-  - When **false** is selected for **provisionPublicIp**, you must connect to the BIG-IP instance via a bastion host. In this case, the **bigIpManagementPublicIp** template output will return the public IP address of the bastion host.
-  - When connecting to a BIG-IP instance using SSH via a bastion host, you must first copy the private SSH key to the bastion instance and set the correct permissions on the key.
+  
+  - **SSH key authentication**: 
+      ```bash
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+      ```
+  - **Password authentication**: 
+      ```bash 
+      ssh quickstart@${IP_ADDRESS_FROM_OUTPUT}
+      ``` 
+      at prompt, enter your **bigIpVmId** (see above to obtain from template "Outputs")
 
-  - **SSH key authentication** (**provisionPublicIP** = **true**): 
-    ```bash
-    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-    ```
-  - **SSH key authentication** (**provisionPublicIP** = **false**): 
-    ```bash
-    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-    vi ${YOUR_PRIVATE_SSH_KEY}
-    # paste private key contents and save file
-    chmod 0600 ${YOUR_PRIVATE_SSH_KEY}
-    ssh azureuser@${PRIVATE_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-    ```
-  - **Password authentication** (**provisionPublicIP** = **true**): 
-    ```bash 
-    ssh quickstart@${PUBLIC_IP_ADDRESS_FROM_OUTPUT}
-    ```
-  - **Password authentication** (**provisionPublicIP** = **false**): 
-    ```bash 
-    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-    ssh quickstart@${PRIVATE_IP_ADDRESS_FROM_OUTPUT}
-    ``` 
-    At prompt, enter your **bigIpVmId** (see above to obtain from template "Outputs")
 
+    - OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+        From your desktop client/shell, create an SSH tunnel:
+        ```bash
+        ssh -i [your-private-ssh-key.pem] -o ProxyCommand='ssh -i [your-private-ssh-key.pem] -W %h:%p [AZURE-USER]@[BASTION-HOST-PUBLIC-IP]' [BIG-IP-USER]@[BIG-IP-MGMT-PRIVATE-IP]
+        ```
+
+        Replace the variables in brackets before submitting the command.
+
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem -o ProxyCommand='ssh -i ~/.ssh/mykey.pem -W %h:%p azureuser@34.82.102.190' admin@10.0.0.11
+        ```
 
 #### WebUI
-- Obtain the URL address of the BIG-IP Management Port:
+
+1. Obtain the URL address of the BIG-IP Management Port:
   - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > bigIpMgmtPublicUrl**.
   - **Azure CLI**: 
     ```bash
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o tsv --query properties.outputs.bigIpManagementPublicUrl.value
     ```
 
-- Open a browser to the Management URL:
-  - NOTE: By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue").
-  - Provide 
+  - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+    - From your desktop client/shell, create an SSH tunnel:
+
+        ```bash
+        ssh -i [your-private-ssh-key.pem] [AZURE-USER]@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
+        ```
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem azureuser@34.82.102.190 -L 8443:10.0.0.11:443
+        ```
+
+        NOTE: `[BIGIP-GUI-PORT]` is 443 for multi-NIC deployments and 8443 for single-NIC deployments.
+
+        You should now be able to open a browser to the BIG-IP UI from your desktop:
+
+        https://localhost:8443
+
+
+
+2. Open a browser to the Management URL.
+  - *NOTE: By default, the BIG-IP system's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").*
+  - To Login: 
     - username: quickstart
-    - password: **bigIpVmId** (obtained from parent template "Outputs" above)
+    - password: **bigIpVmId** (see above to obtain from template "Outputs")
 
 
 ### Further Exploring

@@ -148,8 +148,8 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIqVnetId | No | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
 | createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
 | provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
-| restrictedSrcAddressApp | Yes | When creating application security group, this field restricts application access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources. |
-| restrictedSrcAddressMgmt | Yes | When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation. |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, for example: access via bastion host, clustering, etc. *IMPORTANT: Please restrict to your client. For example: 'X.X.X.X/32'.* *WARNING - For evaluation purposes only. Production should never have the BIG-IP Management interface exposed to Internet.*|
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the EC2 instances, for example `X.X.X.X/32` for a host, `0.0.0.0/0` for the Internet, etc. *NOTE: The VPC CIDR is automatically added for internal usage.* |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
@@ -483,41 +483,55 @@ To test the WAF service, perform the following steps:
 
 ### Accessing the BIG-IP
 
+
 - Obtain the IP address of the BIG-IP Management Port:
-  - NOTE: 
-      - When **false** is selected for **provisionPublicIp**, you must connect to the BIG-IP instances via a bastion host. When looking up public IPs, replace *uniqueId*-bigip-vmss with *uniqueId*-bastion-vmss to find the address of a bastion host. Once connected to a bastion host, you may then connect via SSH or X11 to the private IP addresses of the BIG-IP instances in *uniqueId*-bigip-vmss.
-      - When connecting to a BIG-IP instance using SSH via a bastion host, you must first copy the private SSH key to the bastion instance and set the correct permissions on the key.
-  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *INSTANCE_NAME* > Essentials > Public or Private IP address**.
+
+  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *instance name* > Essentials > Public address**.
   - **Azure CLI**: 
-    - Public IPs (**provisionPublicIP** = **true**): 
       ```shell
       az vmss list-instance-public-ips --name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
       ```
-    - Public IPs (**provisionPublicIP** = **false**): 
-      ```shell
-      az vmss list-instance-public-ips --name ${uniqueId}-bastion-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
-      ```
-    - Private IPs: 
-      ```shell 
-      az vmss nic list --vmss-name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipConfigurations[].privateIpAddress
-      ```
-- Login in via SSH:
-  - **SSH key authentication** (**provisionPublicIP** = **true**): 
+
+  - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
+       - Obtain the Public IP address of a bastion host: 
+         - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bastion-vmss > Instances > *instance name* > Essentials > Public address**.
+         - **Azure CLI**: 
+             ```shell
+             az vmss list-instance-public-ips --name ${uniqueId}-bastion-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
+             ```
+
+       - Obtain the Private IP address of a BIG-IP host: 
+          - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *instance name* > Essentials > Private address**
+          - **Azure CLI**: 
+              ```shell 
+              az vmss nic list --vmss-name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipConfigurations[].privateIpAddress
+              ```
+
+#### SSH
+
+  - **SSH key authentication**: 
+      ```bash
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+
+  - OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+    From your desktop client/shell, create an SSH tunnel:
     ```bash
-    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-    ```
-  - **SSH key authentication** (**provisionPublicIP** = **false**): 
-    ```bash
-    ssh azureuser@${PUBLIC_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
-    vi ${YOUR_PRIVATE_SSH_KEY}
-    # paste private key contents and save file
-    chmod 0600 ${YOUR_PRIVATE_SSH_KEY}
-    ssh azureuser@${PRIVATE_IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ssh -i [your-private-ssh-key.pem] -o ProxyCommand='ssh -i [your-private-ssh-key.pem] -W %h:%p [AZURE-USER]@[BASTION-HOST-PUBLIC-IP]' [BIG-IP-USER]@[BIG-IP-MGMT-PRIVATE-IP]
     ```
 
+    Replace the variables in brackets before submitting the command.
+
+    For example:
+    ```bash
+    ssh -i ~/.ssh/mykey.pem -o ProxyCommand='ssh -i ~/.ssh/mykey.pem -W %h:%p azureuser@34.82.102.190' admin@10.0.0.11
+    ```
+        
+#### WebUI 
+
 - Login in via WebUI:
-  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (per above) and use tmsh to create one:
-    At the TMSH prompt ```azureuser@(ip-10-0-0-100)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
+  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH and use tmsh to create one:
+    At the TMSH prompt ```admin@(bigip1)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
       ```shell
       create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
 
@@ -526,30 +540,50 @@ To test the WAF service, perform the following steps:
 
   - Open a browser to the Management IP
     - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
-    - NOTE: 
-      - By default, for Single NIC deployments, the management port is 8443.
-      - By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue").
-    - To Login: 
-      - username: `<YOUR_WEBUI_USERNAME>`
-      - password: `<YOUR_STRONG_PASSWORD>`
+
+        
+
+    - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+        From your desktop client/shell, create an SSH tunnel:
+        ```bash
+        ssh -i [keyname-passed-to-template.pem] [AZURE-USER]@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
+        ```
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem azureuser@34.82.102.190 -L 8443:10.0.0.11:8443
+        ```
+
+        You should now be able to open a browser to the BIG-IP UI from your desktop:
+
+        https://localhost:8443
+      
+
+  - NOTE: 
+    - By default, for Single NIC deployments, the management port is 8443.
+    - By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue" ).
+
+- To Login: 
+  - username: `<YOUR_WEBUI_USERNAME>`
+  - password: `<YOUR_STRONG_PASSWORD>`
       
 
 ### Further Exploring
 
 #### WebUI
- - Navigate to **Virtual Services > Partition**. Select Partition = `Tenant_1`
-    - Navigate to **Local Traffic Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). The should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*
+1. Navigate to **Virtual Services > Partition**. Select Partition = `Tenant_1`
+2.  Navigate to **Local Traffic Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). They should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*.
 
 #### SSH
 
-  - From tmsh shell, type 'bash' to enter the bash shell
-    - Examine BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
+1. From tmsh shell, type 'bash' to enter the bash shell.
+2. Examine the BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
     ```bash
     curl -u admin: http://localhost:8100/mgmt/shared/declarative-onboarding | jq .
     curl -u admin: http://localhost:8100/mgmt/shared/appsvcs/declare | jq .
     curl -u admin: http://localhost:8100/mgmt/shared/telemetry/declare | jq . 
     ```
-  - Examine the Runtime-Init Config downloaded: 
+3. Examine the Runtime-Init Config downloaded: 
     ```bash 
     cat /config/cloud/runtime-init.conf
     ```
@@ -560,7 +594,7 @@ To test the WAF service, perform the following steps:
 
 As mentioned in the [Introduction](#introduction), if you need to change the configuration on the BIG-IPs in the deployment, instead of updating the existing instances directly, you update the instance model by passing a new config file (which references the updated Automation Toolchain declarations) via template's bigIpRuntimeInitConfig input parameter. The model will be reponsible for maintaining the configuration across the deployment, updating existing instances and deploying new instances with the latest configuration.
 
-This happens by leveraging Azure's vmss [Rolling Upgrades](https://docs.microsoft.com/en-us/cli/azure/vmss/rolling-upgrade?view=azure-cli-latest) feature.
+This happens by leveraging Azure's VMSS [Rolling Upgrades](https://docs.microsoft.com/en-us/cli/azure/vmss/rolling-upgrade?view=azure-cli-latest) feature.
 
 By default, Rolling Upgrades are configured to upgrade in batches of 20% with zero pause time in between sets and minimum of 20% of healthy nodes available. To modify, you can customize the `/module/bigip-autoscale` template.
 
