@@ -35,7 +35,7 @@ cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-<LICENSE TYPE
 /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
 
 if [[ <LICENSE TYPE> == "bigiq" ]]; then
-    /usr/bin/yq e ".runtime_parameters.[5].secretProvider.vaultUrl = \"<RESOURCE GROUP>fnfv\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[5].secretProvider.vaultUrl = \"https://<UNIQUE STRING>fnfv.vault.azure.net/\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters.[5].secretProvider.secretId = \"<RESOURCE GROUP>fnbigiq\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"${BIGIQ_ADDRESS}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml

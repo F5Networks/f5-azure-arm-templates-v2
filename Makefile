@@ -11,7 +11,6 @@ SYNC_AT_DIR := cloud-tools/sync-at-components-metadata
 DIFF_VAR :=`diff automated-test-scripts/parameters_diff_expected.yaml ${PARSER_DIR}/parameters_diff.yaml`
 DIFF_VAR_OUTPUTS :=`diff automated-test-scripts/outputs_diff_expected.yaml ${PARSER_DIR}/outputs_diff.yaml`
 
-
 .PHONY: help
 help:
 	@echo "Check MakeFile"

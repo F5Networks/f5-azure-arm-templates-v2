@@ -200,7 +200,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTPS_Service:
@@ -221,7 +221,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
     - extensionType: ts
