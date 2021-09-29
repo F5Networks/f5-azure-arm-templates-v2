@@ -607,15 +607,15 @@ By default, Rolling Upgrades are configured to upgrade in batches of 20% with ze
           "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
         },
     ```
-    to `v1.3.1.0`
+    to `v1.4.0.0`
     ```json
         "bigIpRuntimeInitConfig": {
-          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
+          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
         },
     ```
 2. Re-deploy the template with new **bigIpRuntimeInitConfig** parameter
     ```bash
-    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigiq/azuredeploy.json  --parameters ${YOUR_NEW_PARAMETERS}
+    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigiq/azuredeploy.json  --parameters ${YOUR_NEW_PARAMETERS}
     ```  
 
 #### Upgrading the BIG-IP VE Image
@@ -625,7 +625,7 @@ As new BIG-IP versions are released, existing VM scale sets can be upgraded to u
 
 2. Re-deploy the template with new **bigIpImage** parameter
     ```bash
-    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigiq/azuredeploy.json  --parameters @azuredeploy.parameters.json
+    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigiq/azuredeploy.json  --parameters @azuredeploy.parameters.json
     ```
 
 **Note:** Due to a known issue, you cannot upgrade an existing VM Scale Set from BIG-IP version 15.1.200000 to version 16.0.101000. To upgrade between these versions, you must first delete the VM Scale Set resource before re-deploying the template.
