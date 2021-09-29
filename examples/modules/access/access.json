@@ -1,6 +1,6 @@
 {
-	"$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
-	"contentVersion": "1.3.1.0",
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.4.0.0",
 	"parameters": {
 		"builtInRoleType": {
 			"allowedValues": [
@@ -106,24 +106,22 @@
 		}
 	},
 	"variables": {
-		"Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-		"Owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
-		"Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-		"UserAccessAdministrator": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9')]",
 		"customRoleAssignScopes": "[if(empty(parameters('customRoleAssignableScopes')), createArray(resourceGroup().id), parameters('customRoleAssignableScopes'))]",
-		"identityApiVersion": "2018-11-30",
-		"keyVaultApiVersion": "2018-02-14",
 		"keyVaultNameVariable": "[if(empty(parameters('keyVaultName')), concat(resourceGroup().name, '-keyvault'), parameters('keyVaultName'))]",
-		"roleDefinitionApiVersion": "2018-07-01",
-		"roleAssignmentsApiVersion": "2018-09-01-preview",
 		"roleDefName": "[guid(resourceGroup().id, string(parameters('customRolePermissions')), string(parameters('customRoleName')))]",
+		"roleTypeArray": {
+			"Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+			"Owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+			"Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+			"UserAccessAdministrator": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9')]"
+		},
 		"secretNameVariable": "[if(or(empty(parameters('secretName')), empty(parameters('keyVaultName'))), concat(resourceGroup().name, '-secret', '/', 'secret'), concat(parameters('keyVaultName'), '/', parameters('secretName')))]",
 		"tenantId": "[subscription().tenantId]",
 		"userAssignedIdentityNameVariable": "[if(empty(parameters('userAssignedIdentityName')), concat(resourceGroup().name, '-identity'), parameters('userAssignedIdentityName'))]"
 	},
 	"resources": [
 		{
-			"apiVersion": "[variables('roleDefinitionApiVersion')]",
+			"apiVersion": "2018-07-01",
 			"condition": "[and(not(empty(parameters('customRoleName'))), not(empty(parameters('customRoleDescription'))))]",
 			"name": "[variables('roleDefName')]",
 			"properties": {
@@ -137,7 +135,7 @@
 			"type": "Microsoft.Authorization/roleDefinitions"
 		},
 		{
-			"apiVersion": "[variables('identityApiVersion')]",
+			"apiVersion": "2018-11-30",
 			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",
 			"location": "[resourceGroup().location]",
 			"name": "[variables('userAssignedIdentityNameVariable')]",
@@ -145,7 +143,7 @@
 			"type": "Microsoft.ManagedIdentity/userAssignedIdentities"
 		},
 		{
-			"apiVersion": "[variables('roleAssignmentsApiVersion')]",
+			"apiVersion": "2021-04-01-preview",
 			"condition": "[and(not(empty(parameters('customRoleName'))), and(not(empty(parameters('customRoleDescription'))), not(empty(parameters('userAssignedIdentityName')))))]",
 			"dependsOn": [
 				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]",
@@ -161,7 +159,7 @@
 			"type": "Microsoft.Authorization/roleAssignments"
 		},
 		{
-			"apiVersion": "[variables('roleAssignmentsApiVersion')]",
+			"apiVersion": "2021-04-01-preview",
 			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",
 			"dependsOn": [
 				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]"
@@ -169,14 +167,14 @@
 			"name": "[guid(resourceGroup().id, 'builtInId')]",
 			"properties": {
 				"principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable')), '2018-11-30').principalId]",
-				"roleDefinitionId": "[variables(parameters('builtInRoleType'))]",
+				"roleDefinitionId": "[variables('roleTypeArray')[parameters('builtInRoleType')]]",
 				"scope": "[resourceGroup().id]",
 				"principalType": "ServicePrincipal"
 			},
 			"type": "Microsoft.Authorization/roleAssignments"
 		},
 		{
-			"apiVersion": "[variables('keyVaultApiVersion')]",
+			"apiVersion": "2019-09-01",
 			"condition": "[and(not(empty(parameters('keyVaultName'))), not(empty(parameters('userAssignedIdentityName'))))]",
 			"dependsOn": [
 				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]"
@@ -186,7 +184,7 @@
 			"properties": {
 				"accessPolicies": [
 					{
-						"objectId": "[if(empty(parameters('userAssignedIdentityName')), resourceGroup().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable')), variables('identityApiVersion')).principalId)]",
+						"objectId": "[if(empty(parameters('userAssignedIdentityName')), resourceGroup().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable')), '2018-11-30').principalId)]",
 						"permissions": {
 							"keys": "[parameters('keyVaultPermissionsKeys')]",
 							"secrets": "[parameters('keyVaultPermissionsSecrets')]"
@@ -211,7 +209,7 @@
 			"type": "Microsoft.KeyVault/vaults"
 		},
 		{
-			"apiVersion": "[variables('keyVaultApiVersion')]",
+			"apiVersion": "2019-09-01",
 			"condition": "[and(not(empty(parameters('secretValue'))),not(empty(parameters('secretName'))))]",
 			"dependsOn": [
 				"[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultNameVariable'))]"
@@ -227,12 +225,12 @@
 	"outputs": {
 		"builtInRoleId": {
 			"type": "string",
-			"value": "[variables(parameters('builtInRoleType'))]"
+			"value": "[variables('roleTypeArray')[parameters('builtInRoleType')]]"
 		},
 		"customRoleDefinitionId": {
 			"condition": "[and(not(empty(parameters('customRoleName'))), not(empty(parameters('customRoleDescription'))))]",
 			"type": "string",
-			"value": "[resourceId(resourceGroup().name, 'Microsoft.Authorization/roleDefinitions/', variables('roleDefName'))]"
+			"value": "[resourceId('Microsoft.Authorization/roleDefinitions/', variables('roleDefName'))]"
 		},
 		"keyVaultName": {
 			"condition": "[not(empty(parameters('keyVaultName')))]",
@@ -247,7 +245,7 @@
 		"userAssignedIdentityId": {
 			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",
 			"type": "string",
-			"value": "[resourceId(resourceGroup().name, 'Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]"
+			"value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]"
 		}
 	}
 }

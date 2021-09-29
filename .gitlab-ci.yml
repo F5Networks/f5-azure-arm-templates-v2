@@ -11,6 +11,8 @@ stages:
   - droplets
   - publish
   - release
+  - post-release-tests
+  - merge
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -61,7 +63,7 @@ template2_prep_release_testing:
 
 # run arm-ttk against all templates
 run_arm_lint:
-  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/hawaku/arm-ttk
+  image: mcr.microsoft.com/powershell:lts-ubuntu-18.04
   stage: smoke-tests
   tags:
     - docker-executor
@@ -71,11 +73,15 @@ run_arm_lint:
       - triggers
       - pipelines
   script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends git
+    - git clone https://github.com/Azure/arm-ttk.git
     - templates=$(find examples -name *.json ! -name *.parameters.json ! -name sample_linked.json)
-    - for t in $templates; do echo "Testing template $t"; bash /arm-ttk/Test-AzTemplate.sh -TemplatePath $t -Test \"adminUsername Should Not Be A Literal\",\"Deployment Resources Must Not Be Debug\",\"Dynamic Variable References Should Not Use Concat\",\"Min And Max Value Are Numbers\",\"Outputs Must Not Contain Secrets\",\"Parameters Must Be Referenced\",\"Parameters Property Must Exist\",\"providers apiVersions Is Not Permitted\",\"Resources Should Have Location\",\"Secure String Parameters Cannot Have Default\",\"Variables Must Be Referenced\",\"Virtual Machines Should Not Be Preview\",\"VM Size Should Be A Parameter\" || continue; done
+    - for t in $templates; do echo "Testing template $t"; ./arm-ttk/arm-ttk/Test-AzTemplate.sh -TemplatePath $t -Skip \"Template Should Not Contain Blanks\",\"Location Should Not Be Hardcoded\" || continue; done
 
-## disabling this for now, need to work on checking links that have not been published yet
 # validate README file(s) only contain links that respond with 200 OK
+# this pre-release job only checks internal links to avoid failures
+# when tag version is unpublished
 run_link_checker:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:10
   stage: smoke-tests
@@ -83,9 +89,9 @@ run_link_checker:
     - docker-executor
   only:
     refs:
-      # the current intent is to run only on main and release branches
-      - main
+      # run only on release branch and develop
       - /^R.*/
+      - develop
   except:
     refs:
       - schedules
@@ -242,6 +248,37 @@ azure_application_module_test_job:
       - runner_system_failure
       - stuck_or_timeout_failure
 
+# Module: Bastion Template
+azure_bastion_module_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/*
+      - examples/modules/bastion/bastion.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $RELEASE_RUNTIME_INIT_TESTS == "true"
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/test_policy.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
 # Module: DAG Template
 azure_dag_module_test_job:
   stage: sprinkle-tests
@@ -294,6 +331,37 @@ azure_function_module_test_job:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/test_policy.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+# Module: Telemetry Template
+azure_telemetry_module_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/telemetry/*
+      - examples/modules/telemetry/telemetry.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $RELEASE_RUNTIME_INIT_TESTS == "true"
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -556,7 +624,7 @@ dewdrop_test_run:
     variables:
       - $RUN_SCHEDULED_DEWDROP_TEST == "true"
   script:
-    # The dewdrop image itself does not contain any test files, so ensure dewdrop
+    # the dewdrop image itself does not contain any test files, so ensure dewdrop
     # is run from the known location where test policies expect it to be
     # location: root of the cloud factory repository
     - if [ "$CLOUD_PROVIDER_ENVIRONMENT" == "aws_china" ]; then
@@ -566,6 +634,7 @@ dewdrop_test_run:
     - fi
     - python /dewdrop/dewdrop-docker.py
 
+# publish templates to github
 publish_to_github:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
   stage: release
@@ -583,3 +652,57 @@ publish_to_github:
     GITLAB_API_URL: "$AZURE_V2_URL"
     GITHUB_API_TOKEN: "$AZURE_V2_GITHUB_API_TOKEN"
     GITLAB_PRIVATE_TOKEN: "$AZURE_V2_GITLAB_API_TOKEN"
+
+# validate README file(s) only contain links that respond with 200 OK
+run_link_checker_release:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:10
+  stage: post-release-tests
+  tags:
+    - docker-executor
+  only:
+    # run only after release has been published
+    - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $RELEASE_RUNTIME_INIT_TESTS == "true"
+  script:
+    - make link_check_release
+
+# Create a merge request develop into staging
+create_merge_request:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
+  stage: merge
+  only:
+    - develop
+  script:
+    - apt-get update
+    - apt-get install -y jq
+    - ./cloud-tools/merge-request/merge-request.sh
+  variables:
+    GIT_LAB_API_URL: "$AZURE_V2_URL"
+    GIT_LAB_PRIVATE_TOKEN: "$AZURE_V2_GITLAB_API_TOKEN"
+    MR_SOURCE_BRANCH: "$CI_COMMIT_REF_NAME"
+    MR_TARGET_BRANCH: staging
+
+# verifies all examples use the latest AT Components versions
+check_at_components_metadata:
+  stage: smoke-tests
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+  script:
+    - curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt-get install -yq nodejs build-essential
+    - apt-get install -y jq
+    - pip3 install yq
+    - if [[ ! -z ${RUNTIME_INIT_PACKAGE_URL} && ! $CI_COMMIT_BRANCH == "main" ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure --runtime-init-package-url $RUNTIME_INIT_PACKAGE_URL; fi
+    - if [[ -z $RUNTIME_INIT_PACKAGE_URL ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure; fi
+    - if git diff | grep 'diff --git'; then exit 1; else exit 0; fi
+  tags:
+    - cm-official-docker-executor

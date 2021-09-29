@@ -1,74 +1,86 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.3.1.0",
-    "parameters": {
-        "uniqueString": {
-            "value": ""
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.4.0.0",
+  "parameters": {
+    "externalLoadBalancerName": {
+      "value": "None"
+    },
+    "internalLoadBalancerName": {
+      "value": "None"
+    },
+    "internalLoadBalancerProbePort": {
+      "value": "3456"
+    },
+    "internalSubnetId": {
+      "value": ""
+    },
+    "loadBalancerRulePorts": {
+      "value": [
+        "80",
+        "443"
+      ]
+    },
+    "nsg0": {
+      "value": [
+        {
+          "destinationPortRanges": [
+            "22",
+            "8443"
+          ],
+          "protocol": "Tcp",
+          "sourceAddressPrefix": ""
         },
-        "externalLoadBalancerName": {
-            "value": "None"
-        },
-        "internalLoadBalancerName": {
-            "value": "None"
-        },
-        "internalLoadBalancerProbePort": {
-            "value": "3456"
-        },
-        "internalSubnetId": {
-            "value": ""
-        },
-        "loadBalancerRulePorts": {
-            "value": [
-                "80",
-                "443"
-            ]
-        },
-        "nsg0": {
-            "value": [
-                {
-                    "destinationPortRanges": ["22","8443"],
-                    "sourceAddressPrefix": "",
-                    "protocol": "Tcp"
-                },
-                {
-                    "destinationPortRanges": ["80","443"],
-                    "sourceAddressPrefix": "",
-                    "protocol": "Tcp"
-                }
-            ]
-        },
-        "nsg1": {
-            "value": [
-                {
-                    "destinationPortRanges": ["80","443"],
-                    "sourceAddressPrefix": "",
-                    "protocol": "Tcp"
-                }
-            ]
-        },
-        "nsg2": {
-            "value": [
-                {
-                    "destinationPortRanges": ["80","443"],
-                    "sourceAddressPrefix": "",
-                    "protocol": "Tcp"
-                }
-            ]
-        },
-        "numberPublicExternalIpAddresses": {
-            "value": 1
-        },
-        "numberPublicMgmtIpAddresses": {
-            "value": 0
-        },
-        "tagValues": {
-            "value": {
-                "application": "APP",
-                "cost": "COST",
-                "environment": "ENV",
-                "group": "GROUP",
-                "owner": "OWNER"
-            }
+        {
+          "destinationPortRanges": [
+            "80",
+            "443"
+          ],
+          "protocol": "Tcp",
+          "sourceAddressPrefix": ""
         }
+      ]
+    },
+    "nsg1": {
+      "value": [
+        {
+          "destinationPortRanges": [
+            "80",
+            "443"
+          ],
+          "protocol": "Tcp",
+          "sourceAddressPrefix": ""
+        }
+      ]
+    },
+    "nsg2": {
+      "value": [
+        {
+          "destinationPortRanges": [
+            "80",
+            "443"
+          ],
+          "protocol": "Tcp",
+          "sourceAddressPrefix": ""
+        }
+      ]
+    },
+    "numberPublicExternalIpAddresses": {
+      "value": 1
+    },
+    "numberPublicMgmtIpAddresses": {
+      "value": 0
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "uniqueString": {
+      "value": ""
     }
+  }
 }

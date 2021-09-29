@@ -1,0 +1,7 @@
+# Bastion Module Tests 
+azure-arm-bastion-module-test:
+    test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/prepub_parameters1.yaml"

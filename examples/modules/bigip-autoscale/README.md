@@ -55,7 +55,11 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 | instanceHealthProbeId | No | Enter the resource ID of the probe that you wish to use to determine instance health when performing a rolling upgrade of scale set instances. Use the default value if you are using a manual upgrade policy. Note: The probe must be associated with a load balancing rule. |
 | instanceType | No | Enter a valid instance type. |
 | loadBalancerBackendAddressPoolsArray | No | Enter an Array of pools where BIG-IP instances are to be added. |
+| maxBatchInstancePercent | No | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
+| maxUnhealthyInstancePercent | No | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
+| maxUnhealthyUpgradedInstancePercent | No | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
 | nsgId | No | Enter security group ID to use. Use default if you do not wish to apply an NSG policy. |
+| pauseTimeBetweenBatches | No | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
 | provisionPublicIp | No | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
 | roleDefinitionId | No | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
 | scaleInCpuThreshold | No | The percentage of CPU utilization that should trigger a scale in event. Required when customAutoscaleRules parameter not used. |
@@ -364,7 +368,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -406,5 +410,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.3.1.0/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.4.0.0/examples/images/azure-bigip-autoscale-module.png)
 

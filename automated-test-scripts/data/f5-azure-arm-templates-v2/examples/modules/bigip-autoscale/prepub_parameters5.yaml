@@ -6,9 +6,10 @@ BUILT IN ROLE TYPE: Owner
 CPU METRIC NAME: Percentage CPU
 CUSTOM AUTOSCALE RULES: []
 CUSTOM EMAIL: '[]'
+CREATE WORKSPACE: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:15.1.201000 # custom image fails licensing, needs investigation
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.000000 # custom image fails licensing, needs investigation
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
 INTERNAL LOAD BALANCER PROBE PORT: 3456
@@ -33,6 +34,10 @@ SCALE OUT THROUGHPUT THRESHOLD: 20000000
 SCALE OUT TIME WINDOW: 10
 TEMPLATE URL: file://$PWD/examples/modules/bigip-autoscale/bigip.json
 THROUGHPUT METRIC NAME: Network In
+UPGRADE MAX BATCH: 25
+UPGRADE MAX UNHEALTHY: 15
+UPGRADE MAX UNHEALTHY UPGRADED: 20
+UPGRADE PAUSE TIME: 10
 USE AVAILABILITY ZONES: false
 USE NAT POOLS: 'No'
 USE ROLE DEFINITION ID: 'Yes'

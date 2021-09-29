@@ -1,48 +1,48 @@
 {
-    "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion":"1.3.1.0",
-    "parameters":{
-        "adminUsername":{
-            "value":"azureuser"
-        },
-        "sshKey":{
-            "value":""
-        },
-        "createAutoscaleGroup":{
-            "value":true
-        },
-        "instanceName":{
-            "value":"vm01"
-        },
-        "instanceType":{
-            "value":"Standard_D2s_v3"
-        },
-        "subnetId":{
-            "value":"app-subnet"
-        },
-        "nsgId":{
-            "value":""
-        },
-        "appContainerName":{
-            "value":"f5devcentral/f5-demo-app:latest"
-        },
-        "cloudInitUrl":{
-            "value":""
-        },
-        "tagValues":{
-            "value":{
-                "application":"APP",
-                "cost":"COST",
-                "environment":"ENV",
-                "group":"GROUP",
-                "owner":"OWNER"
-            }
-        },
-        "vmScaleSetMaxCount":{
-            "value":10
-        },
-        "vmScaleSetMinCount":{
-            "value":1
-        }
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.4.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "appContainerName": {
+      "value": "f5devcentral/f5-demo-app:latest"
+    },
+    "cloudInitUrl": {
+      "value": ""
+    },
+    "createAutoscaleGroup": {
+      "value": true
+    },
+    "instanceName": {
+      "value": "vm01"
+    },
+    "instanceType": {
+      "value": "Standard_D2s_v3"
+    },
+    "nsgId": {
+      "value": ""
+    },
+    "sshKey": {
+      "value": ""
+    },
+    "subnetId": {
+      "value": ""
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "vmScaleSetMaxCount": {
+      "value": 10
+    },
+    "vmScaleSetMinCount": {
+      "value": 1
     }
+  }
 }

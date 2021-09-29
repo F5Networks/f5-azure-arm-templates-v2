@@ -149,8 +149,8 @@ A high level overview of customizing the templates may look like:
           ```bash
           az group create -n ${RESOURCE_GROUP} -l ${REGION}
           az storage account create -n ${STORAGE_ACCOUNT_NAME} -g ${RESOURCE_GROUP} -l ${REGION}
-          az storage container create -n ${CONTAINER NAME} --account-name ${STORAGE_ACCOUNT_NAME}  --public-access container
-          az storage blob upload-batch -s f5-azure-arm-templates-v2/ -d https://${STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${CONTAINER NAME}
+          az storage container create -n ${CONTAINER_NAME} --account-name ${STORAGE_ACCOUNT_NAME}  --public-access container
+          az storage blob upload-batch -s f5-azure-arm-templates-v2/ -d https://${STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${CONTAINER_NAME}
           ```
 
           Example:

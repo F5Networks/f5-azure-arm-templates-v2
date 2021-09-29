@@ -1,0 +1,48 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.4.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "cloudInitUrl": {
+      "value": ""
+    },
+    "createAutoscaleGroup": {
+      "value": true
+    },
+    "instanceName": {
+      "value": "vm01"
+    },
+    "instanceType": {
+      "value": "Standard_D2s_v3"
+    },
+    "nsgId": {
+      "value": ""
+    },
+    "publicIpId": {
+      "value": ""
+    },
+    "sshKey": {
+      "value": ""
+    },
+    "subnetId": {
+      "value": ""
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "vmScaleSetMaxCount": {
+      "value": 10
+    },
+    "vmScaleSetMinCount": {
+      "value": 1
+    }
+  }
+}

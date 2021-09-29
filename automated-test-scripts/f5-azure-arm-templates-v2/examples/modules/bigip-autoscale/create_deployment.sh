@@ -14,7 +14,7 @@ echo "TEMPLATE URI: <TEMPLATE URL>"
 ID=$(az network vnet subnet show --resource-group dd-bigip-<DEWPOINT JOB ID> --name subnet0 --vnet-name vnet-<DEWPOINT JOB ID> | jq -r .id)
 SUBNETID="\"subnetId\":{\"value\":\"${ID}\"},"
 SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public | jq .value --raw-output)
-if [[ "<NSG0>" != "{}" ]]; then    
+if [[ "<NSG0>" != "{}" ]]; then
     NSGID="\"nsgId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.nsg0Id.value)\"},"
 else
     NSGID=""
@@ -54,11 +54,15 @@ fi
 
 if [[ "<USE ROLLING UPGRADE>" == "Yes" ]] && [ "<EXTERNAL LOAD BALANCER NAME>" != "none" ]; then
     INSTANCEHEALTHPROBEID="\"instanceHealthProbeId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-dag-env -g <RESOURCE GROUP> | jq -r .properties.outputs.externalLoadBalancerProbesId.value[0])\"},"
-else 
+    ROLLINGUPGRADESETTINGS="\"maxBatchInstancePercent\":{\"value\":<UPGRADE MAX BATCH>},\"maxUnhealthyInstancePercent\":{\"value\":<UPGRADE MAX UNHEALTHY>},\"maxUnhealthyUpgradedInstancePercent\":{\"value\":<UPGRADE MAX UNHEALTHY UPGRADED>},\"pauseTimeBetweenBatches\":{\"value\":<UPGRADE PAUSE TIME>},"
+else
     INSTANCEHEALTHPROBEID=""
+    ROLLINGUPGRADESETTINGS=""
 fi
 
-DEPLOY_PARAMS='{"uniqueString":{"value":"<DNSLABEL>"},"adminUsername":{"value":"<ADMIN USERNAME>"},"customAutoscaleRules":{"value":<CUSTOM AUTOSCALE RULES>},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"$SSH_KEY"'"},"image":{"value":"<IMAGE>"},"instanceType":{"value":"<INSTANCE TYPE>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"vmssName":{"value":"<VMSS NAME>"},"vmScaleSetMinCount":{"value":<VM SCALE SET MIN COUNT>},"vmScaleSetMaxCount":{"value":<VM SCALE SET MAX COUNT>},"cpuMetricName":{"value":"<CPU METRIC NAME>"},"scaleOutCpuThreshold":{"value":<SCALE OUT CPU THRESHOLD>},"scaleInCpuThreshold":{"value":<SCALE IN CPU THRESHOLD>},"scaleOutTimeWindow":{"value":<SCALE OUT TIME WINDOW>},"scaleInTimeWindow":{"value":<SCALE IN TIME WINDOW>},"throughputMetricName":{"value":"<THROUGHPUT METRIC NAME>"},"scaleOutThroughputThreshold":{"value":<SCALE OUT THROUGHPUT THRESHOLD>},"appInsights":{"value":"<APP INSIGHTS>"},"customEmail":{"value":<CUSTOM EMAIL>},"scaleInThroughputThreshold":{"value":<SCALE IN THROUGHPUT THRESHOLD>},'${INBOUNDMGMTNATPOOLID}''${INBOUNDSSHNATPOOLID}''${SUBNETID}''${NSGID}''${ASSIGNMANAGEDIDENTITY}''${ROLEDEFINITIONID}''${INSTANCEHEALTHPROBEID}''${LOADBALANCERBACKENDADDRESSPOOLSARRAY}'}'
+WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group <RESOURCE GROUP> --workspace-name f5telemetry --query customerId | tr -d '"')
+
+DEPLOY_PARAMS='{"uniqueString":{"value":"<DNSLABEL>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"}, "adminUsername":{"value":"<ADMIN USERNAME>"},"customAutoscaleRules":{"value":<CUSTOM AUTOSCALE RULES>},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"$SSH_KEY"'"},"image":{"value":"<IMAGE>"},"instanceType":{"value":"<INSTANCE TYPE>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"vmssName":{"value":"<VMSS NAME>"},"vmScaleSetMinCount":{"value":<VM SCALE SET MIN COUNT>},"vmScaleSetMaxCount":{"value":<VM SCALE SET MAX COUNT>},"cpuMetricName":{"value":"<CPU METRIC NAME>"},"scaleOutCpuThreshold":{"value":<SCALE OUT CPU THRESHOLD>},"scaleInCpuThreshold":{"value":<SCALE IN CPU THRESHOLD>},"scaleOutTimeWindow":{"value":<SCALE OUT TIME WINDOW>},"scaleInTimeWindow":{"value":<SCALE IN TIME WINDOW>},"throughputMetricName":{"value":"<THROUGHPUT METRIC NAME>"},"scaleOutThroughputThreshold":{"value":<SCALE OUT THROUGHPUT THRESHOLD>},"appInsights":{"value":"<APP INSIGHTS>"},"customEmail":{"value":<CUSTOM EMAIL>},"scaleInThroughputThreshold":{"value":<SCALE IN THROUGHPUT THRESHOLD>},'${INBOUNDMGMTNATPOOLID}''${INBOUNDSSHNATPOOLID}''${SUBNETID}''${NSGID}''${ASSIGNMANAGEDIDENTITY}''${ROLEDEFINITIONID}''${INSTANCEHEALTHPROBEID}''${ROLLINGUPGRADESETTINGS}''${LOADBALANCERBACKENDADDRESSPOOLSARRAY}'}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

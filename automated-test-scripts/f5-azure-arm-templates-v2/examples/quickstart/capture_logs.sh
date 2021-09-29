@@ -29,7 +29,7 @@ if [[ -n "$HOST" ]]; then
     echo "------------------------LOG:$LOG ------------------------"
     filename=$(basename ${LOG})
     echo $filename
-    sshpass -p '<RESOURCE GROUP>-vm' scp -o "StrictHostKeyChecking no" -P $SSH_PORT quickstart@${HOST}:${base}${LOG} ${TMP_DIR}/${filename}-<REGION>
+    sshpass -p '<RESOURCE GROUP>-bigip-vm' scp -o "StrictHostKeyChecking no" -P $SSH_PORT quickstart@${HOST}:${base}${LOG} ${TMP_DIR}/${filename}-<REGION>
     cat ${TMP_DIR}/${filename}-<REGION> 2>/dev/null
     echo
   done

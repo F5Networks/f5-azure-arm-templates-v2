@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "1.3.1.0",
+	"contentVersion": "1.4.0.0",
 	"parameters": {
 		"artifactLocation": {
 			"defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
@@ -23,7 +23,7 @@
 	"resources": [
 		{
 			"apiVersion": "[variables('deploymentApiVersion')]",
-			"name": "bigipTemplate",
+			"name": "bigIpTemplate",
 			"properties": {
 				"mode": "Incremental",
 				"parameters": {
@@ -74,6 +74,18 @@
 					},
 					"bigIpRuntimeInitConfig": {
 						"value": ""
+					},
+					"maxBatchInstancePercent": {
+						"value": 20
+					},
+					"maxUnhealthyInstancePercent": {
+						"value": 20
+					},
+					"maxUnhealthyUpgradedInstancePercent": {
+						"value": 20
+					},
+					"pauseTimeBetweenBatches": {
+						"value": 0
 					},
 					"scaleInCpuThreshold": {
 						"value": 20
@@ -131,7 +143,7 @@
 					}
 				},
 				"templateLink": {
-					"contentVersion": "1.3.1.0",
+					"contentVersion": "1.4.0.0",
 					"uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/bigip-autoscale/bigip.json')]"
 				}
 			},
@@ -141,23 +153,23 @@
 	"outputs": {
 		"appInsightsComponentId": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.appInsightsComponentId.value]"
+			"value": "[reference('bigIpTemplate').outputs.appInsightsComponentId.value]"
 		},
 		"appIps": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.roleAssignmentId.value]"
+			"value": "[reference('bigIpTemplate').outputs.roleAssignmentId.value]"
 		},
 		"autoscaleSettingsId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.autoscaleSettingsId.value]"
+			"value": "[reference('bigIpTemplate').outputs.autoscaleSettingsId.value]"
 		},
 		"vmssId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmssId.value]"
+			"value": "[reference('bigIpTemplate').outputs.vmssId.value]"
 		},
 		"vmssName": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmssName.value]"
+			"value": "[reference('bigIpTemplate').outputs.vmssName.value]"
 		}
 	}
 }

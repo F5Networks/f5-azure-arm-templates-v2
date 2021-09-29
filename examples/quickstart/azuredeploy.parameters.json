@@ -1,54 +1,57 @@
 {
-    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion":"1.3.1.0",
-    "parameters":{
-        "templateBaseUrl":{
-            "value":"https://cdn.f5.com/product/cloudsolutions/"
-        },
-        "artifactLocation":{
-            "value":"f5-azure-arm-templates-v2/v1.3.1.0/examples/"
-        },
-        "uniqueString":{
-            "value":""
-        },
-        "sshKey":{
-            "value":""
-        },
-        "restrictedSrcAddressMgmt":{
-            "value":""
-        },
-        "restrictedSrcAddressApp":{
-            "value":""
-        },
-        "bigIpRuntimeInitConfig":{
-            "value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
-        },
-        "bigIpRuntimeInitPackageUrl":{
-            "value":"https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run"
-        },
-        "bigIpImage":{
-            "value":"f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.0.101000"
-        },
-        "bigIpInstanceType":{
-            "value":"Standard_DS3_v2"
-        },
-        "numNics":{
-            "value":3
-        },
-        "useAvailabilityZones":{
-            "value":false
-        },
-        "appContainerName":{
-            "value":"f5devcentral/f5-demo-app:latest"
-        },
-        "tagValues":{
-            "value":{
-                "application":"APP",
-                "cost":"COST",
-                "environment":"ENV",
-                "group":"GROUP",
-                "owner":"OWNER"
-            }
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.4.0.0",
+  "parameters": {
+    "appContainerName": {
+      "value": "f5devcentral/f5-demo-app:latest"
+    },
+    "artifactLocation": {
+      "value": "f5-azure-arm-templates-v2/v1.4.0.0/examples/"
+    },
+    "bigIpImage": {
+      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
+    },
+    "bigIpInstanceType": {
+      "value": "Standard_DS3_v2"
+    },
+    "bigIpRuntimeInitConfig": {
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+    },
+    "bigIpRuntimeInitPackageUrl": {
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run"
+    },
+    "numNics": {
+      "value": 3
+    },
+    "provisionPublicIp": {
+      "value": true
+    },
+    "restrictedSrcAddressApp": {
+      "value": ""
+    },
+    "restrictedSrcAddressMgmt": {
+      "value": ""
+    },
+    "sshKey": {
+      "value": ""
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "templateBaseUrl": {
+      "value": "https://cdn.f5.com/product/cloudsolutions/"
+    },
+    "uniqueString": {
+      "value": ""
+    },
+    "useAvailabilityZones": {
+      "value": false
     }
+  }
 }
