@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.3.1.0",
+    "contentVersion": "1.4.0.0",
     "parameters": {
         "createNatGateway": {
             "defaultValue": false,
@@ -55,12 +55,12 @@
                         "routeTable": {
                             "id": "[resourceId('Microsoft.Network/routeTables', concat('routeTable-subnet', copyIndex('constructSubnetArray')))]"
                         },
-                        "natGateway": "[if(and(equals(copyIndex('constructSubnetArray'), 0), parameters('createNatGateway')), json(concat('{\"id\": \"', resourceId('Microsoft.Network/natGateways', variables('natGatewayName')), '\"}')), json('null'))]"             
+                        "natGateway": "[if(and(equals(copyIndex('constructSubnetArray'), 0), parameters('createNatGateway')), json(concat('{\"id\": \"', resourceId('Microsoft.Network/natGateways', variables('natGatewayName')), '\"}')), json('null'))]"
                     }
                 },
                 "name": "constructSubnetArray"
             }
-        ],       
+        ],
         "natGatewayName": "[concat(parameters('vnetName'), '-natgw')]",
         "natGatewayPublicIpName": "[concat(parameters('vnetName'), '-natgw-pip')]"
     },
