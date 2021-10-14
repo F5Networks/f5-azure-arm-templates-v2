@@ -1,6 +1,6 @@
 {
-	"$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
-	"contentVersion": "1.3.1.0",
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.4.0.0",
 	"parameters": {
 		"vmssId": {
 			"defaultValue": "",
@@ -90,10 +90,7 @@
 		}
 	},
 	"variables": {
-		"appInightsApiVersion": "2018-05-01-preview",
 		"applicationInsightsName": "[variables('functionAppName')]",
-		"authApiVersion": "2018-07-01",
-		"functionAppApiVersion": "2018-11-01",
 		"functionAppName": "[concat(parameters('functionAppName'), '-function')]",
 		"functionAppVnetName": "[last(split(parameters('functionAppVnetId'),'/'))]",
 		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/v1.2.0/timer_trigger_revoke.zip",
@@ -101,17 +98,15 @@
 		"functionStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
 		"functionWorkerRuntime": "python",
 		"hostingPlanName": "[concat(parameters('functionAppName'), '-plan')]",
-		"keyVaultApiVersion": "2018-02-14",
 		"keyVaultName": "[concat(parameters('functionAppName'), 'fv')]",
 		"location": "[resourceGroup().location]",
 		"vmssName": "[last(split(parameters('vmssId'),'/'))]",
 		"resourceGroupName": "[split(parameters('vmssId'),'/')[4]]",
-		"secretName": "[concat(parameters('functionAppName'), 'bigiq')]",
-		"storageApiVersion": "2017-10-01"
+		"secretName": "[concat(parameters('functionAppName'), 'bigiq')]"
 	},
 	"resources": [
 		{
-			"apiVersion": "[variables('storageApiVersion')]",
+			"apiVersion": "2021-04-01",
 			"kind": "Storage",
 			"location": "[variables('location')]",
 			"name": "[variables('functionStorageAccountName')]",
@@ -122,7 +117,7 @@
 			"type": "Microsoft.Storage/storageAccounts"
 		},
 		{
-			"apiVersion": "2018-02-01",
+			"apiVersion": "2021-01-15",
 			"kind": "linux",
 			"location": "[variables('location')]",
 			"name": "[variables('hostingPlanName')]",
@@ -133,7 +128,7 @@
 			"type": "Microsoft.Web/serverfarms"
 		},
 		{
-			"apiVersion": "[variables('functionAppApiVersion')]",
+			"apiVersion": "2021-01-15",
 			"dependsOn": [
 				"[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
 			],
@@ -157,7 +152,7 @@
 			},
 			"resources": [
 				{
-					"apiVersion": "[variables('functionAppApiVersion')]",
+					"apiVersion": "2021-01-15",
 					"dependsOn": [
 						"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
 						"[resourceId('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
@@ -167,13 +162,13 @@
 					],
 					"name": "appsettings",
 					"properties": {
-						"APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]",
+						"APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components/', variables('applicationInsightsName')), '2020-02-02').InstrumentationKey]",
 						"AZURE_RESOURCE_GROUP": "[variables('resourceGroupName')]",
 						"AZURE_VMSS_NAME": "[variables('vmssName')]",
 						"AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('functionStorageAccountId'),'2015-05-01-preview').key1)]",
 						"BIGIQ_ADDRESS": "[parameters('bigIqAddress')]",
 						"BIGIQ_LICENSE_POOL": "[parameters('bigIqLicensePool')]",
-						"BIGIQ_PASSWORD": "[concat('@Microsoft.KeyVault(SecretUri=https://', variables('keyVaultName'), '.vault.azure.net/secrets/', variables('secretName'), '/)')]",
+						"BIGIQ_PASSWORD": "[concat('@Microsoft.KeyVault(SecretUri=https://', variables('keyVaultName'), environment().suffixes.keyvaultDns, '/secrets/', variables('secretName'), '/)')]",
 						"BIGIQ_USERNAME": "[parameters('bigIqUsername')]",
 						"BIGIQ_UTILITY_SKU": "[if(equals(parameters('bigIqUtilitySku'), ''), json('null'), parameters('bigIqUtilitySku'))]",
 						"F5_DISABLE_SSL_WARNINGS": false,
@@ -187,7 +182,7 @@
 					"type": "config"
 				},
 				{
-					"apiVersion": "[variables('functionAppApiVersion')]",
+					"apiVersion": "2021-01-15",
 					"condition": "[not(equals(parameters('functionAppVnetId'), ''))]",
 					"dependsOn": [
 						"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
@@ -203,7 +198,7 @@
 			"type": "Microsoft.Web/sites"
 		},
 		{
-			"apiVersion": "[variables('authApiVersion')]",
+			"apiVersion": "2021-04-01-preview",
 			"dependsOn": [
 				"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
 				"[resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'appsettings')]",
@@ -211,14 +206,14 @@
 			],
 			"name": "[guid(concat(parameters('functionAppName'), '-role'))]",
 			"properties": {
-				"principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2018-11-01', 'Full').identity.principalId]",
-				"roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+				"principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-01-15', 'Full').identity.principalId]",
+				"roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
 				"scope": "[resourceGroup().id]"
 			},
 			"type": "Microsoft.Authorization/roleAssignments"
 		},
 		{
-			"apiVersion": "[variables('keyVaultApiVersion')]",
+			"apiVersion": "2019-09-01",
 			"dependsOn": [
 				"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
 			],
@@ -227,13 +222,13 @@
 			"properties": {
 				"accessPolicies": [
 					{
-						"objectId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2018-11-01', 'Full').identity.principalId]",
+						"objectId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-01-15', 'Full').identity.principalId]",
 						"permissions": {
 							"secrets": [
 								"get"
 							]
 						},
-						"tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2018-11-01', 'Full').identity.tenantId]"
+						"tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-01-15', 'Full').identity.tenantId]"
 					}
 				],
 				"networkAcls": {
@@ -248,7 +243,7 @@
 			},
 			"resources": [
 				{
-					"apiVersion": "[variables('keyVaultApiVersion')]",
+					"apiVersion": "2019-09-01",
 					"dependsOn": [
 						"[resourceId('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
 						"[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageAccountName'))]"
@@ -263,7 +258,7 @@
 			"type": "Microsoft.KeyVault/vaults"
 		},
 		{
-			"apiVersion": "[variables('appInightsApiVersion')]",
+			"apiVersion": "2020-02-02",
 			"location": "[variables('location')]",
 			"name": "[variables('applicationInsightsName')]",
 			"properties": {

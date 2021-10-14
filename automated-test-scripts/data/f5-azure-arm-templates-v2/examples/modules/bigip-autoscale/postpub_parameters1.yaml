@@ -8,9 +8,10 @@ CPU METRIC NAME: Percentage CPU
 CUSTOM AUTOSCALE RULES: >-
   [{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"GreaterThan","statistic":"Average","threshold":"80","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"LessThan","statistic":"Average","threshold":"20","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}},{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"GreaterThan","statistic":"Average","threshold":"20000000","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"LessThan","statistic":"Average","threshold":"10000000","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}}]
 CUSTOM EMAIL: '["dewpoint@f5.com"]'
+CREATE WORKSPACE: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:15.1.201000
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.000000
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
 INTERNAL LOAD BALANCER PROBE PORT: 3456
@@ -37,6 +38,10 @@ SCALE OUT THROUGHPUT THRESHOLD: 20000000
 SCALE OUT TIME WINDOW: 10
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/bigip-autoscale/bigip.json
 THROUGHPUT METRIC NAME: Network In
+UPGRADE MAX BATCH: 30
+UPGRADE MAX UNHEALTHY: 30
+UPGRADE MAX UNHEALTHY UPGRADED: 30
+UPGRADE PAUSE TIME: 10
 USE AVAILABILITY ZONES: true
 USE NAT POOLS: 'No'
 USE ROLE DEFINITION ID: 'Yes'

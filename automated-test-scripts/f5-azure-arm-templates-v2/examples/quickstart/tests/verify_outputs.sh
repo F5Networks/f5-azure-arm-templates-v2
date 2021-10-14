@@ -2,7 +2,7 @@
 #  expectValue = "OUTPUTS PASSED"
 #  scriptTimeout = 3
 #  replayEnabled = true
-#  replayTimeout = 5
+#  replayTimeout = 10
 
 # Script Requires min BASH Version 4
 # usage: verify_outputs associative_array
@@ -28,18 +28,18 @@ function verify_outputs() {
 # array_name[jq_filter]=expected_response
 subscription=$(az account show | jq -r .id)
 mgmt_private_ip="10.0.0.11"
-id=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vm | jq -r .vmId)
+id=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .vmId)
 
 if [[ <NIC COUNT> -eq 1 ]]; then
     mgmt_port="8443"
     nic1_service_index="0"
     nic2_service_index="0"
-    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[1].ipAddress)
+    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[1].ipAddress)
 else
     mgmt_port="443"
     nic1_service_index="1"
     nic2_service_index="2"
-    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vm | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
+    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
 fi
 
 vip_1_private_ip="10.0.${nic1_service_index}.101"
@@ -48,14 +48,16 @@ declare -A outputs
 outputs[appPrivateIp]="10.0.<NIC COUNT>.4"
 outputs[appUsername]="azureuser"
 outputs[appVmName]="<RESOURCE GROUP>-app-vm"
-outputs[bigIpUsername]="azureuser"
 outputs[bigIpManagementPrivateIp]=$mgmt_private_ip
 outputs[bigIpManagementPrivateUrl]="https://${mgmt_private_ip}:${mgmt_port}/"
 
 if [[ <PROVISION PUBLIC IP> == True ]]; then
-    mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     outputs[bigIpManagementPublicIp]=$mgmt_public_ip
     outputs[bigIpManagementPublicUrl]="https://${mgmt_public_ip}:${mgmt_port}/"
+else
+    bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    outputs[bigIpManagementPublicIp]=$bastion_public_ip
 fi
 
 outputs[vip1PrivateIp]=$vip_1_private_ip

@@ -15,9 +15,10 @@ CUSTOM ROLE PERMISSIONS: >-
   "notDataActions": []}]
 CUSTOM ROLE DESCRIPTION: 'Allows for read, write and delete access to Azure Storage blob containers and data'
 CUSTOM ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
+CREATE WORKSPACE: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-1g-best-hourly:15.1.201000
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-1g-best-hourly:16.1.000000
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
 INTERNAL LOAD BALANCER PROBE PORT: 3456
@@ -44,6 +45,10 @@ SCALE OUT THROUGHPUT THRESHOLD: 20000000
 SCALE OUT TIME WINDOW: 10
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/bigip-autoscale/bigip.json
 THROUGHPUT METRIC NAME: Network In
+UPGRADE MAX BATCH: 20
+UPGRADE MAX UNHEALTHY: 20
+UPGRADE MAX UNHEALTHY UPGRADED: 20
+UPGRADE PAUSE TIME: 0
 USE AVAILABILITY ZONES: false
 USE NAT POOLS: 'No'
 USE ROLE DEFINITION ID: 'No'

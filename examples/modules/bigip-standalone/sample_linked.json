@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "1.1.0.0",
+	"contentVersion": "1.4.0.0",
 	"parameters": {
 		"artifactLocation": {
 			"defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
@@ -23,7 +23,7 @@
 	"resources": [
 		{
 			"apiVersion": "[variables('deploymentApiVersion')]",
-			"name": "bigipTemplate",
+			"name": "bigIpTemplate",
 			"properties": {
 				"mode": "Incremental",
 				"parameters": {
@@ -89,7 +89,7 @@
 					},
 					"sshKey": {
 						"value": ""
-					},       
+					},
 					"tagValues": {
 						"value": {
 							"application": "APP",
@@ -116,7 +116,7 @@
 					}
 				},
 				"templateLink": {
-					"contentVersion": "1.1.0.0",
+					"contentVersion": "1.4.0.0",
 					"uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/bigip-standalone/bigip.json')]"
 				}
 			},
@@ -126,27 +126,27 @@
 	"outputs": {
         "selfPrivateIp0": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.selfPrivateIp0.value]"
+			"value": "[reference('bigIpTemplate').outputs.selfPrivateIp0.value]"
 		},
         "selfPrivateIp1": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.selfPrivateIp1.value]"
+			"value": "[reference('bigIpTemplate').outputs.selfPrivateIp1.value]"
 		},
         "selfPrivateIp2": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.selfPrivateIp2.value]"
+			"value": "[reference('bigIpTemplate').outputs.selfPrivateIp2.value]"
 		},
         "selfPrivateIp3": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.selfPrivateIp3.value]"
+			"value": "[reference('bigIpTemplate').outputs.selfPrivateIp3.value]"
 		},
         "roleAssignmentId": {
 			"type": "array",
-			"value": "[reference('bigipTemplate').outputs.roleAssignmentId.value]"
+			"value": "[reference('bigIpTemplate').outputs.roleAssignmentId.value]"
 		},
 		"vmId": {
 			"type": "string",
-			"value": "[reference('bigipTemplate').outputs.vmId.value]"
+			"value": "[reference('bigIpTemplate').outputs.vmId.value]"
 		}
 	}
 }

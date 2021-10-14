@@ -1,6 +1,7 @@
 azure-quickstart-byol-example-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/postpub_parameters.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/postpub_parameters3.yaml
   run: all
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml'
 azure-access-module-test:

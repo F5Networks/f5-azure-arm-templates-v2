@@ -13,13 +13,6 @@ runtime_parameters:
     headers:
       - name: Metadata
         value: true
-  - name: SUBSCRIPTION_ID
-    type: url
-    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2020-09-01'
-    query: subscriptionId
-    headers:
-      - name: Metadata
-        value: true
   - name: UNIQUE_STRING
     type: url
     value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
@@ -31,6 +24,13 @@ runtime_parameters:
     type: url
     value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
     query: "[?name=='workspaceId'].value|[0]"
+    headers:
+      - name: Metadata
+        value: true
+  - name: SUBSCRIPTION_ID
+    type: url
+    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2020-09-01'
+    query: subscriptionId
     headers:
       - name: Metadata
         value: true
@@ -52,14 +52,14 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.19.0
-      extensionHash: 15c1b919954a91b9ad1e469f49b7a0915b20de494b7a032da9eb258bbb7b6c49
+      extensionVersion: 1.23.0
+      extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
     - extensionType: as3
-      extensionVersion: 3.26.0
-      extensionHash: b33a96c84b77cff60249b7a53b6de29cc1e932d7d94de80cc77fb69e0b9a45a0
+      extensionVersion: 3.30.0
+      extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
     - extensionType: ts
-      extensionVersion: 1.18.0
-      extensionHash: de4c82cafe503e65b751fcacfb2f169912ad5ce1645e13c5135dca972299174a
+      extensionVersion: 1.22.0
+      extensionHash: bff1b0695b7408e05a5e22492c8fce4805fc84c10408f82b60b14a0a206406a7
 extension_services:
   service_operations:
     - extensionType: do
@@ -68,8 +68,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         label: >-
-          Autoscale 1NIC BIG-IP declaration for Declarative Onboarding with
-          BIG-IQ license
+          Autoscale 1NIC BIG-IP declaration for Declarative Onboarding with BIG-IQ
+          license
         async: true
         Common:
           class: Tenant
@@ -200,7 +200,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTPS_Service:
@@ -221,7 +221,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
     - extensionType: ts
@@ -254,13 +254,13 @@ extension_services:
             class: Telemetry_System_Poller
             interval: 60
             endpointList:
-            - My_Scaling_Endpoints/hostname
-            - My_Scaling_Endpoints/throughputIn
+              - My_Scaling_Endpoints/hostname
+              - My_Scaling_Endpoints/throughputIn
           My_Telemetry_System:
             class: Telemetry_System
             systemPoller:
-            - My_System_Poller
-            - My_Custom_Endpoints_Poller
+              - My_System_Poller
+              - My_Custom_Endpoints_Poller
           My_Azure_Application_Insights:
             appInsightsResourceName: '{{{UNIQUE_STRING}}}-insights'
             class: Telemetry_Consumer

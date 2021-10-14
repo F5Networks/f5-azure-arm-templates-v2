@@ -39,7 +39,7 @@ case <LICENSE TYPE> in
 bigiq)
     DEPLOY_BIGIQ='Yes'
     BIG_IQ_LICENSE='<AUTOFILL BIGIQ LICENSE KEY>'
-    BIG_IQ_LICENSE_POOL='clpv2:<AUTOFILL CLPV2 LICENSE KEY>'
+    BIG_IQ_LICENSE_POOL='<AUTOFILL CLPV2 LICENSE KEY>'
     echo "Deploying BIG-IQ" ;;
 *)
     echo "Not deploying BIG-IQ" ;;

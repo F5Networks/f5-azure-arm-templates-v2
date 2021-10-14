@@ -1,0 +1,9 @@
+REGION: westus
+RESOURCE GROUP: dd-app-<DEWPOINT JOB ID>
+SEQUENCE NUMBER: 0
+SOLUTION LOGS: 'cloud-init.log;cloud-init-output.log,waagent.log'
+SSH PORT: 22
+STACK PARAM: ''
+STACK TYPE: existing-stack
+SUBNET ID: /subscriptions/d18b486a-112d-4402-add2-7fb1006f943a/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/existingStackVnet/subnets/internal
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/telemetry/telemetry.json

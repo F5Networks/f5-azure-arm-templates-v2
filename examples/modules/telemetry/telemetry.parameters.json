@@ -1,0 +1,27 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.4.0.0",
+  "parameters": {
+    "sku": {
+      "value": "PerGB2018"
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "uniqueString": {
+      "value": ""
+    },
+    "workbookDisplayName": {
+      "value": "F5 BIG-IP WAF View"
+    },
+    "workspaceName": {
+      "value": "f5telemetry"
+    }
+  }
+}

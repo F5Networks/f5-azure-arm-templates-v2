@@ -1,6 +1,6 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
-  "contentVersion": "1.3.1.0",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.4.0.0",
   "parameters": {
     "adminUsername": {
       "defaultValue": "azureuser",
@@ -17,7 +17,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -47,7 +47,7 @@
     "image": {
       "defaultValue": "f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000",
       "metadata": {
-        "description":"2 formats accepted. URN of the image to use in Azure marketplace or id of custom image. Example URN value: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000. You can find the URNs of F5 marketplace images in the README for this template or by running the command: az vm image list --output yaml --publisher f5-networks --all. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image."
+        "description": "2 formats accepted. URN of the image to use in Azure marketplace or id of custom image. Example URN value: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000. You can find the URNs of F5 marketplace images in the README for this template or by running the command: az vm image list --output yaml --publisher f5-networks --all. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image."
       },
       "type": "string"
     },
@@ -85,6 +85,42 @@
         "description": "Array of pools where BIG-IP instances are to be added."
       },
       "type": "array"
+    },
+    "maxBatchInstancePercent": {
+      "defaultValue": 20,
+      "maxValue": 100,
+      "metadata": {
+        "description": "The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch."
+      },
+      "minValue": 1,
+      "type": "int"
+    },
+    "maxUnhealthyInstancePercent": {
+      "defaultValue": 20,
+      "maxValue": 100,
+      "metadata": {
+        "description": "The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy."
+      },
+      "minValue": 1,
+      "type": "int"
+    },
+    "maxUnhealthyUpgradedInstancePercent": {
+      "defaultValue": 20,
+      "maxValue": 100,
+      "metadata": {
+        "description": "The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state."
+      },
+      "minValue": 1,
+      "type": "int"
+    },
+    "pauseTimeBetweenBatches": {
+      "defaultValue": 0,
+      "maxValue": 120,
+      "metadata": {
+        "description": "The wait time between completing the update for all virtual machines in one batch and starting the next batch."
+      },
+      "minValue": 0,
+      "type": "int"
     },
     "nsgId": {
       "defaultValue": "",
@@ -242,11 +278,16 @@
         "description": "Name to use for Virtual Machine Scale Set."
       },
       "type": "string"
+    },
+    "workspaceId": {
+      "metadata": {
+        "description": "Log Analytics workspace ID used by Telemetry Streaming for sending logs"
+      },
+      "type": "string",
+      "defaultValue": "WORKSPACE_ID"
     }
   },
   "variables": {
-    "appInsightsApiVersion": "2015-04-01",
-    "appInsightsComponentsApiVersion": "2015-05-01",
     "appInsightsName": "[if(empty(parameters('appInsights')), 'NOT_USED', parameters('appInsights'))]",
     "autoscaleRules": [
       {
@@ -326,7 +367,6 @@
         }
       }
     ],
-    "computeApiVersion": "2019-12-01",
     "customData": "[base64(concat('#!/bin/bash -x\n\n# Log to local file and serial console\nmkdir -p /var/log/cloud /config/cloud /var/config/rest/downloads\nLOG_FILE=/var/log/cloud/startup-script.log\ntouch ${LOG_FILE}\nnpipe=/tmp/$$.tmp\ntrap \"rm -f $npipe\" EXIT\nmknod $npipe p\ntee <$npipe -a ${LOG_FILE} /dev/ttyS0 &\nexec 1>&-\nexec 1>$npipe\nexec 2>&1\n\necho \"$(date  +\"%Y-%m-%dT%H:%M:%S.%3NZ\") : Startup Script Start\"\n# Optional optimizations required as early in boot as possible before mcpd starts\n/usr/bin/setdb provision.extramb 1000\n/usr/bin/setdb restjavad.useextramb true\n\n# VARS FROM TEMPLATE\nPACKAGE_URL=', variables('singleQuote'), parameters('bigIpRuntimeInitPackageUrl'), variables('singleQuote'), '\nRUNTIME_CONFIG=',  variables('singleQuote'), parameters('bigIpRuntimeInitConfig'), variables('singleQuote'), '\n\n# Render or download f5-bigip-runtime-init config\nif [[ \"${RUNTIME_CONFIG}\" =~ ^http.* ]]; then\n    for i in {1..30}; do\n        curl -sfv --retry 1 --connect-timeout 5 -L \"${RUNTIME_CONFIG}\" -o /config/cloud/runtime-init.conf && break || sleep 10;\n    done\nelse\n  printf ', variables('singleQuote'), '%s\\n', variables('singleQuote'), ' \"${RUNTIME_CONFIG}\" | jq . > /config/cloud/runtime-init.conf\nfi\n\n# Download and install f5-bigip-runtime-init package\nif [[ ! -s \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" ]]; then\n  for i in {1..30}; do\n    curl -fv --retry 1 --connect-timeout 5 -L \"${PACKAGE_URL}\" -o \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" && break || sleep 10\n  done\nfi\nbash \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" -- ', variables('singleQuote'), '--cloud azure', variables('singleQuote'), '\n\n# Run\nf5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf\n'))]",
     "deploymentScript": "[resourceId('Microsoft.Resources/deploymentScripts', variables('deploymentScriptName'))]",
     "deploymentScriptName": "[concat(variables('appInsightsName'), '-metric-stub')]",
@@ -374,13 +414,11 @@
       "id": "[parameters('nsgId')]"
     },
     "offerToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[1])]",
-    "roleAssignmentsApiVersion": "2017-09-01",
     "rollingUpgrade": "[not(empty(parameters('instanceHealthProbeId')))]",
     "scaleInTimeWindow": "[concat('PT', parameters('scaleInTimeWindow'), 'M')]",
     "scaleOutTimeWindow": "[concat('PT', parameters('scaleOutTimeWindow'), 'M')]",
     "singleQuote": "'",
     "skuToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[2])]",
-    "storageApiVersion": "2017-10-01",
     "storageProfileArray": {
       "customImage": {
         "imageReference": {
@@ -400,21 +438,25 @@
     "upgradePolicyRolling": {
       "mode": "Rolling",
       "rollingUpgradePolicy": {
-        "maxBatchInstancePercent": 20,
-        "maxUnhealthyInstancePercent": 20,
-        "maxUnhealthyUpgradedInstancePercent": 20,
-        "pauseTimeBetweenBatches": "PT0S"
+        "maxBatchInstancePercent": "[parameters('maxBatchInstancePercent')]",
+        "maxUnhealthyInstancePercent": "[parameters('maxUnhealthyInstancePercent')]",
+        "maxUnhealthyUpgradedInstancePercent": "[parameters('maxUnhealthyUpgradedInstancePercent')]",
+        "pauseTimeBetweenBatches": "[concat('PT', parameters('pauseTimeBetweenBatches'), 'S')]"
       }
     },
     "useCustomImage": "[contains(tolower(parameters('image')), 'microsoft.compute')]",
     "useInboundMgmtNatPool": "[if(contains(tolower(parameters('inboundMgmtNatPoolId')), 'inboundnatpools'), variables('inboundMgmtNatPool'), parameters('inboundMgmtNatPoolId'))]",
     "useInboundSshNatPool": "[if(contains(tolower(parameters('inboundSshNatPoolId')), 'inboundnatpools'), variables('inboundSshNatPool'), parameters('inboundSshNatPoolId'))]",
     "versionToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[3])]",
-    "vmssId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('vmssName'))]"
+    "vmssId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('vmssName'))]",
+    "runtimeInitTag": {
+      "workspaceId": "[parameters('workspaceId')]",
+      "uniqueString": "[parameters('uniqueString')]"
+    }
   },
   "resources": [
     {
-      "apiVersion": "[variables('computeApiVersion')]",
+      "apiVersion": "2019-12-01",
       "dependsOn": [
         "[variables('deploymentScript')]",
         "[variables('diagnosticsStorageAccountName')]"
@@ -487,7 +529,7 @@
           "diagnosticsProfile": {
             "bootDiagnostics": {
               "enabled": true,
-              "storageUri": "[concat('https://', variables('diagnosticsStorageAccountName'), '.blob.core.windows.net')]"
+              "storageUri": "[concat('https://', variables('diagnosticsStorageAccountName'), '.blob.', environment().suffixes.storage)]"
             }
           }
         }
@@ -497,12 +539,12 @@
         "name": "[parameters('instanceType')]",
         "tier": "Standard"
       },
-      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "tags": "[union(variables('runtimeInitTag'), parameters('tagValues'))]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "zones": "[if(parameters('useAvailabilityZones'), createArray(1, 2, 3), json('null'))]"
     },
     {
-      "apiVersion": "[variables('storageApiVersion')]",
+      "apiVersion": "2021-04-01",
       "kind": "Storage",
       "location": "[resourceGroup().location]",
       "name": "[variables('diagnosticsStorageAccountName')]",
@@ -517,7 +559,7 @@
       "type": "Microsoft.Storage/storageAccounts"
     },
     {
-      "apiVersion": "[variables('appInsightsApiVersion')]",
+      "apiVersion": "2015-04-01",
       "dependsOn": [
         "[variables('vmssId')]"
       ],
@@ -552,7 +594,7 @@
       "type": "Microsoft.Insights/autoscaleSettings"
     },
     {
-      "apiVersion": "[variables('appInsightsComponentsApiVersion')]",
+      "apiVersion": "2020-02-02",
       "condition": "[not(equals(variables('appInsightsName'), 'NOT_USED'))]",
       "kind": "other",
       "location": "[resourceGroup().location]",
@@ -565,14 +607,14 @@
       "type": "Microsoft.Insights/components"
     },
     {
-      "apiVersion": "[variables('roleAssignmentsApiVersion')]",
+      "apiVersion": "2021-04-01-preview",
       "condition": "[not(empty(parameters('roleDefinitionId')))]",
       "dependsOn": [
         "[variables('vmssId')]"
       ],
       "name": "[guid(resourceGroup().id, 'roleId')]",
       "properties": {
-        "principalId": "[reference(variables('vmssId'), variables('computeApiVersion'), 'Full').identity.principalId]",
+        "principalId": "[reference(variables('vmssId'), '2019-12-01', 'Full').identity.principalId]",
         "roleDefinitionId": "[parameters('roleDefinitionId')]",
         "scope": "[resourceGroup().id]"
       },
@@ -585,7 +627,7 @@
         "[variables('appInsightsName')]"
       ],
       "type": "Microsoft.Resources/deploymentScripts",
-      "apiVersion": "2019-10-01-preview",
+      "apiVersion": "2020-10-01",
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
@@ -601,7 +643,7 @@
         "environmentVariables": [
           {
             "name": "INSTRUMENTATION_KEY",
-            "secureValue": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), variables('appInsightsComponentsApiVersion')).InstrumentationKey]"
+            "secureValue": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2020-02-02').InstrumentationKey]"
           }
         ],
         "scriptContent": "NOW=$(date); METRICS=(\"F5_system_cpu\" \"F5_system_tmmCpu\" \"F5_system_memory\" \"F5_system_tmmMemory\" \"F5_throughputIn_sys/performance/throughput/In_Current\"); for METRIC in \"${METRICS[@]}\"; do curl -d '{\"name\":\"MetricData\",\"time\":\"'\"${NOW}\"'\",\"iKey\":\"'\"${INSTRUMENTATION_KEY}\"'\",\"data\":{\"baseType\":\"MetricData\",\"baseData\":{\"metrics\":[{\"name\":\"'\"${METRIC}\"'\",\"value\":0,\"count\":0}]}}}' https://dc.services.visualstudio.com/v2/track; sleep 2; done",
@@ -619,7 +661,7 @@
     "appInsightsInstrumentationKey": {
       "condition": "[not(equals(variables('appInsightsName'), 'NOT_USED'))]",
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), variables('appInsightsComponentsApiVersion')).InstrumentationKey]"
+      "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2020-02-02').InstrumentationKey]"
     },
     "roleAssignmentId": {
       "condition": "[not(empty(parameters('roleDefinitionId')))]",

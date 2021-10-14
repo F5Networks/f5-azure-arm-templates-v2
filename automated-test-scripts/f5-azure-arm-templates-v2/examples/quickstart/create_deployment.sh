@@ -15,7 +15,12 @@ SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public |
 STORAGE_ACCOUNT_NAME=$(echo st<RESOURCE GROUP>tmpl | tr -d -)
 STORAGE_ACCOUNT_FQDN=$(az storage account show -n ${STORAGE_ACCOUNT_NAME} -g <RESOURCE GROUP> | jq -r .primaryEndpoints.blob)
 
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"numNics":{"value":<NIC COUNT>}}'
+if [[ <USE DEFAULT PARAMETERS> == 'Yes' ]]; then
+    DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"}}'
+else
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"numNics":{"value":<NIC COUNT>}}'
+fi
+
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

@@ -19,6 +19,7 @@
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
     - [Testing the WAF Service](#testing-the-waf-service)
+    - [Viewing the Azure Workbook in Azure Log Analytics Workspace](#viewing-the-azure-workbook-in-azure-log-analytics-workspace)
   - [Updating this Solution](#updating-this-solution)
     - [Updating the Configuration](#updating-the-configuration)
     - [Upgrading the BIG-IP VE Image](#upgrading-the-big-ip-ve-image)
@@ -124,6 +125,10 @@ This solution leverages more traditional Autoscale configuration management prac
 | artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | Enter a valid instance type. |
+| bigIpMaxBatchInstancePercent | No | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
+| bigIpMaxUnhealthyInstancePercent | No | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
+| bigIpMaxUnhealthyUpgradedInstancePercent | No | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
+| bigIpPauseTimeBetweenBatches | No | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
 | bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
 | bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
@@ -133,6 +138,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleInTimeWindow | No | The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
 | bigIpScaleOutCpuThreshold | No | The percentage of CPU utilization that should trigger a scale out event. |
 | bigIpScaleOutThroughputThreshold | No | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. |
+| bigIpScaleOutTimeWindow | No | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
 | bigIqAddress | Yes | The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP. Note: The Azure function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
 | bigIqLicensePool | Yes | The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ license pool specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. This value should match the BIG-IQ license pool specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
 | bigIqPassword | Yes | The BIG-IQ password to use during BIG-IP licensing via BIG-IQ; it will be stored as a secret in the Azure function KeyVault created by this template. This value should match the BIG-IQ password specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
@@ -140,8 +146,10 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIqUsername | Yes | The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
 | bigIqUtilitySku | No | The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
 | bigIqVnetId | No | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
-| restrictedSrcAddressApp | Yes | When creating application security group, this field restricts application access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources. |
-| restrictedSrcAddressMgmt | Yes | When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation. |
+| createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
+| provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, for example: access via bastion host, clustering, etc. *IMPORTANT: Please restrict to your client. For example: 'X.X.X.X/32'.* *WARNING - For evaluation purposes only. Production should never have the BIG-IP Management interface exposed to Internet.*|
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the EC2 instances, for example `X.X.X.X/32` for a host, `0.0.0.0/0` for the Internet, etc. *NOTE: The VPC CIDR is automatically added for internal usage.* |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
@@ -158,6 +166,8 @@ This solution leverages more traditional Autoscale configuration management prac
 | appVmssId | Application Virtual Machine Scale Set resource ID | Application Template | String |
 | bigIpUsername | BIG-IP username | BIG-IP Template | String |
 | virtualNetworkId | Virtual Network resource ID | Network Template | String |
+| bastionVmssName | Bastion Virtual Machine Scale Set name | Bastion Template | String |
+| bastionVmssId | Bastion Virtual Machine Scale Set resource ID | Bastion Template | String |
 | bigIpVmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | String |
 | bigIpVmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | String |
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | Array |
@@ -313,27 +323,8 @@ Example:
   6. Deploy or Re-Deploy the template
 
 
-This example configuration does not require any further modifications to deploy successfully *(Disclaimer: "Successfully" implying the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites) and created the remote logging destination)* However, the configurations would commonly be customized further. Some additional examples of customizations or modifications are provided below for illustration. 
+This example configuration does not require any further modification to deploy successfully. *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, the configurations are commonly customized further. Some additional examples of customizations or modifications are provided below for illustration. 
 
-The example configuration contains a Telemetry Streaming declaration that sends metrics to Azure Insights and logs to Azure Log Analytics. By default, the fields for the Telemetry Streaming declaration (**appInsightsResourceName** and **workspaceId**) are rendered from values from Azure metadata and a specific naming convention. These values could be modified to use different static values. 
-
-To change the logging destination: 
-
-  1. edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file with the new static values for `workspaceId` and `region`. 
-
-Example:.
-```yaml
-        My_Azure_Log_Analytics:
-          class: Telemetry_Consumer
-          type: Azure_Log_Analytics
-          workspaceId: <YOUR_WORKSPACE_ID>
-          useManagedIdentity: true
-          region: <YOUR_REGION>
-
-```
-  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc.) or render/format to send as inline json.
-  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline json of the updated configuration 
-  4. Deploy or Re-Deploy
 
 The example AS3 declaration in this config uses [Service Discovery](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/service-discovery.html#using-service-discovery-with-as3) to populate the pool with the private IP addresses of application servers in a Virtual Machine Scale Set. By default, the fields for the service discovery configuration (**resourceGroup**, **subscriptionId** and ***uniqueString***) are rendered similarly from Azure metadata. If the application VMSS were located in a different resource group or subscription, you could modify these values. 
 
@@ -378,15 +369,72 @@ Example:
   4. Deploy or Re-Deploy
 
 
+To change the logging destination: 
+
+  1. *OPTIONAL*: If the remote logging destination requires authentication, edit/modify the the corresponding runtime-init config file to fetch the secret from Azure Vault.
+
+Example:
+```yaml
+runtime_parameters:
+  - name: LOGGING_API_KEY
+    type: secret
+    secretProvider:
+      type: KeyVault
+      environment: azure
+      vaultUrl: 'https://<YOUR_VAULT_NAME>.vault.azure.net'
+      secretId: <YOUR_SECRET_NAME>
+```
+  NOTE: Ensure that the Azure Managed User Identity assigned to BIG-IP has permissions to access this secret.
+
+  2. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file with the new logging consumer/destination. 
+
+Example:
+```yaml
+        My_Remote_Logs_Namespace:
+          class: Telemetry_Namespace
+          My_Listener:
+            class: Telemetry_Listener
+            port: 6514
+          My_Azure_Log_Analytics:
+            class: Telemetry_Consumer
+            type: Azure_Log_Analytics
+            workspaceId: '{{{WORKSPACE_ID}}}'
+            useManagedIdentity: true
+            region: '{{{REGION}}}'
+
+```
+to:
+
+```yaml
+        My_Remote_Logs_Namespace:
+          class: Telemetry_Namespace
+          My_Listener:
+            class: Telemetry_Listener
+            port: 6514            
+          My_Remote_Consumer:
+            class: Telemetry_Consumer
+            type: Splunk
+            host: <YOUR_HOST>
+            protocol: https
+            port: 8088
+            passphrase:
+                cipherText: '{{{ LOGGING_API_KEY }}}'
+            compressionType: gzip
+```
+
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: GitHub, Azure Storage, etc.) or render/format to send as inline JSON.
+  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
+  4. Deploy or redeploy.
+
 ## Validation
 
 This section describes how to validate the template deployment, test the WAF service, and troubleshoot common problems.
 
 ### Validating the Deployment
 
-To view the status of the example and module template deployments, navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments**. You should see a series of deployments, including one each for the example templates as well as the accessTemplate, appTemplate, networkTemplate, dagTemplate, bigipTemplate, and functionTemplate. The deployment status for each template deployment should be "Succeeded".
+To view the status of the example and module template deployments, navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments**. You should see a series of deployments, including one each for the example templates as well as the accessTemplate, appTemplate, networkTemplate, dagTemplate, bigIpTemplate, and functionTemplate. The deployment status for each template deployment should be "Succeeded".
 
-Expected Deploy time for entire stack =~ 13-15 minutes.
+Expected deploy time for the entire stack =~ 13-15 minutes.
 
 If any of the deployments are in a failed state, proceed to the [Troubleshooting Steps](#troubleshooting-steps) section below.
 
@@ -395,7 +443,7 @@ If any of the deployments are in a failed state, proceed to the [Troubleshooting
 
 To test the WAF service, perform the following steps:
 
-1. Check the VM Scale Set instance health state; instance health is based on Azure's ability to connect to your application via the VM Scale Set's load balancer.
+1. Check the VM Scale Set instance health state. Instance health is based on Azure's ability to connect to your application via the VM Scale Set's load balancer.
   - Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-vmss" > Instances**. 
   - The health state for each instance should be "Healthy". If the state is "Unhealthy", proceed to the [Troubleshooting Steps](#troubleshooting-steps) section.
 
@@ -407,7 +455,7 @@ To test the WAF service, perform the following steps:
       ```
 3. Verify the application is responding:
   - Paste the IP address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
-      - NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue", etc.).
+      - NOTE: By default, the Virtual Service starts with a self-signed certificate. Follow your browser's instructions for accepting self-signed certificates (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue", etc.).
   - Use curl: 
       ```shell
        curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
@@ -416,7 +464,7 @@ To test the WAF service, perform the following steps:
     ```shell
     curl -sk -X DELETE https://${IP_ADDRESS_FROM_OUTPUT}
     ```
-  - The response should include a message that the request was blocked, and a reference support ID
+  - The response should include a message that the request was blocked, and a reference support ID.
     Example:
     ```shell
     $ curl -sko /dev/null -w '%{response_code}\n' https://55.55.55.55
@@ -425,30 +473,65 @@ To test the WAF service, perform the following steps:
     <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 2394594827598561347<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
     ```
 
+### Viewing the Azure Workbook in Azure Log Analytics Workspace 
+
+ - If you use the default settings, an Azure Log Analytics Workspace named "f5telemetry" with Azure Workbook named "F5 BIG-IP WAF View" is created. 
+
+    - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > f5telemetry(Workspace) > "F5 BIG-IP WAF VIEW"(Workbook)**.  
+    - Review any violations.
+      
 
 ### Accessing the BIG-IP
 
+
 - Obtain the IP address of the BIG-IP Management Port:
 
-   - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-vmss > Instances > *INSTANCE_NAME* > Essentials > Public or Private IP address**.
+  - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *instance name* > Essentials > Public address**.
   - **Azure CLI**: 
-    - Public IPs: 
       ```shell
       az vmss list-instance-public-ips --name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
       ```
-    - Private IPs: 
-      ```shell 
-      az vmss nic list --vmss-name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipConfigurations[].privateIpAddress
-      ```
-- Login in via SSH:
+
+  - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
+       - Obtain the Public IP address of a bastion host: 
+         - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bastion-vmss > Instances > *instance name* > Essentials > Public address**.
+         - **Azure CLI**: 
+             ```shell
+             az vmss list-instance-public-ips --name ${uniqueId}-bastion-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
+             ```
+
+       - Obtain the Private IP address of a BIG-IP host: 
+          - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *instance name* > Essentials > Private address**
+          - **Azure CLI**: 
+              ```shell 
+              az vmss nic list --vmss-name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipConfigurations[].privateIpAddress
+              ```
+
+#### SSH
+
   - **SSH key authentication**: 
+      ```bash
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+
+  - OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+    From your desktop client/shell, create an SSH tunnel:
     ```bash
-    ssh azureuser@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
+    ssh -i [your-private-ssh-key.pem] -o ProxyCommand='ssh -i [your-private-ssh-key.pem] -W %h:%p [AZURE-USER]@[BASTION-HOST-PUBLIC-IP]' [BIG-IP-USER]@[BIG-IP-MGMT-PRIVATE-IP]
     ```
 
+    Replace the variables in brackets before submitting the command.
+
+    For example:
+    ```bash
+    ssh -i ~/.ssh/mykey.pem -o ProxyCommand='ssh -i ~/.ssh/mykey.pem -W %h:%p azureuser@34.82.102.190' admin@10.0.0.11
+    ```
+        
+#### WebUI 
+
 - Login in via WebUI:
-  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (per above) and use tmsh to create one:
-    At the TMSH prompt ```azureuser@(ip-10-0-0-100)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
+  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH and use tmsh to create one:
+    At the TMSH prompt ```admin@(bigip1)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
       ```shell
       create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
 
@@ -457,34 +540,53 @@ To test the WAF service, perform the following steps:
 
   - Open a browser to the Management IP
     - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
-    - NOTE: 
-      - By default, for Single NIC deployments, the management port is 8443.
-      - By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue").
-    - To Login: 
-      - username: `<YOUR_WEBUI_USERNAME>`
-      - password: `<YOUR_STRONG_PASSWORD>`
+
+        
+
+    - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+        From your desktop client/shell, create an SSH tunnel:
+        ```bash
+        ssh -i [keyname-passed-to-template.pem] [AZURE-USER]@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
+        ```
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem azureuser@34.82.102.190 -L 8443:10.0.0.11:8443
+        ```
+
+        You should now be able to open a browser to the BIG-IP UI from your desktop:
+
+        https://localhost:8443
+      
+
+  - NOTE: 
+    - By default, for Single NIC deployments, the management port is 8443.
+    - By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue" ).
+
+- To Login: 
+  - username: `<YOUR_WEBUI_USERNAME>`
+  - password: `<YOUR_STRONG_PASSWORD>`
       
 
 ### Further Exploring
 
 #### WebUI
- - Navigate to **Virtual Services > Partition**. Select Partition = `Tenant_1`
-    - Navigate to **Local Traffic Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). The should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*
+1. Navigate to **Virtual Services > Partition**. Select Partition = `Tenant_1`
+2.  Navigate to **Local Traffic Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). They should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*.
 
 #### SSH
 
-  - From tmsh shell, type 'bash' to enter the bash shell
-    - Examine BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
+1. From tmsh shell, type 'bash' to enter the bash shell.
+2. Examine the BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
     ```bash
     curl -u admin: http://localhost:8100/mgmt/shared/declarative-onboarding | jq .
     curl -u admin: http://localhost:8100/mgmt/shared/appsvcs/declare | jq .
     curl -u admin: http://localhost:8100/mgmt/shared/telemetry/declare | jq . 
     ```
-  - Examine the Runtime-Init Config downloaded: 
+3. Examine the Runtime-Init Config downloaded: 
     ```bash 
     cat /config/cloud/runtime-init.conf
     ```
-
 
 ## Updating this Solution
 
@@ -492,7 +594,7 @@ To test the WAF service, perform the following steps:
 
 As mentioned in the [Introduction](#introduction), if you need to change the configuration on the BIG-IPs in the deployment, instead of updating the existing instances directly, you update the instance model by passing a new config file (which references the updated Automation Toolchain declarations) via template's bigIpRuntimeInitConfig input parameter. The model will be reponsible for maintaining the configuration across the deployment, updating existing instances and deploying new instances with the latest configuration.
 
-This happens by leveraging Azure's vmss [Rolling Upgrades](https://docs.microsoft.com/en-us/cli/azure/vmss/rolling-upgrade?view=azure-cli-latest) feature.
+This happens by leveraging Azure's VMSS [Rolling Upgrades](https://docs.microsoft.com/en-us/cli/azure/vmss/rolling-upgrade?view=azure-cli-latest) feature.
 
 By default, Rolling Upgrades are configured to upgrade in batches of 20% with zero pause time in between sets and minimum of 20% of healthy nodes available. To modify, you can customize the `/module/bigip-autoscale` template.
 
@@ -505,15 +607,15 @@ By default, Rolling Upgrades are configured to upgrade in batches of 20% with ze
           "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
         },
     ```
-    to `v1.3.1.0`
+    to `v1.4.0.0`
     ```json
-        "biRuntimeInitConfig": {
-          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
+        "bigIpRuntimeInitConfig": {
+          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
         },
     ```
 2. Re-deploy the template with new **bigIpRuntimeInitConfig** parameter
     ```bash
-    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigiq/azuredeploy.json  --parameters ${YOUR_NEW_PARAMETERS}
+    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigiq/azuredeploy.json  --parameters ${YOUR_NEW_PARAMETERS}
     ```  
 
 #### Upgrading the BIG-IP VE Image
@@ -523,8 +625,10 @@ As new BIG-IP versions are released, existing VM scale sets can be upgraded to u
 
 2. Re-deploy the template with new **bigIpImage** parameter
     ```bash
-    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigiq/azuredeploy.json  --parameters @azuredeploy.parameters.json
-    ```  
+    az deployment group create --name ${DEPLOYMENT_NAME} --resource-group ${RESOURCE_GROUP} --template-uri https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigiq/azuredeploy.json  --parameters @azuredeploy.parameters.json
+    ```
+
+**Note:** Due to a known issue, you cannot upgrade an existing VM Scale Set from BIG-IP version 15.1.200000 to version 16.0.101000. To upgrade between these versions, you must first delete the VM Scale Set resource before re-deploying the template.
 
 #### Lifecycle Troubleshooting
 
@@ -695,8 +799,8 @@ These templates have been tested and validated with the following versions of BI
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.0.101000 | 16.0.1.1 Build 0.0.6 |
-| 14.1.400000 | 14.1.4 Build 0.0.11 |
+| 16.1.000000 | 16.1.0 Build 0.0.0 |
+| 14.1.404001 | 14.1.4.4 Build 0.0.1 |
 
 
 ## Supported Instance Types and Hypervisors
@@ -721,4 +825,3 @@ For help with authoring and support for custom CST2 templates, we recommend enga
 ### Filing Issues
 
 Use the **Issues** link on the GitHub menu bar in this repository for items such as enhancement or feature requests and bugs found when deploying the example templates as-is. Tell us as much as you can about what you found and how you found it.
-
