@@ -12,6 +12,7 @@ onStart:
 - ../../common/verify_create.sh
 - ./tests/verify_license.sh
 - ./tests/verify_login.sh
+- ./tests/verify_runtimeinit_install_params.sh
 - ./tests/verify_waf_blocking.sh
 - ./tests/verify_remote_logging.sh
 - ./tests/update_model.sh

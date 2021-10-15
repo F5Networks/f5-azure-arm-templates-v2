@@ -8,6 +8,7 @@ onStart:
 - ./create_deployment.sh
 - ../../common/verify_create.sh
 - ./tests/verify_login.sh
+- ./tests/verify_runtimeinit_install_params.sh
 - ./tests/verify_waf_blocking.sh
 - ./tests/verify_outputs.sh
 - ../../common/delete_deployment.sh
