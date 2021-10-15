@@ -164,8 +164,8 @@ azure_access_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/**/*
       - examples/modules/access/access.json
   except:
     refs:
@@ -195,8 +195,8 @@ azure_network_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/network/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/network/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/network/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/network/**/*
       - examples/modules/network/network.json
   except:
     refs:
@@ -226,8 +226,8 @@ azure_application_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/**/*
       - examples/modules/application/application.json
   except:
     refs:
@@ -257,8 +257,8 @@ azure_bastion_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/**/*
       - examples/modules/bastion/bastion.json
   except:
     refs:
@@ -288,8 +288,8 @@ azure_dag_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/dag/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/dag/**/*
       - examples/modules/dag/dag.json
   except:
     refs:
@@ -319,8 +319,8 @@ azure_function_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/**/*
       - examples/modules/function/function.json
   except:
     refs:
@@ -350,8 +350,8 @@ azure_telemetry_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/telemetry/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/telemetry/**/*
       - examples/modules/telemetry/telemetry.json
   except:
     refs:
@@ -381,8 +381,8 @@ azure_bigip_autoscale_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/**/*
       - examples/modules/bigip-autoscale/bigip.json
   except:
     refs:
@@ -410,8 +410,8 @@ azure_bigip_standalone_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/**/*
       - examples/modules/bigip-standalone/bigip.json
   except:
     refs:
@@ -439,8 +439,8 @@ azure_autoscale_example_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
       - examples/autoscale/bigiq/azuredeploy.json
       - examples/autoscale/payg/azuredeploy.json
   except:
@@ -469,8 +469,8 @@ azure_quickstart_example_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
       - examples/quickstart/azuredeploy.json
   except:
     refs:
