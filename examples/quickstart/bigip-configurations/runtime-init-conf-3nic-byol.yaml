@@ -40,7 +40,7 @@ extension_packages:
       extensionHash: 2c990f6185b16acf0234ebba02afc24863f538c955f51c7a3ebe01d5db58b859
     - extensionType: as3
       extensionVersion: 3.32.0
-      extensionHash: 6003ab9319fa36948c2e5a473c00f46d359b6ecdda86460fa2886978f45bc1ac
+      extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
     - extensionType: ts
       extensionVersion: 1.24.0
       extensionHash: 842698f154a87d9beea52fd3c23f1cf32220042ecd496eb969a379d1164d213f
