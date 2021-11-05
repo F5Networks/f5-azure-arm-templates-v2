@@ -32,6 +32,6 @@ case <PROVISION PUBLIC IP> in
     echo "Did not find boolean for provisioning public IP" ;;
 esac
 
-if echo $response  | grep "examples/modules/bigip-autoscale/bigip.json"; then
+if echo $SSH_RESPONSE  | grep "examples/modules/bigip-autoscale/bigip.json"; then
     echo "SUCCESS"
 fi
