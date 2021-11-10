@@ -8,5 +8,7 @@ FUNCTION APP NAME: <RESOURCE GROUP>
 FUNCTION APP SKU: '{"Tier":"ElasticPremium","Name":"EP1"}'
 REGION: westus
 RESOURCE GROUP: dd-fn-<DEWPOINT JOB ID>
+SECRET VALUE: 'B!giq2017'
 TEMPLATE URL: file://$PWD/examples/modules/function/function.json
 TENANT: myTenant
+USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>

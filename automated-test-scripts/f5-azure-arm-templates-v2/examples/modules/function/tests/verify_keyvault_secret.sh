@@ -29,7 +29,7 @@ function verify_keyvault_secret() {
 # Build associative array
 # array_name[jq_filter]=expected_response
 declare -A keyvault_secret
-keyvault_secret[value]="<PASSWORD>"
+keyvault_secret[value]="<SECRET VALUE>"
 
 
 # Run array through function

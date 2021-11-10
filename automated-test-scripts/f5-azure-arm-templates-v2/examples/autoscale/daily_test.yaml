@@ -3,6 +3,7 @@ name: Azure Examples - Autoscale
 onStart:
 - ../../common/helper_init.sh
 - ../../common/create_resource_group.sh
+- ../../common/create_secret.sh
 - ../../common/upload_templates.sh
 - ./create_environment.sh
 - ../../common/verify_create_env.sh

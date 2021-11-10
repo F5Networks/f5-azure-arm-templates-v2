@@ -32,6 +32,7 @@ SCALE IN TIME WINDOW: 10
 SCALE OUT CPU THRESHOLD: 80
 SCALE OUT THROUGHPUT THRESHOLD: 20000000
 SCALE OUT TIME WINDOW: 10
+SECRET VALUE: StrongPassword212+
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/bigip-autoscale/bigip.json
 THROUGHPUT METRIC NAME: Network In
 UPGRADE MAX BATCH: 20

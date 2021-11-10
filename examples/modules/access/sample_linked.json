@@ -37,11 +37,9 @@
 					"customRoleAssignableScopes": { "value": [ "[subscription().subscriptionId]"] },
 					"customRoleDescription": { "value": "this is a custom role defition for reader" },
 					"customRoleName": {	"value": "custom-reader" },
-					"keyVaultName": { "value": "test-kv" },
 					"keyVaultPermissionsKeys": { "value": [ "get", "list" ]	},
 					"keyVaultPermissionsSecrets": { "value": [ "get", "list" ] },
-					"secretName": { "value": "linux-admin" },
-					"secretValue": { "value": "StrongPassword212+" },
+					"secretId": { "value": "https://mySecretVault.vault.azure.net/secrets/secretName" },
 					"userAssignedIdentityName": { "value": "" },
 					"tagValues": { "value": { "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" } }
 				}
@@ -57,7 +55,7 @@
 			"type": "string",
 			"value": "[reference('accessTemplate').outputs.customRoleDefinitionId.value]"
 		},
-		"userAssignedIdentityName": {
+		"userAssignedIdentityId": {
 			"type": "string",
 			"value": "[reference('accessTemplate').outputs.userAssignedIdentityName.value]"
 		},

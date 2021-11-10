@@ -59,7 +59,7 @@ extension_packages:
       extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
     - extensionType: ts
       extensionVersion: 1.24.0
-      extensionHash: 827d5f1d106db6b1be0eb457e3060a2c567a9539f831efefaa1703d14cde42ac
+      extensionHash: f20c4dd3b06986a29d1f79823dab0efd3d46d4d9406dbc90bb861e24912dd222
 extension_services:
   service_operations:
     - extensionType: do

@@ -43,7 +43,7 @@ extension_packages:
       extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
     - extensionType: ts
       extensionVersion: 1.24.0
-      extensionHash: 265c674a6607f64d8997fb8fe6c6aa6b205236cc861c6a34114e46a4eb150d13
+      extensionHash: f20c4dd3b06986a29d1f79823dab0efd3d46d4d9406dbc90bb861e24912dd222
     - extensionType: fast
       extensionVersion: 1.13.0
       extensionHash: aeecdc04bbf6cb1012cb8d32ab191210b737c9f8b23a037fcacd2420f32dfe18

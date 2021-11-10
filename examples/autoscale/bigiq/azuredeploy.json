@@ -22,6 +22,12 @@
       },
       "type": "string"
     },
+    "secretId": {
+      "metadata": {
+        "description": "REQUIRED - the full URI of the secretId, including KeyVault Name"
+      },
+      "type": "string"
+    },
     "sshKey": {
       "metadata": {
         "description": "REQUIRED - Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines."
@@ -186,43 +192,6 @@
       },
       "type": "bool"
     },
-    "bigIqAddress": {
-      "metadata": {
-        "description": "REQUIRED - The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP.  Note: The Azure function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqUsername": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqPassword": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ password to use during BIG-IP licensing via BIG-IQ; it will be stored as a secret in the Azure function KeyVault created by this template. This value should match the BIG-IQ password specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "securestring"
-    },
-    "bigIqLicensePool": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ license pool specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqTenant": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqUtilitySku": {
-      "defaultValue": "",
-      "metadata": {
-        "description": "The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
     "bigIqVnetId": {
       "defaultValue": "",
       "metadata": {
@@ -294,9 +263,14 @@
     "customRoleName": "",
     "customRolePermissions": [],
     "keyVaultName": "",
-    "keyVaultPermissionsKeys": [],
-    "keyVaultPermissionsSecrets": [],
-    "secretName": "",
+    "keyVaultPermissionsKeys": [
+      "get",
+      "list"
+    ],
+    "keyVaultPermissionsSecrets": [
+      "get",
+      "list"
+    ],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
     "numSubnets": 2,
     "vnetAddressPrefix": "10.0",
@@ -528,20 +502,14 @@
           "customRolePermissions": {
             "value": "[variables('customRolePermissions')]"
           },
-          "keyVaultName": {
-            "value": "[variables('keyVaultName')]"
-          },
           "keyVaultPermissionsKeys": {
             "value": "[variables('keyVaultPermissionsKeys')]"
           },
           "keyVaultPermissionsSecrets": {
             "value": "[variables('keyVaultPermissionsSecrets')]"
           },
-          "secretName": {
-            "value": "[variables('secretName')]"
-          },
-          "secretValue": {
-            "value": ""
+          "secretId": {
+            "value": "[parameters('secretId')]"
           },
           "userAssignedIdentityName": {
             "value": "[variables('userAssignedIdentityName')]"
@@ -880,23 +848,8 @@
           "vmssId": {
             "value": "[reference('bigIpTemplate').outputs.vmssId.value]"
           },
-          "bigIqAddress": {
-            "value": "[parameters('bigIqAddress')]"
-          },
-          "bigIqUsername": {
-            "value": "[parameters('bigIqUsername')]"
-          },
-          "bigIqPassword": {
-            "value": "[parameters('bigIqPassword')]"
-          },
-          "bigIqTenant": {
-            "value": "[parameters('bigIqTenant')]"
-          },
-          "bigIqLicensePool": {
-            "value": "[parameters('bigIqLicensePool')]"
-          },
-          "bigIqUtilitySku": {
-            "value": "[parameters('bigIqUtilitySku')]"
+          "bigIpRuntimeInitConfig": {
+            "value": "[parameters('bigIpRuntimeInitConfig')]"
           },
           "functionAppName": {
             "value": "[variables('functionAppName')]"
@@ -907,8 +860,14 @@
           "functionAppVnetId": {
             "value": "[parameters('bigIqVnetId')]"
           },
+          "secretId": {
+            "value": "[parameters('secretId')]"
+          },
           "tagValues": {
             "value": "[parameters('tagValues')]"
+          },
+          "userAssignManagedIdentity": {
+            "value": "[if(variables('assignManagedIdentity'), reference('accessTemplate').outputs.userAssignedIdentityId.value, '')]"
           }
         }
       }
