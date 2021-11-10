@@ -1,0 +1,17 @@
+---
+# Failover Example Test
+azure-arm-failover-byol-example-test:
+    test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/prepub_parameters1.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/prepub_parameters2.yaml"
+
+azure-arm-failover-payg-example-test:
+    test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/prepub_parameters1.yaml"
+        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/prepub_parameters2.yaml"

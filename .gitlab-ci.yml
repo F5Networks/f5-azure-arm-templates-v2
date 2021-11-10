@@ -489,6 +489,36 @@ azure_quickstart_example_test_job:
       - runner_system_failure
       - stuck_or_timeout_failure
 
+# Module: Failover Template
+azure_failover_example_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/**/*
+      - examples/failover/byol/azuredeploy.json
+      - examples/failover/payg/azuredeploy.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/test_policy.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
 # end of Azure Template Modules Tests
 
 pre_release_test_job:
