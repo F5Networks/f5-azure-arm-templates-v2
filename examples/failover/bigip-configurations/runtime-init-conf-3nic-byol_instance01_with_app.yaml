@@ -1,0 +1,233 @@
+---
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.25.0
+      extensionHash: 2c990f6185b16acf0234ebba02afc24863f538c955f51c7a3ebe01d5db58b859
+    - extensionType: as3
+      extensionVersion: 3.32.0
+      extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
+    - extensionType: cf
+      extensionVersion: 1.9.0
+      extensionHash: da3118eacc4fe9ff925d95d4bf8d1993810560e07260825306cb0721862defdf
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            dhclient.mgmt: disable
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            class: Provision
+            asm: nominal
+            ltm: nominal
+          my_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          my_System:
+            autoPhonehome: true
+            class: System
+            hostname: 'failover0.local'
+          my_License:
+            class: License
+            licenseType: regKey
+            regKey: REPLACE_WITH_VALID_REGKEY
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: 10.0.1.1
+            network: default
+            mtu: 1500
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          externalSelf:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: '{{{SELF_IP_INTERNAL}}}'
+            vlan: internal
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          configSync:
+            class: ConfigSync
+            configsyncIp: /Common/externalSelf/address
+          failoverAddress:
+            class: FailoverUnicast
+            address: /Common/externalSelf/address
+          failoverGroup:
+            class: DeviceGroup
+            type: sync-failover
+            members:
+              - failover0.local
+              - failover1.local
+            owner: /Common/failoverGroup/members/0
+            autoSync: true
+            saveOnAutoSync: false
+            networkFailover: true
+            fullLoadOnSync: false
+            asmSync: false
+          trust:
+            class: DeviceTrust
+            localUsername: admin
+            localPassword: '{{{BIGIP_PASSWORD}}}'
+            remoteHost: /Common/failoverGroup/members/0
+            remoteUsername: admin
+            remotePassword: '{{{BIGIP_PASSWORD}}}'
+    - extensionType: cf
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Cloud_Failover
+        environment: azure
+        controls:
+          class: Controls
+          logLevel: info
+        externalStorage:
+          scopingTags:
+            f5_cloud_failover_label: bigip-high-availability-solution
+        failoverAddresses:
+          enabled: true
+          scopingTags:
+            f5_cloud_failover_label: bigip-high-availability-solution
+          requireScopingTags: false
+    - extensionType: as3
+      type: inline
+      value:
+        class: ADC
+        schemaVersion: 3.0.0
+        label: Failover
+        remark: Failover
+        Tenant_1:
+          class: Tenant
+          Shared:
+            class: Application
+            template: shared
+            shared_pool:
+              class: Pool
+              remark: Service 1 shared pool
+              members:
+                - serverAddresses:
+                    - 10.0.3.4
+                  servicePort: 80
+              monitors:
+                - http
+          HTTP_Service:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - 10.0.1.101
+              snat: auto
+              policyWAF:
+                use: WAFPolicy
+              pool: /Tenant_1/Shared/shared_pool
+            WAFPolicy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+          HTTPS_Service:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - 10.0.1.101
+              snat: auto
+              policyWAF:
+                use: WAFPolicy
+              pool: /Tenant_1/Shared/shared_pool
+              serverTLS:
+                bigip: /Common/clientssl
+              redirect80: false
+            WAFPolicy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+post_onboard_enabled: []
+pre_onboard_enabled:
+  - name: disable_1nic_config
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.1nicautoconfig disable
+  - name: provision_rest
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.extramb 1000
+      - /usr/bin/setdb restjavad.useextramb true
+runtime_parameters:
+  - name: BIGIP_PASSWORD
+    type: secret
+    secretProvider:
+      type: KeyVault
+      environment: azure
+      vaultUrl: 'https://myVaultName.vault.azure.net'
+      secretId: mySecretId
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 1
+  - name: SELF_IP_INTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 2

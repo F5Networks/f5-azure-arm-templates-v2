@@ -16,6 +16,20 @@
       },
       "type": "string"
     },
+    "cfeStorageAccountName": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "CFE storage account created and used for cloud-failover-extension."
+      },
+      "type": "string"
+    },
+    "cfeTag": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Cloud Failover deployment tag value."
+      },
+      "type": "string"
+    },
     "image": {
       "defaultValue": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000",
       "metadata": {
@@ -349,9 +363,30 @@
     "runtimeInitTag": {
       "workspaceId": "[parameters('workspaceId')]",
       "uniqueString": "[parameters('uniqueString')]"
-    }
+    },
+    "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), parameters('uniqueString'))]",
+    "cfeTag": {
+      "f5_cloud_failover_label": "[parameters('cfeTag')]"
+    },
+    "cfeTagValue": "[union(if(empty(parameters('tagValues')), json('null'), parameters('tagValues')), variables('cfeTag'))]"
   },
   "resources": [
+    {
+      "apiVersion": "2021-04-01",
+      "condition": "[not(empty(parameters('cfeStorageAccountName')))]",
+      "kind": "Storage",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('cfeStorageAccountName')]",
+      "properties": {
+        "supportsHttpsTrafficOnly": true
+      },
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "tags": "[variables('cfeTagValue')]",
+      "type": "Microsoft.Storage/storageAccounts"
+    },
     {
       "apiVersion": "2021-04-01",
       "kind": "Storage",
@@ -391,7 +426,7 @@
           "id": "[parameters('nic1NsgId')]"
         }
       },
-      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "tags": "[union(variables('cfeTagValue'), json(concat('{\"f5_cloud_failover_nic_map\": \"nic1\"}')))]",
       "type": "Microsoft.Network/networkInterfaces"
     },
     {
@@ -405,7 +440,7 @@
           "id": "[parameters('nic2NsgId')]"
         }
       },
-      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "tags": "[union(variables('cfeTagValue'), json(concat('{\"f5_cloud_failover_nic_map\": \"nic2\"}')))]",
       "type": "Microsoft.Network/networkInterfaces"
     },
     {

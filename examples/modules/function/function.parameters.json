@@ -1,36 +1,39 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.4.0.0",
-    "parameters": {
-        "bigIpRuntimeInitConfig": {
-            "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
-        },
-        "functionAppName": {
-            "value": "functionApp"
-        },
-        "functionAppSku": {
-            "value": {
-                "Name": "EP1",
-                "Tier": "ElasticPremium"
-            }
-        },
-        "functionAppVnetId": {
-            "value": ""
-        },
-        "tagValues": {
-            "value": {
-                "application": "APP",
-                "cost": "COST",
-                "environment": "ENV",
-                "group": "GROUP",
-                "owner": "OWNER"
-            }
-        },
-        "userAssignManagedIdentity": {
-            "value": ""
-        },
-        "vmssId": {
-            "value": ""
-        }
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.4.0.0",
+  "parameters": {
+    "bigIpRuntimeInitConfig": {
+      "value": ""
+    },
+    "functionAppName": {
+      "value": "functionApp"
+    },
+    "functionAppSku": {
+      "value": {
+        "Name": "EP1",
+        "Tier": "ElasticPremium"
+      }
+    },
+    "functionAppVnetId": {
+      "value": ""
+    },
+    "secretId": {
+      "value": ""
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "userAssignManagedIdentity": {
+      "value": ""
+    },
+    "vmssId": {
+      "value": ""
     }
+  }
 }
