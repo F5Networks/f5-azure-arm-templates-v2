@@ -30,23 +30,8 @@
 					"vmssId": {
 						"value": "vmssId"
 					},
-					"bigIqAddress": {
-						"value": "Default"
-					},
-					"bigIqLicensePool": {
-						"value": "Default"
-					},
-					"bigIqPassword": {
-						"value": "Default"
-					},
-					"bigIqUsername": {
-						"value": "azureuser"
-					},
-					"bigIqTenant": {
-						"value": "Default"
-					},
-					"bigIqUtilitySku": {
-						"value": "Default"
+					"bigIpRuntimeInitConfig": {
+						"value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
 					},
 					"functionAppName": {
 						"value": "functionApp"
@@ -56,6 +41,9 @@
 							"Tier": "ElasticPremium",
 							"Name": "EP1"
 						}
+					},
+					"secretId": {
+						"value": "https://mySecretVault.vault.azure.net/secrets/secretName"
 					},
 					"functionAppVnetId": {
 						"value": "Default"
@@ -68,6 +56,9 @@
 							"group": "GROUP",
 							"owner": "OWNER"
 						}
+					},
+					"userAssignManagedIdentity": {
+						"value": ""
 					}
 				},
 				"templateLink": {
@@ -90,10 +81,6 @@
 		"functionApp": {
 			"type": "string",
 			"value": "[reference('functionTemplate').outputs.functionApp.value]"
-		},
-		"keyVault": {
-			"type": "string",
-			"value": "[reference('functionTemplate').outputs.keyVault.value]"
 		},
 		"applicationInsights": {
 			"type": "string",

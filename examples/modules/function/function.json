@@ -9,45 +9,10 @@
 			},
 			"type": "string"
 		},
-		"bigIqAddress": {
+		"bigIpRuntimeInitConfig": {
 			"defaultValue": "",
 			"metadata": {
-				"description": "The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP.  Note: The Azure function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-			},
-			"type": "string"
-		},
-		"bigIqLicensePool": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ license pool specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-			},
-			"type": "string"
-		},
-		"bigIqPassword": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "The BIG-IQ password to use during BIG-IP licensing via BIG-IQ; it will be stored as a secret in the Azure function KeyVault created by this template. This value should match the BIG-IQ password specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-			},
-			"type": "securestring"
-		},
-		"bigIqUsername": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-			},
-			"type": "string"
-		},
-		"bigIqTenant": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-			},
-			"type": "string"
-		},
-		"bigIqUtilitySku": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
+				"description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
 			},
 			"type": "string"
 		},
@@ -75,6 +40,13 @@
 			},
 			"type": "string"
 		},
+		"secretId": {
+			"defaultValue": "",
+			"metadata": {
+				"description": "Enter full URI of existing secret."
+			},
+			"type": "string"
+		},
 		"tagValues": {
 			"defaultValue": {
 				"application": "APP",
@@ -87,18 +59,27 @@
 				"description": "Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key."
 			},
 			"type": "object"
+		},
+		"userAssignManagedIdentity": {
+			"defaultValue": "",
+			"metadata": {
+				"description": "Enter user assigned management identity ID to be associated to vmss. Leave default if not used."
+			},
+			"type": "string"
 		}
 	},
 	"variables": {
 		"applicationInsightsName": "[variables('functionAppName')]",
 		"functionAppName": "[concat(parameters('functionAppName'), '-function')]",
 		"functionAppVnetName": "[last(split(parameters('functionAppVnetId'),'/'))]",
-		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/v1.2.0/timer_trigger_revoke.zip",
+		"functionUrl": "https://khanna.s3.amazonaws.com/timer_trigger_revoke.zip",
 		"functionStorageAccountId": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
 		"functionStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
 		"functionWorkerRuntime": "python",
 		"hostingPlanName": "[concat(parameters('functionAppName'), '-plan')]",
-		"keyVaultName": "[concat(parameters('functionAppName'), 'fv')]",
+		"secretIdSplitDelimiters": [ "https://", "[environment().suffixes.keyvaultDns]" ],
+		"secretIdSplitArray": "[split(parameters('secretId'),variables('secretIdSplitDelimiters'))]",
+		"keyVaultNameVariable": "[variables('secretIdSplitArray')[1]]",
 		"location": "[resourceGroup().location]",
 		"vmssName": "[last(split(parameters('vmssId'),'/'))]",
 		"resourceGroupName": "[split(parameters('vmssId'),'/')[4]]",
@@ -155,8 +136,6 @@
 					"apiVersion": "2021-01-15",
 					"dependsOn": [
 						"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
-						"[resourceId('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
-						"[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('secretName'))]",
 						"[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageAccountName'))]",
 						"[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]"
 					],
@@ -166,13 +145,10 @@
 						"AZURE_RESOURCE_GROUP": "[variables('resourceGroupName')]",
 						"AZURE_VMSS_NAME": "[variables('vmssName')]",
 						"AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('functionStorageAccountId'),'2015-05-01-preview').key1)]",
-						"BIGIQ_ADDRESS": "[parameters('bigIqAddress')]",
-						"BIGIQ_LICENSE_POOL": "[parameters('bigIqLicensePool')]",
-						"BIGIQ_PASSWORD": "[concat('@Microsoft.KeyVault(SecretUri=https://', variables('keyVaultName'), environment().suffixes.keyvaultDns, '/secrets/', variables('secretName'), '/)')]",
-						"BIGIQ_USERNAME": "[parameters('bigIqUsername')]",
-						"BIGIQ_UTILITY_SKU": "[if(equals(parameters('bigIqUtilitySku'), ''), json('null'), parameters('bigIqUtilitySku'))]",
+						"RUNTIME_INIT_CONFIG": "[parameters('bigIpRuntimeInitConfig')]",
+						"BIGIQ_PASSWORD": "[concat('@Microsoft.KeyVault(SecretUri=', parameters('secretId'), ')')]",
 						"F5_DISABLE_SSL_WARNINGS": false,
-						"TENANT": "[if(empty(parameters('bigIqTenant')), variables('vmssName'), parameters('bigIqTenant'))]",
+						"TENANT": "[variables('vmssName')]",
 						"FUNCTIONS_EXTENSION_VERSION": "~3",
 						"FUNCTIONS_WORKER_RUNTIME": "[variables('functionWorkerRuntime')]",
 						"WEBSITE_ENABLE_SYNC_UPDATE_SITE": true,
@@ -213,51 +189,6 @@
 			"type": "Microsoft.Authorization/roleAssignments"
 		},
 		{
-			"apiVersion": "2019-09-01",
-			"dependsOn": [
-				"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-			],
-			"location": "[variables('location')]",
-			"name": "[variables('keyVaultName')]",
-			"properties": {
-				"accessPolicies": [
-					{
-						"objectId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-01-15', 'Full').identity.principalId]",
-						"permissions": {
-							"secrets": [
-								"get"
-							]
-						},
-						"tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-01-15', 'Full').identity.tenantId]"
-					}
-				],
-				"networkAcls": {
-					"bypass": "AzureServices",
-					"defaultAction": "Allow"
-				},
-				"sku": {
-					"family": "A",
-					"name": "standard"
-				},
-				"tenantId": "[subscription().tenantId]"
-			},
-			"resources": [
-				{
-					"apiVersion": "2019-09-01",
-					"dependsOn": [
-						"[resourceId('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
-						"[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageAccountName'))]"
-					],
-					"name": "[variables('secretName')]",
-					"properties": {
-						"value": "[parameters('bigIqPassword')]"
-					},
-					"type": "secrets"
-				}
-			],
-			"type": "Microsoft.KeyVault/vaults"
-		},
-		{
 			"apiVersion": "2020-02-02",
 			"location": "[variables('location')]",
 			"name": "[variables('applicationInsightsName')]",
@@ -286,15 +217,15 @@
 		},
 		"keyVaultId": {
 			"type": "string",
-			"value": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+			"value": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultNameVariable'))]"
 		},
 		"applicationInsightsId": {
 			"type": "string",
 			"value": "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]"
 		},
-        "roleAssignmentId": {
+		"roleAssignmentId": {
 			"type": "string",
-            "value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourcegroups/',  resourceGroup().name, '/providers/Microsoft.Authorization/roleAssignments/', guid(concat(parameters('functionAppName'), '-role')))]"
+			"value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourcegroups/',  resourceGroup().name, '/providers/Microsoft.Authorization/roleAssignments/', guid(concat(parameters('functionAppName'), '-role')))]"
 		}
 	}
 }

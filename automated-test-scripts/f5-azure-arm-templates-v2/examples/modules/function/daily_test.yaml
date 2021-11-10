@@ -3,6 +3,8 @@ name: Azure Examples - Function
 onStart:
 - ../../../common/helper_init.sh
 - ../../../common/create_resource_group.sh
+- ../../../common/create_user_identity.sh
+- ../../../common/create_secret.sh
 - ./create_environment.sh
 - ./create_deployment.sh
 - ../../../common/verify_create.sh

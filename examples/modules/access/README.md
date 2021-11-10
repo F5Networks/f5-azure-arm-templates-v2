@@ -69,11 +69,9 @@ This solution uses an ARM template to launch a stack for provisioning Access rel
 | customRoleDescription | No | Description for custom role. |
 | customRoleName| No | Provides value for custom role definiton which will be created by the template. |
 | customRolePermissions| No | Array of permissions for the custom roleDefinition. |
-| keyVaultName | No | Key Vault name. |
 | keyVaultPermissionsKeys | No | Array of permissions allowed on KeyVault Secrets for role. |
 | keyVaultPermissionsSecrets | No | Array of permissions allowed on KeyVault Secrets for role. |
-| secretName | No | Enter the secret name. |
-| secretValue | No | Enter the secret value. |
+| secretId | No | Enter full URI of existing secret. |
 | userAssignedIdentityName | No | User Assigned Identity name. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
 
@@ -84,8 +82,8 @@ This solution uses an ARM template to launch a stack for provisioning Access rel
 | builtInRoleId | Built-in role resource ID | None | String |
 | customRoleDefinitionId | Custom role definition resource ID | Custom Role Definition | String |
 | keyVaultName | Key Vault name | Key Vault | String |
-| secretName | Secret name | Secret | String |
-| userAssignedIdentityName | User assigned identity name | User Assigned Identity | String |
+| secretId | Secret ID | Secret | String |
+| userAssignedIdentityId | User assigned identity name | User Assigned Identity | String |
 
 ## Resource Creation Flow Chart
 

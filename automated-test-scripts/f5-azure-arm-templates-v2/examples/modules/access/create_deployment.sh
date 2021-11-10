@@ -39,32 +39,14 @@ else
    CUSTOM_ROLE_PERMISSIONS=',"customRolePermissions":{"value":<CUSTOM ROLE PERMISSIONS>}'
 fi
 
-TEMP_VAR="<KEY VAULT NAME>"
-if [[ $TEMP_VAR =~ "KEY VAULT NAME" || -z $TEMP_VAR ]]; then
-   KEY_VAULT_NAME=',"keyVaultName":{"value":""}'
-else
-   KEY_VAULT_NAME=',"keyVaultName":{"value":"<KEY VAULT NAME>"}'
-fi
+SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
+SECRET_ID_STRING=',"secretId":{"value":"'"$SECRET_ID"'"}'
 
 TEMP_VAR="<USER ASSIGNED IDENT NAME>"
 if [[ $TEMP_VAR =~ "USER ASSIGNED IDENT NAME" || -z $TEMP_VAR ]]; then
    USER_ASSIGNED_IDENT_NAME=',"userAssignedIdentityName":{"value":""}'
 else
    USER_ASSIGNED_IDENT_NAME=',"userAssignedIdentityName":{"value":"<USER ASSIGNED IDENT NAME>"}'
-fi
-
-TEMP_VAR="<SECRET NAME>"
-if [[ $TEMP_VAR =~ "SECRET NAME" || -z $TEMP_VAR ]]; then
-   SECERT_NAME=',"secretName":{"value":""}'
-else
-   SECERT_NAME=',"secretName":{"value":"<SECRET NAME>"}'
-fi
-
-TEMP_VAR="<SECRET VALUE>"
-if [[ $TEMP_VAR =~ "SECRET VALUE" || -z $TEMP_VAR ]]; then
-   SECERT_VALUE=',"secretValue":{"value":""}'
-else
-   SECERT_VALUE=',"secretValue":{"value":"<SECRET VALUE>"}'
 fi
 
 TEMP_VAR="<CUSTOM ROLE SCOPE>"
@@ -74,7 +56,7 @@ else
    CUSTOM_ROLE_SCOPE=',"customRoleAssignableScopes":{"value":["<CUSTOM ROLE SCOPE>"]}'
 fi
 
-DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${BUILT_INT_ROLE_TYPE}${CUSTOM_ROLE_NAME}${CUSTOM_ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${KEY_VAULT_NAME}${USER_ASSIGNED_IDENT_NAME}${SECERT_NAME}${SECERT_VALUE}${CUSTOM_ROLE_SCOPE}'}}'
+DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${BUILT_INT_ROLE_TYPE}${CUSTOM_ROLE_NAME}${CUSTOM_ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${CUSTOM_ROLE_SCOPE}'}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

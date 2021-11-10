@@ -62,24 +62,6 @@
     "bigIpScalingMinSize": {
       "value": 1
     },
-    "bigIqAddress": {
-      "value": ""
-    },
-    "bigIqLicensePool": {
-      "value": ""
-    },
-    "bigIqPassword": {
-      "value": ""
-    },
-    "bigIqTenant": {
-      "value": ""
-    },
-    "bigIqUsername": {
-      "value": ""
-    },
-    "bigIqUtilitySku": {
-      "value": ""
-    },
     "bigIqVnetId": {
       "value": ""
     },
@@ -93,6 +75,9 @@
       "value": ""
     },
     "restrictedSrcAddressMgmt": {
+      "value": ""
+    },
+    "secretId": {
       "value": ""
     },
     "sshKey": {
