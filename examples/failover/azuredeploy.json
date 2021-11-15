@@ -708,6 +708,11 @@
       "type": "string",
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
+    "bastionPublicIp": {
+      "condition": "[not(parameters('provisionPublicIp'))]",
+      "type": "string",
+      "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
+    },
     "bigIpInstance01VmId": {
       "type": "string",
       "value": "[reference('bigIpTemplate01').outputs.vmId.value]"
@@ -724,7 +729,7 @@
     "bigIpInstance02ManagementPublicIp": {
       "condition": "[parameters('provisionPublicIp')]",
       "type": "string",
-      "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
+      "value": "[reference('dagTemplate').outputs.mgmtIps.value[1]]"
     },
     "bigIpInstance01ManagementPrivateIp": {
       "type": "string",
@@ -742,7 +747,7 @@
     "bigIpInstance02ManagementPublicUrl": {
       "condition": "[parameters('provisionPublicIp')]",
       "type": "string",
-      "value": "[concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/')]"
+      "value": "[concat('https://', reference('dagTemplate').outputs.mgmtIps.value[1], ':443/')]"
     },
     "bigIpInstance01ManagementPrivateUrl": {
       "type": "string",

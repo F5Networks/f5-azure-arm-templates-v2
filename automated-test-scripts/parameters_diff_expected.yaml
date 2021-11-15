@@ -10,16 +10,10 @@
 ../../examples/autoscale/payg/azuredeploy.parameters.json:
 - No Key Diff
 - No Value Diff
-../../examples/failover/byol/azuredeploy.json:
+../../examples/failover/azuredeploy.json:
 - No Key Diff
 - No Value Diff
-../../examples/failover/byol/azuredeploy.parameters.json:
-- No Key Diff
-- No Value Diff
-../../examples/failover/payg/azuredeploy.json:
-- No Key Diff
-- No Value Diff
-../../examples/failover/payg/azuredeploy.parameters.json:
+../../examples/failover/azuredeploy.parameters.json:
 - No Key Diff
 - No Value Diff
 ../../examples/modules/access/access.json:

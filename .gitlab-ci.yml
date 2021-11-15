@@ -500,8 +500,7 @@ azure_failover_example_test_job:
     changes:
       - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/**/*
       - automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/**/*
-      - examples/failover/byol/azuredeploy.json
-      - examples/failover/payg/azuredeploy.json
+      - examples/failover/azuredeploy.json
   except:
     refs:
       - schedules

@@ -23,6 +23,6 @@ SELF INT 1: 10.0.2.11
 SELF INT 2: 10.0.2.12
 SELF MGMT 1: 10.0.0.11
 SELF MGMT 2: 10.0.0.12
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/failover/<LICENSE TYPE>/azuredeploy.json
+TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/failover/azuredeploy.json
 USE AVAILABILITY ZONES: false
 USE DEFAULT PARAMETERS: 'No'
