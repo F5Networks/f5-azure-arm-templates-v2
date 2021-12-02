@@ -3,7 +3,7 @@
 #  replayEnabled = true
 #  replayTimeout = 30
 
-if [[ <CREATE WORKSPACE> == false ]]; then
+if [[ "<CREATE WORKSPACE>" == "False" ]]; then
     RESPONSE=$(az monitor log-analytics workspace table list --resource-group <RESOURCE GROUP> --workspace-name <RESOURCE GROUP>-log-wrkspc | jq '.[] | select(.name=="F5Telemetry_ASM_CL")')
 else
     RESPONSE=$(az monitor log-analytics workspace table list --resource-group <RESOURCE GROUP> --workspace-name f5telemetry | jq '.[] | select(.name=="F5Telemetry_ASM_CL")')

@@ -12,6 +12,8 @@
   - [Important Configuration Notes](#important-configuration-notes)
     - [Template Input Parameters](#template-input-parameters)
     - [Template Outputs](#template-outputs)
+    - [Existing Network Template Input Parameters](#existing-network-template-input-parameters)
+    - [Existing Network Template Outputs](#existing-network-template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the Azure Deploy Button](#deploying-via-the-azure-deploy-button)
     - [Deploying via the Azure CLI](#deploying-via-the-azure-cli)
@@ -37,10 +39,14 @@
 
 This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP Autoscale solution. The linked templates are located in the examples/modules directories in this repository. **F5 recommends you clone this repository and modify these templates to fit your use case.** 
 
+***Existing Stack Deployments (azuredeploy-existing-network.json)***<br>
+Use azuredeploy-existing-network.json parent template to deploy the autoscale solution into an existing infrastructure. This template expects virtual network, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+
 The modules below create the following resources:
 
 - **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables.
 - **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IPs.
+- **Bastion**: This template creates a generic example bastion for use when connecting to the management interfaces of BIG-IPs.
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Azure Network Security Groups, Public IP Addresses, internal/external Load Balancers, and accompanying resources such as load balancing rules, NAT rules, and probes.
 - **Access**: This template creates an Azure Managed User Identity, KeyVault, and secret used to set the admin password on the BIG-IP instances.
 - **BIG-IP**: This template creates the Microsoft Azure VM Scale Set with F5 BIG-IP Virtual Editions provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). Traffic flows from the Azure load balancer to the BIG-IP VE instances and then to the application servers. The BIG-IP VE(s) are configured in single-NIC mode. Auto scaling means that as certain thresholds are reached, the number of BIG-IP VE instances automatically increases or decreases accordingly. The BIG-IP module template can be deployed separately from the example template provided here into an "existing" stack.
@@ -99,7 +105,7 @@ This solution leverages more traditional Autoscale configuration management prac
 
 - This template can send non-identifiable statistical information to F5 Networks to help us improve our templates. You can disable this functionality by setting the **autoPhonehome** system class property value to false in the F5 Declarative Onboarding declaration. See [Sending statistical information to F5](#sending-statistical-information-to-f5).
 
-- See [trouble shooting steps](#troubleshooting-steps) for more details.
+- See [troubleshooting steps](#troubleshooting-steps) for more details.
 
 
 ### Template Input Parameters
@@ -153,6 +159,47 @@ This solution leverages more traditional Autoscale configuration management prac
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | array |
 
 
+### Existing Network Template Input Parameters
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.0.101000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpInstanceType | No | Enter a valid instance type. |
+| bigIpMaxBatchInstancePercent | No | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
+| bigIpMaxUnhealthyInstancePercent | No | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
+| bigIpMaxUnhealthyUpgradedInstancePercent | No | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
+| bigIpPauseTimeBetweenBatches | No | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
+| bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
+| bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
+| bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| bigIpScaleInCpuThreshold | No | The percentage of CPU utilization that should trigger a scale in event. |
+| bigIpScaleInThroughputThreshold | No | The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB. |
+| bigIpScaleInTimeWindow | No | The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
+| bigIpScaleOutCpuThreshold | No | The percentage of CPU utilization that should trigger a scale out event. |
+| bigIpScaleOutThroughputThreshold | No | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. |
+| bigIpScaleOutTimeWindow | No | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
+| createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
+| provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
+| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
+| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+| workspaceId | No | Azure Logging Workspace ID. For example: "0ad61913-8c82-4d58-b93c-89d612812c84" |
+
+### Existing Network Template Outputs
+
+| Name | Description | Required Resource | Type |
+| --- | --- | --- | --- |
+| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
+| bigIpVmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | string |
+| bigIpVmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | string |
+| wafPublicIps | WAF Service Public IP Addresses | DAG Template | array |
+
+
 ## Deploying this Solution
 
 See [Prerequisites](#prerequisites).
@@ -167,7 +214,11 @@ Two options for deploying this solution include:
 
 An easy way to deploy this Azure Arm templates is to use the deploy button below:<br>
 
+**Full Stack**
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.4.0.0%2Fexamples%2Fautoscale%2Fpayg%2Fazuredeploy.json)
+
+**Existing Stack**
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.4.0.0%2Fexamples%2Fautoscale%2Fpayg%2Fazuredeploy-existing-network.json)
 
 *Step 1: Custom Template Page* 
   - Select or Create New Resource Group.
@@ -243,8 +294,10 @@ NOTE: If providing the json inline as a template parameter, you must escape all 
  
 F5 has provided the following example configuration files in the `examples/autoscale/bigip-configurations` folder:
 
-- `runtime-init-conf-bigiq.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
-- `runtime-init-conf-payg.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
+- `runtime-init-conf-bigiq.yaml` - This configuration file installs packages for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
+- `runtime-init-conf-payg.yaml` - This inline configuration file installs packages for a PAYG licensed deployment.
+- `runtime-init-conf-bigiq_with_app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
+- `runtime-init-conf-payg_with_app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples. 
