@@ -1,9 +1,15 @@
 azure-autoscale-example-test:
-  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test.yaml'
+  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_full.yaml'
   run: all
   parameters-files:
-    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters.yaml
-    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters2.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/postpub_parameters.yaml
+    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/postpub_parameters2.yaml
+
+azure-autoscale-example-test:
+  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml'
+  run: all
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/postpub_parameters.yaml"
 
 azure-autoscale-example-defaults-test:
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/defaults_test.yaml'

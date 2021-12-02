@@ -95,7 +95,7 @@
 		"customRoleAssignScopes": "[if(empty(parameters('customRoleAssignableScopes')), createArray(resourceGroup().id), parameters('customRoleAssignableScopes'))]",
 		"secretIdSplitDelimiters": [ "https://", "[environment().suffixes.keyvaultDns]" ],
 		"secretIdSplitArray": "[split(parameters('secretId'),variables('secretIdSplitDelimiters'))]",
-		"keyVaultNameVariable": "[variables('secretIdSplitArray')[1]]",
+		"keyVaultNameVariable": "[if(not(empty(parameters('secretId'))), variables('secretIdSplitArray')[1], 'null')]",
 		"roleDefName": "[guid(resourceGroup().id, string(parameters('customRolePermissions')), string(parameters('customRoleName')))]",
 		"roleTypeArray": {
 			"Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",

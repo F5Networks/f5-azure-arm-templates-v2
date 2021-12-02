@@ -71,8 +71,8 @@
 	"variables": {
 		"applicationInsightsName": "[variables('functionAppName')]",
 		"functionAppName": "[concat(parameters('functionAppName'), '-function')]",
-		"functionAppVnetName": "[last(split(parameters('functionAppVnetId'),'/'))]",
-		"functionUrl": "https://khanna.s3.amazonaws.com/timer_trigger_revoke.zip",
+		"functionAppVnetName": "[if(not(equals(parameters('functionAppVnetId'), '')), last(split(parameters('functionAppVnetId'),'/')), 'functionAppVnet')]",
+		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/develop/v1.2.0/timer_trigger_revoke.zip",
 		"functionStorageAccountId": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
 		"functionStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
 		"functionWorkerRuntime": "python",

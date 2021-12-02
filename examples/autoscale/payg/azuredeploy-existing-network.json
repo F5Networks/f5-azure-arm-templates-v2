@@ -28,15 +28,15 @@
       },
       "type": "string"
     },
-    "restrictedSrcAddressMgmt": {
+    "subnetId": {
       "metadata": {
-        "description": "REQUIRED - When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources."
+        "description": "REQUIRED - Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed."
       },
       "type": "string"
     },
-    "restrictedSrcAddressApp": {
+    "restrictedSrcAddressMgmt": {
       "metadata": {
-        "description": "REQUIRED - When creating application security group, this field restricts application access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources."
+        "description": "REQUIRED - When creating management security group, this field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources."
       },
       "type": "string"
     },
@@ -200,31 +200,6 @@
       "type": "string",
       "defaultValue": "WORKSPACE_ID"
     },
-    "appContainerName": {
-      "defaultValue": "f5devcentral/f5-demo-app:latest",
-      "metadata": {
-        "description": "The docker container to use when deploying the example application."
-      },
-      "type": "string"
-    },
-    "appScalingMinSize": {
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Minimum number of Application instances (1-99) you want available in the Auto Scale Group."
-      },
-      "minValue": 1,
-      "maxValue": 99,
-      "type": "int"
-    },
-    "appScalingMaxSize": {
-      "defaultValue": 10,
-      "metadata": {
-        "description": "Maximum number of Application instances (2-100) that can be created in the Auto Scale Group."
-      },
-      "minValue": 2,
-      "maxValue": 100,
-      "type": "int"
-    },
     "tagValues": {
       "defaultValue": {
         "application": "APP",
@@ -252,9 +227,6 @@
     "keyVaultPermissionsKeys": [],
     "keyVaultPermissionsSecrets": [],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
-    "numSubnets": 2,
-    "vnetAddressPrefix": "10.0",
-    "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
     "externalLoadBalancerName": "[concat(variables('uniqueString'), '-alb')]",
     "internalLoadBalancerName": "None",
     "internalLoadBalancerProbePort": "3456",
@@ -280,44 +252,10 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg1": [
-      {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
-        "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
-        "protocol": "Tcp"
-      },
-      {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
-        "sourceAddressPrefix": "10.0.0.0/8",
-        "protocol": "Tcp"
-      }
-    ],
-    "nsg2": [
-      {
-        "destinationPortRanges": [
-          "22"
-        ],
-        "sourceAddressPrefix": "[parameters('restrictedSrcAddressMgmt')]",
-        "protocol": "Tcp"
-      }
-    ],
+    "nsg1": [],
+    "nsg2": [],
     "numberPublicExternalIpAddresses": 1,
     "numberPublicMgmtIpAddresses": 0,
-    "bastionInstanceName": "[variables('uniqueString')]",
-    "bastionInstanceType": "Standard_D2s_v3",
-    "appInstanceName": "[variables('uniqueString')]",
-    "appInstanceType": "Standard_D2s_v3",
-    "appVmScaleSetMaxCount": "[parameters('appScalingMaxSize')]",
-    "appVmScaleSetMinCount": "[parameters('appScalingMinSize')]",
-    "cloudInitUrl": "",
-    "createAutoscaleGroup": true,
-    "provisionApp": "[not(empty(parameters('appContainerName')))]",
     "appInsights": "[concat(variables('uniqueString'), '-insights')]",
     "appInsightsId": "[resourceId('Microsoft.Insights/components', variables('appInsights'))]",
     "bigIpImage": "[parameters('bigIpImage')]",
@@ -498,36 +436,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "networkTemplate",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/network/network.json')]",
-          "contentVersion": "[variables('contentVersion')]"
-        },
-        "parameters": {
-          "numSubnets": {
-            "value": "[variables('numSubnets')]"
-          },
-          "vnetName": {
-            "value": "[variables('vnetName')]"
-          },
-          "vnetAddressPrefix": {
-            "value": "[variables('vnetAddressPrefix')]"
-          },
-          "tagValues": {
-            "value": "[parameters('tagValues')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
       "name": "dagTemplate",
-      "dependsOn": [
-        "networkTemplate"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -560,7 +469,7 @@
             "value": "[variables('nsg1')]"
           },
           "nsg2": {
-            "value": "[if(parameters('provisionPublicIp'), createArray(), variables('nsg2'))]"
+            "value": "[variables('nsg2')]"
           },
           "numberPublicExternalIpAddresses": {
             "value": "[variables('numberPublicExternalIpAddresses')]"
@@ -577,107 +486,9 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "condition": "[not(parameters('provisionPublicIp'))]",
-      "name": "bastionTemplate",
-      "dependsOn": [
-        "bigIpTemplate"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/bastion/bastion.json')]",
-          "contentVersion": "[variables('contentVersion')]"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[variables('adminUsername')]"
-          },
-          "createAutoscaleGroup": {
-            "value": "[variables('createAutoscaleGroup')]"
-          },
-          "instanceName": {
-            "value": "[variables('bastionInstanceName')]"
-          },
-          "instanceType": {
-            "value": "[variables('bastionInstanceType')]"
-          },
-          "nsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
-          },
-          "sshKey": {
-            "value": "[parameters('sshKey')]"
-          },
-          "subnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[0]]"
-          },
-          "tagValues": {
-            "value": "[parameters('tagValues')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "condition": "[variables('provisionApp')]",
-      "apiVersion": "2021-04-01",
-      "name": "appTemplate",
-      "dependsOn": [
-        "networkTemplate",
-        "dagTemplate"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/application/application.json')]",
-          "contentVersion": "[variables('contentVersion')]"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[variables('adminUsername')]"
-          },
-          "appContainerName": {
-            "value": "[parameters('appContainerName')]"
-          },
-          "cloudInitUrl": {
-            "value": "[variables('cloudInitUrl')]"
-          },
-          "createAutoscaleGroup": {
-            "value": "[variables('createAutoscaleGroup')]"
-          },
-          "instanceName": {
-            "value": "[variables('appInstanceName')]"
-          },
-          "instanceType": {
-            "value": "[variables('appInstanceType')]"
-          },
-          "nsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg1Id.value]"
-          },
-          "sshKey": {
-            "value": "[parameters('sshKey')]"
-          },
-          "subnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
-          },
-          "tagValues": {
-            "value": "[parameters('tagValues')]"
-          },
-          "vmScaleSetMaxCount": {
-            "value": "[variables('appVmScaleSetMaxCount')]"
-          },
-          "vmScaleSetMinCount": {
-            "value": "[variables('appVmScaleSetMinCount')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
       "name": "bigIpTemplate",
       "dependsOn": [
         "accessTemplate",
-        "networkTemplate",
         "dagTemplate",
         "telemetryTemplate"
       ],
@@ -716,7 +527,7 @@
             "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundSshNatPool.value, '')]"
           },
           "instanceHealthProbeId": {
-            "value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesId.value[0]]"
+            "value": ""
           },
           "instanceType": {
             "value": "[variables('bigIpInstanceType')]"
@@ -777,7 +588,7 @@
             "value": "[parameters('sshKey')]"
           },
           "subnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[0]]"
+            "value": "[parameters('subnetId')]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -808,31 +619,6 @@
     }
   ],
   "outputs": {
-    "appUsername": {
-      "condition": "[variables('provisionApp')]",
-      "type": "string",
-      "value": "[variables('adminUsername')]"
-    },
-    "appVmssId": {
-      "condition": "[variables('provisionApp')]",
-      "type": "string",
-      "value": "[reference('appTemplate').outputs.vmssId.value]"
-    },
-    "appVmssName": {
-      "condition": "[variables('provisionApp')]",
-      "type": "string",
-      "value": "[reference('appTemplate').outputs.vmssName.value]"
-    },
-    "bastionVmssId": {
-      "condition": "[not(parameters('provisionPublicIp'))]",
-      "type": "string",
-      "value": "[reference('bastionTemplate').outputs.vmssId.value]"
-    },
-    "bastionVmssName": {
-      "condition": "[not(parameters('provisionPublicIp'))]",
-      "type": "string",
-      "value": "[reference('bastionTemplate').outputs.vmssName.value]"
-    },
     "bigIpUsername": {
       "type": "string",
       "value": "[variables('adminUsername')]"
@@ -845,12 +631,7 @@
       "type": "string",
       "value": "[reference('bigIpTemplate').outputs.vmssName.value]"
     },
-    "virtualNetworkId": {
-      "type": "string",
-      "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
-    },
     "wafPublicIps": {
-      "condition": "[variables('provisionApp')]",
       "type": "array",
       "value": "[reference('dagTemplate').outputs.externalIps.value]"
     }
