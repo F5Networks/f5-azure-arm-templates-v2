@@ -256,7 +256,7 @@
     "contentVersion": "[deployment().properties.template.contentVersion]",
     "uniqueString": "[toLower(parameters('uniqueString'))]",
     "adminUsername": "[string('azureuser')]",
-    "assignManagedIdentity": "[not(empty(variables('customAutoscaleRules')))]",
+    "assignManagedIdentity": true,
     "builtInRoleType": "Contributor",
     "customRoleAssignableScopes": [],
     "customRoleDescription": "",

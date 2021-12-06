@@ -758,8 +758,10 @@ check_at_components_metadata:
     - curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt-get install -yq nodejs build-essential
     - apt-get install -y jq
     - pip3 install yq
-    - if [[ ! -z ${RUNTIME_INIT_PACKAGE_URL} && ! $CI_COMMIT_BRANCH == "main" ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure --runtime-init-package-url $RUNTIME_INIT_PACKAGE_URL; fi
-    - if [[ -z $RUNTIME_INIT_PACKAGE_URL ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure; fi
+    - if [[ ! -z ${RUNTIME_INIT_PACKAGE_URL} && ! $CI_COMMIT_BRANCH == "main" ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations,examples/failover/bigip-configurations --template-directory examples --cloud azure --runtime-init-package-url $RUNTIME_INIT_PACKAGE_URL; fi
+    - if [[ -z $RUNTIME_INIT_PACKAGE_URL ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations,examples/failover/bigip-configurations --template-directory examples --cloud azure; fi
+
+
     - if git diff | grep 'diff --git'; then exit 1; else exit 0; fi
   tags:
     - cm-official-docker-executor

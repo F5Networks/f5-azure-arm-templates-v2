@@ -14,7 +14,6 @@ onStart:
 - ./tests/verify_function_app_settings.sh
 - ./tests/verify_keyvault.sh
 - ./tests/verify_keyvault_secret.sh
-- ./tests/verify_role_assignment.sh
 - ./tests/verify_app_insights.sh
 - ../../../common/delete_deployment.sh
 - ../../../common/verify_delete.sh

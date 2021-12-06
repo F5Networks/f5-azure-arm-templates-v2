@@ -31,7 +31,6 @@ function verify_keyvault_secret() {
 declare -A keyvault_secret
 keyvault_secret[value]="<SECRET VALUE>"
 
-
 # Run array through function
 response=$(verify_keyvault_secret "keyvault_secret")
 spacer=$'\n============\n'

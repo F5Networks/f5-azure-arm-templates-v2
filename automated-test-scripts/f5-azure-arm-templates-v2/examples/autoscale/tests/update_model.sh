@@ -15,7 +15,6 @@ SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public |
 STORAGE_ACCOUNT_NAME=$(echo st<RESOURCE GROUP>tmpl | tr -d -)
 STORAGE_ACCOUNT_FQDN=$(az storage account show -n ${STORAGE_ACCOUNT_NAME} -g <RESOURCE GROUP> | jq -r .primaryEndpoints.blob)
 
-BIGIQ_ADDRESS=''
 SECRET_ID=''
 BIGIQ_PARAMS=''
 if [[ "<LICENSE TYPE>" == "bigiq" ]]; then
@@ -24,11 +23,11 @@ if [[ "<LICENSE TYPE>" == "bigiq" ]]; then
         cat ${TMP_DIR}/bigiq_info.json
         bigiq_stack_name=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_name)
         bigiq_stack_region=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_region)
+        bigiq_address=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_address)
     else
         echo "Template validation failed - No BIG-IQ found"
     fi
 
-    BIGIQ_ADDRESS=$(aws cloudformation describe-stacks --region $bigiq_stack_region --stack-name $bigiq_stack_name | jq -r '.Stacks[].Outputs[]|select (.OutputKey=="device1ManagementEipAddress")|.OutputValue')
     SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
     BIGIQ_PARAMS=',"bigIqVnetId":{"value":""},"secretId":{"value":"'"${SECRET_ID}"'"}'
 fi
@@ -42,9 +41,9 @@ fi
 UPDATE_RUNTIME_CONFIG_URL=${STORAGE_ACCOUNT_FQDN}templates/update_<DEWPOINT JOB ID>.yaml
 
 if [[ -z <BIGIP RUNTIME INIT PACKAGEURL> ]]; then
-    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"createWorkspace":{"value":<CREATE WORKSPACE>},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"bigIpScaleOutCpuThreshold":{"value":<SCALE OUT CPU THRESHOLD>},"bigIpScaleInCpuThreshold":{"value":<SCALE IN CPU THRESHOLD>},"bigIpScaleOutTimeWindow":{"value":<SCALE OUT TIME WINDOW>},"bigIpScaleInTimeWindow":{"value":<SCALE IN TIME WINDOW>},"bigIpScaleOutThroughputThreshold":{"value":<SCALE OUT THROUGHPUT THRESHOLD>},"bigIpScaleInThroughputThreshold":{"value":<SCALE IN THROUGHPUT THRESHOLD>},"appScalingMinSize":{"value":<APP VM SCALE SET MIN COUNT>},"appScalingMaxSize":{"value":<APP VM SCALE SET MAX COUNT>},"bigIpMaxBatchInstancePercent":{"value":<UPGRADE MAX BATCH>},"bigIpMaxUnhealthyInstancePercent":{"value":<UPGRADE MAX UNHEALTHY>},"bigIpMaxUnhealthyUpgradedInstancePercent":{"value":<UPGRADE MAX UNHEALTHY UPGRADED>},"bigIpPauseTimeBetweenBatches":{"value":<UPGRADE PAUSE TIME>},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
 else
-    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpRuntimeInitPackageUrl":{"value":"<BIGIP RUNTIME INIT PACKAGEURL>"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"createWorkspace":{"value":<CREATE WORKSPACE>},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpRuntimeInitPackageUrl":{"value":"<BIGIP RUNTIME INIT PACKAGEURL>"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"bigIpScaleOutCpuThreshold":{"value":<SCALE OUT CPU THRESHOLD>},"bigIpScaleInCpuThreshold":{"value":<SCALE IN CPU THRESHOLD>},"bigIpScaleOutTimeWindow":{"value":<SCALE OUT TIME WINDOW>},"bigIpScaleInTimeWindow":{"value":<SCALE IN TIME WINDOW>},"bigIpScaleOutThroughputThreshold":{"value":<SCALE OUT THROUGHPUT THRESHOLD>},"bigIpScaleInThroughputThreshold":{"value":<SCALE IN THROUGHPUT THRESHOLD>},"appScalingMinSize":{"value":<APP VM SCALE SET MIN COUNT>},"appScalingMaxSize":{"value":<APP VM SCALE SET MAX COUNT>},"bigIpMaxBatchInstancePercent":{"value":<UPGRADE MAX BATCH>},"bigIpMaxUnhealthyInstancePercent":{"value":<UPGRADE MAX UNHEALTHY>},"bigIpMaxUnhealthyUpgradedInstancePercent":{"value":<UPGRADE MAX UNHEALTHY UPGRADED>},"bigIpPauseTimeBetweenBatches":{"value":<UPGRADE PAUSE TIME>},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
 fi
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/update_deploy_params.json
