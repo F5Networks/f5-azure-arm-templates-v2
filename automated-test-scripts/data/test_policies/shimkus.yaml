@@ -21,7 +21,7 @@ azure-autoscale-example-bigiq-test:
 azure-autoscale-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 2
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters1.yaml"
@@ -135,7 +135,7 @@ azure-dag-module-test:
 azure-function-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 2
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/prepub_parameters1.yaml"

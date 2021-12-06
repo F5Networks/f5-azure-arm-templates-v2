@@ -72,7 +72,7 @@
 		"applicationInsightsName": "[variables('functionAppName')]",
 		"functionAppName": "[concat(parameters('functionAppName'), '-function')]",
 		"functionAppVnetName": "[if(not(equals(parameters('functionAppVnetId'), '')), last(split(parameters('functionAppVnetId'),'/')), 'functionAppVnet')]",
-		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/develop/v1.2.0/timer_trigger_revoke.zip",
+		"functionUrl": "https://cdn.f5.com/product/cloudsolutions/f5-cloud-functions/azure/TimerTriggerRevoke/develop/v1.3.0/timer_trigger_revoke.zip",
 		"functionStorageAccountId": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
 		"functionStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
 		"functionWorkerRuntime": "python",
@@ -110,17 +110,22 @@
 		},
 		{
 			"apiVersion": "2021-01-15",
+			"condition": "[not(empty(parameters('userAssignManagedIdentity')))]",
 			"dependsOn": [
 				"[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
 			],
 			"identity": {
-				"type": "SystemAssigned"
+				"type": "UserAssigned",
+				"userAssignedIdentities": {
+					"[parameters('userAssignManagedIdentity')]": {}
+				}
 			},
 			"kind": "functionapp",
 			"location": "[variables('location')]",
 			"name": "[variables('functionAppName')]",
 			"properties": {
 				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+				"keyVaultReferenceIdentity": "[parameters('userAssignManagedIdentity')]",
 				"siteConfig": {
 					"appSettings": [
 						{
@@ -142,15 +147,15 @@
 					"name": "appsettings",
 					"properties": {
 						"APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components/', variables('applicationInsightsName')), '2020-02-02').InstrumentationKey]",
+						"AZURE_CLIENT_ID": "[reference(parameters('userAssignManagedIdentity'), '2018-11-30').clientId]",
 						"AZURE_RESOURCE_GROUP": "[variables('resourceGroupName')]",
 						"AZURE_VMSS_NAME": "[variables('vmssName')]",
 						"AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('functionStorageAccountId'),'2015-05-01-preview').key1)]",
-						"RUNTIME_INIT_CONFIG": "[parameters('bigIpRuntimeInitConfig')]",
-						"BIGIQ_PASSWORD": "[concat('@Microsoft.KeyVault(SecretUri=', parameters('secretId'), ')')]",
+						"BIGIQ_PASSWORD": "[concat('@Microsoft.KeyVault(SecretUri=', parameters('secretId'), '/)')]",
 						"F5_DISABLE_SSL_WARNINGS": false,
-						"TENANT": "[variables('vmssName')]",
 						"FUNCTIONS_EXTENSION_VERSION": "~3",
 						"FUNCTIONS_WORKER_RUNTIME": "[variables('functionWorkerRuntime')]",
+						"RUNTIME_INIT_CONFIG": "[parameters('bigIpRuntimeInitConfig')]",
 						"WEBSITE_ENABLE_SYNC_UPDATE_SITE": true,
 						"WEBSITE_NODE_DEFAULT_VERSION": "~12",
 						"WEBSITE_RUN_FROM_PACKAGE": "[variables('functionUrl')]"
@@ -172,21 +177,6 @@
 				}
 			],
 			"type": "Microsoft.Web/sites"
-		},
-		{
-			"apiVersion": "2021-04-01-preview",
-			"dependsOn": [
-				"[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
-				"[resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'appsettings')]",
-				"[resourceId('Microsoft.Web/sites/virtualNetworkConnections', variables('functionAppName'), variables('functionAppVnetName'))]"
-			],
-			"name": "[guid(concat(parameters('functionAppName'), '-role'))]",
-			"properties": {
-				"principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-01-15', 'Full').identity.principalId]",
-				"roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-				"scope": "[resourceGroup().id]"
-			},
-			"type": "Microsoft.Authorization/roleAssignments"
 		},
 		{
 			"apiVersion": "2020-02-02",
@@ -222,10 +212,6 @@
 		"applicationInsightsId": {
 			"type": "string",
 			"value": "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]"
-		},
-		"roleAssignmentId": {
-			"type": "string",
-			"value": "[concat('/subscriptions/',subscription().subscriptionId, '/resourcegroups/',  resourceGroup().name, '/providers/Microsoft.Authorization/roleAssignments/', guid(concat(parameters('functionAppName'), '-role')))]"
 		}
 	}
 }
