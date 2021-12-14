@@ -1,11 +1,11 @@
-# Deploying the BIG-IP VE in Azure - Example Failover BIG-IP HA Cluster - Virtual Machines - PAYG Licensing
+# Deploying the BIG-IP VE in Azure - Example Failover BIG-IP HA Cluster - Virtual Machines
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/issues)
 
 ## Contents
 
-- [Deploying the BIG-IP VE in Azure - Example Failover BIG-IP HA Cluster - Virtual Machines - PAYG Licensing](#deploying-the-big-ip-ve-in-azure---example-failover-big-ip-ha-cluster---virtual-machines---payg-licensing)
+- [Deploying the BIG-IP VE in Azure - Example Failover BIG-IP HA Cluster - Virtual Machines(#deploying-the-big-ip-ve-in-azure---example-failover-big-ip-ha-cluster---virtual-machines)
   - [Contents](#contents)
   - [Introduction](#introduction)
   - [Diagram](#diagram)

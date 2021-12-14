@@ -470,6 +470,7 @@ azure_autoscale_existing_test_job:
     changes:
       - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/**/*
       - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
+      - examples/autoscale/bigiq/azuredeploy-existing-network.json
       - examples/autoscale/payg/azuredeploy-existing-network.json
   except:
     refs:
