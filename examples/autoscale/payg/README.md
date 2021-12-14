@@ -44,9 +44,9 @@ Use azuredeploy-existing-network.json parent template to deploy the autoscale so
 
 The modules below create the following resources:
 
-- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables.
-- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IPs.
-- **Bastion**: This template creates a generic example bastion for use when connecting to the management interfaces of BIG-IPs.
+- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables. **Full stack only**
+- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IPs. **Full stack only**
+- **Bastion**: This template creates a generic example bastion for use when connecting to the management interfaces of BIG-IPs. **Full stack only**
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Azure Network Security Groups, Public IP Addresses, internal/external Load Balancers, and accompanying resources such as load balancing rules, NAT rules, and probes.
 - **Access**: This template creates an Azure Managed User Identity, KeyVault, and secret used to set the admin password on the BIG-IP instances.
 - **BIG-IP**: This template creates the Microsoft Azure VM Scale Set with F5 BIG-IP Virtual Editions provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). Traffic flows from the Azure load balancer to the BIG-IP VE instances and then to the application servers. The BIG-IP VE(s) are configured in single-NIC mode. Auto scaling means that as certain thresholds are reached, the number of BIG-IP VE instances automatically increases or decreases accordingly. The BIG-IP module template can be deployed separately from the example template provided here into an "existing" stack.
@@ -184,6 +184,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
+| subnetId | Yes | Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
@@ -227,6 +228,7 @@ An easy way to deploy this Azure Arm templates is to use the deploy button below
     - **restrictedSrcAddressApp**
     - **restrictedSrcAddressMgmt**
     - **uniqueString**
+    - **bigIpRuntimeInitConfig** *(with custom BIG-IQ values, custom URL or inline JSON)*
   - Click "Next: Review + Create".
 
 *Step 2: Custom Template Page*
@@ -256,12 +258,14 @@ az group create -n ${RESOURCE_GROUP} -l ${REGION}
 az deployment group create --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} --template-uri ${TEMPLATE_URI}  --parameters @${DEPLOY_PARAMS_FILE}
 ```
 
+When deploying **azuredeploy-existing-network.json**, modify the deployment parameters to match the requirements specified in the **Existing Network Template Input Parameters** table above.
+
 For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 
 ### Changing the BIG-IP Deployment
 
-You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter as a URL or inline json. 
+You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter as a URL or inline JSON. 
 
 Example from azuredeploy.parameters.json
 ```json
@@ -276,7 +280,7 @@ Example from azuredeploy.parameters.json
 
 **IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to github **must** use the raw file format. 
 
-The F5 BIG-IP Runtime Init configuration file can also be formatted in json and/or passed directly inline:
+The F5 BIG-IP Runtime Init configuration file can also be formatted in JSON and/or passed directly inline:
 
 Example:
 ```json
@@ -288,9 +292,9 @@ Example:
     },
 ```
 
-NOTE: If providing the json inline as a template parameter, you must escape all double quotes so it can be passed as a single parameter string.
+NOTE: If providing the JSON inline as a template parameter, you must escape all double quotes so it can be passed as a single parameter string.
 
-*TIP: If you don't have an easy way to host your own config files, passing the config as inline json via the template input parameter might be the quickest / most accessible option to test out different BIG-IP configs using this repository.*
+*TIP: If you don't have an easy way to host your own config files, passing the config as inline JSON via the template input parameter might be the quickest / most accessible option to test out different BIG-IP configs using this repository.*
  
 F5 has provided the following example configuration files in the `examples/autoscale/bigip-configurations` folder:
 
@@ -302,7 +306,7 @@ F5 has provided the following example configuration files in the `examples/autos
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples. 
  
-By default, this solution deploys the `runtime-init-conf-payg.yaml` configuration. 
+By default, this solution deploys the `runtime-init-conf-payg_with_app.yaml` configuration. 
 
 This example configuration does not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, in production, these files are commonly customized further. Some examples of small customizations or modifications are provided below. 
  
@@ -464,7 +468,6 @@ To test the WAF service, perform the following steps:
 
 ### Accessing the BIG-IP
 
-
 - Obtain the IP address of the BIG-IP Management Port:
 
   - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *instance name* > Essentials > Public address**.
@@ -522,8 +525,6 @@ To test the WAF service, perform the following steps:
   - Open a browser to the Management IP
     - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
 
-        
-
     - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
 
         From your desktop client/shell, create an SSH tunnel:
@@ -538,7 +539,6 @@ To test the WAF service, perform the following steps:
         You should now be able to open a browser to the BIG-IP UI from your desktop:
 
         https://localhost:8443
-      
 
   - NOTE: 
     - By default, for Single NIC deployments, the management port is 8443.
@@ -581,7 +581,7 @@ By default, Rolling Upgrades are configured to upgrade in batches of 20% with ze
 
 #### Updating the Configuration
 
-1. Modify the **bigIpRuntimeInitConfig** parameter value to trigger a model update. If using inline json, make a configuration change in parameter payload. If using a URL, reference a new URL. Example:
+1. Modify the **bigIpRuntimeInitConfig** parameter value to trigger a model update. If using inline JSON, make a configuration change in parameter payload. If using a URL, reference a new URL. Example:
   - If using tags for versions, change from `v1.2.0.0`
     ```json
         "bigIpRuntimeInitConfig": {
@@ -648,7 +648,7 @@ If a new configuration update fails (for example, invalid config, typo, etc.) an
 
 You can add notifications when scale up/down events happen, either in the form of email or webhooks. The following shows an example of adding an email address via the Azure Resources Explorer that receives an email from Azure whenever a scale up/down event occurs.
 
-Log in to the [Azure Resource Explorer](https://resources.azure.com) and then navigate to the Autoscale settings (**Subscriptions > Resource Groups >** *resource group where deployed* **> Providers > Microsoft.Insights > Autoscalesettings > autoscaleconfig**). At the top of the screen click **Read/Write**, and then from the Autoscale settings, click **Edit**. Replace the current **notifications** json key with the example below, making sure to update the email address(es). Select PUT and notifications will be sent to the email addresses listed.
+Log in to the [Azure Resource Explorer](https://resources.azure.com) and then navigate to the Autoscale settings (**Subscriptions > Resource Groups >** *resource group where deployed* **> Providers > Microsoft.Insights > Autoscalesettings > autoscaleconfig**). At the top of the screen click **Read/Write**, and then from the Autoscale settings, click **Edit**. Replace the current **notifications** JSON key with the example below, making sure to update the email address(es). Select PUT and notifications will be sent to the email addresses listed.
 
 ```json
     "notifications": [

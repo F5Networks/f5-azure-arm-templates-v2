@@ -1,3 +1,9 @@
+../../examples/autoscale/bigiq/azuredeploy-existing-network.json:
+- No Key Diff
+- No Value Diff
+../../examples/autoscale/bigiq/azuredeploy-existing-network.parameters.json:
+- No Key Diff
+- No Value Diff
 ../../examples/autoscale/bigiq/azuredeploy.json:
 - No Key Diff
 - No Value Diff

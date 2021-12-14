@@ -1,4 +1,4 @@
-# Deploying the BIG-IP VE in Azure - Example Autoscale BIG-IP WAF (LTM + ASM) - VM Scale Set (Frontend via ALB) - PAYG Licensing
+# Deploying the BIG-IP VE in Azure - Example Autoscale BIG-IP WAF (LTM + ASM) - VM Scale Set (Frontend via ALB) - BIG-IQ Licensing
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/issues)
@@ -37,13 +37,19 @@
 
 This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP Autoscale solution. The linked templates are located in the examples/modules directories in this repository. **F5 recommends you clone this repository and modify these templates to fit your use case.** 
 
+***Existing Stack Deployments (azuredeploy-existing-network.json)***<br>
+Use azuredeploy-existing-network.json parent template to deploy the autoscale solution into an existing infrastructure. This template expects virtual network, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+
 The modules below create the following resources:
 
-- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables.
-- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IPs.
+- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables. **Full stack only**
+- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IPs. **Full stack only**
+- **Bastion**: This template creates a generic example bastion for use when connecting to the management interfaces of BIG-IPs. **Full stack only**
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Azure Network Security Groups, Public IP Addresses, internal/external Load Balancers, and accompanying resources such as load balancing rules, NAT rules, and probes.
 - **Access**: This template creates an Azure Managed User Identity, KeyVault, and secret used to set the admin password on the BIG-IP instances.
 - **BIG-IP**: This template creates the Microsoft Azure VM Scale Set with F5 BIG-IP Virtual Editions provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). Traffic flows from the Azure load balancer to the BIG-IP VE instances and then to the application servers. The BIG-IP VE(s) are configured in single-NIC mode. Auto scaling means that as certain thresholds are reached, the number of BIG-IP VE instances automatically increases or decreases accordingly. The BIG-IP module template can be deployed separately from the example template provided here into an "existing" stack.
+- **Telemetry**: This template creates resources to support sending metrics and remote logging (for example, an Azure Log Analytics Workspace and Workbook).
+- **Function**: This template creates an Azure Function and associated resources for revoking license assignments from the BIG-IQ device when an autoscaled BIG-IP instance is deleted.
 
 This solution leverages more traditional Autoscale configuration management practices where each instance is created with an identical configuration as defined in the Scale Set's "model". Scale Set sizes are no longer restricted to the small limitations of the cluster. The BIG-IP's configuration, now defined in a single convenient YAML or JSON [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate and maintain as code. For instance, if you need to change the configuration on the BIG-IPs in the deployment, instead of updating the existing instances directly, you update the instance model by passing a new config file (which references the updated Automation Toolchain declarations) via template's bigIpRuntimeInitConfig input parameter. The model will be responsible for maintaining the configuration across the deployment, updating existing instances and deploying new instances with the latest configuration.
 
@@ -168,6 +174,50 @@ This solution leverages more traditional Autoscale configuration management prac
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | Array |
 
 
+### Existing Network Template Input Parameters
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpInstanceType | No | Enter a valid instance type. |
+| bigIpMaxBatchInstancePercent | No | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
+| bigIpMaxUnhealthyInstancePercent | No | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
+| bigIpMaxUnhealthyUpgradedInstancePercent | No | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
+| bigIpPauseTimeBetweenBatches | No | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
+| bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
+| bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
+| bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| bigIpScaleInCpuThreshold | No | The percentage of CPU utilization that should trigger a scale in event. |
+| bigIpScaleInThroughputThreshold | No | The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB. |
+| bigIpScaleInTimeWindow | No | The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
+| bigIpScaleOutCpuThreshold | No | The percentage of CPU utilization that should trigger a scale out event. |
+| bigIpScaleOutThroughputThreshold | No | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. |
+| bigIpScaleOutTimeWindow | No | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
+| bigIqVnetId | No | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
+| createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
+| provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, for example: access via bastion host, clustering, etc. *IMPORTANT: Please restrict to your client. For example: 'X.X.X.X/32'.* *WARNING - For evaluation purposes only. Production should never have the BIG-IP Management interface exposed to Internet.*|
+| secretId | Yes | Enter the full URI of an existing secret, which should contain the password to the BIG-IQ. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
+| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
+| subnetId | Yes | Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed. |
+| tagValues | No | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
+| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+| workspaceId | No | Azure Logging Workspace ID. for example, "0ad61913-8c82-4d58-b93c-89d612812c84" |
+
+### Existing Network Template Outputs
+
+| Name | Description | Required Resource | Type |
+| --- | --- | --- | --- |
+| bigIpUsername | BIG-IP username | BIG-IP Template | String |
+| bigIpVmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | String |
+| bigIpVmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | String |
+| wafPublicIps | WAF Service Public IP Addresses | DAG Template | Array |
+
+
 ## Deploying this Solution
 
 Once [Prerequisites](#prerequisites) have been satisfied (Resource Group created, a Log Analytics Workspace have been created and a new **bigIpRuntimeInitconfig** with your custom BIG-IQ values created and/or published). For the new **bigIpRuntimeInitconfig**, see [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
@@ -182,7 +232,11 @@ Two options for deploying this solution include:
 
 An easy way to deploy this Azure Arm templates is to use the deploy button below. 
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v%2Fexamples%2Fautoscale%2Fbigiq%2Fazuredeploy.json)
+**Full Stack**
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.4.0.0%2Fexamples%2Fautoscale%2Fbigiq%2Fazuredeploy.json)
+
+**Existing Stack**
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.4.0.0%2Fexamples%2Fautoscale%2Fbigiq%2Fazuredeploy-existing-network.json)
 
 *Step 1: Custom Template Page* 
   - Select or Create New Resource Group.
@@ -192,7 +246,7 @@ An easy way to deploy this Azure Arm templates is to use the deploy button below
     - **restrictedSrcAddressApp**
     - **restrictedSrcAddressMgmt**
     - **uniqueString**
-    - **bigIpRuntimeInitConfig** *(with custom BIG-IQ values, custom URL or inline json)*
+    - **bigIpRuntimeInitConfig** *(with custom BIG-IQ values, custom URL or inline JSON)*
   - Click "Next: Review + Create".
 
 *Step 2: Custom Template Page*
@@ -222,12 +276,14 @@ az group create -n ${RESOURCE_GROUP} -l ${REGION}
 az deployment group create --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} --template-uri ${TEMPLATE_URI}  --parameters @${DEPLOY_PARAMS_FILE}
 ```
 
+When deploying **azuredeploy-existing-network.json**, modify the deployment parameters to match the requirements specified in the **Existing Network Template Input Parameters** table above.
+
 For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 
 ### Changing the BIG-IP Deployment
 
-By default, for BYOL deployments, you will need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter as a URL or inline json. 
+By default, for BYOL deployments, you will need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter as a URL or inline JSON. 
 
 Example from azuredeploy.parameters.json
 ```json
@@ -242,7 +298,7 @@ Example from azuredeploy.parameters.json
 
 **IMPORTANT**: Note the "raw.githubusercontent.com". Any URLs pointing to GitHub **must** use the raw file format. 
 
-The F5 BIG-IP Runtime Init configuration file can also be formatted in json and/or passed directly inline:
+The F5 BIG-IP Runtime Init configuration file can also be formatted in JSON and/or passed directly inline:
 
 Example:
 ```json
@@ -254,24 +310,27 @@ Example:
     },
 ```
 
-NOTE: If providing the json inline as a template parameter, you must escape all double quotes so it can be passed as a single parameter string.
+NOTE: If providing the JSON inline as a template parameter, you must escape all double quotes so it can be passed as a single parameter string.
 
-*TIP: If you don't have an easy way to host your own config files, passing the config as inline json via the template input parameter might be the quickest / most accessible option to test out different BIG-IP configs using this repository.*
+*TIP: If you don't have an easy way to host your own config files, passing the config as inline JSON via the template input parameter might be the quickest / most accessible option to test out different BIG-IP configs using this repository.*
  
 F5 has provided the following example configuration files in the `examples/autoscale/bigip-configurations` folder:
 
-- `runtime-init-conf-bigiq.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
-- `runtime-init-conf-payg.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
+- `runtime-init-conf-bigiq.yaml` - This configuration file installs packages for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
+- `runtime-init-conf-payg.yaml` - This inline configuration file installs packages for a PAYG licensed deployment.
+- `runtime-init-conf-bigiq_with_app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
+- `runtime-init-conf-payg_with_app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples. 
  
-By default, this solution deploys the `runtime-init-conf-bigiq.yaml` configuration. However, this file must be customized with your BIG-IQ information and republished before deploying. 
+By default, this solution deploys the `runtime-init-conf-bigiq_with_app.yaml` configuration. However, this file must be customized with your BIG-IQ information and republished before deploying.
 
+This example configuration does not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, in production, these files are commonly customized further. Some examples of small customizations or modifications are provided below. 
 
 To change the BIG-IQ Licensing configuration:
 
-  1. edit/modify the Declarative Onboarding (DO) declaration in the runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq.yaml) with the new `License` values. 
+  1. Edit/modify the Declarative Onboarding (DO) declaration in the runtime-init config file [runtime-init-conf-bigiq_with_app.yaml](../bigip-configurations/runtime-init-conf-bigiq_with_app.yaml) with the new `License` values. 
 
 Example:
 ```yaml
@@ -290,7 +349,7 @@ Example:
             overwrite: false
 ```
 
-  2. edit/modify the BIG-IQ secret runtime-parameter in the runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq.yaml) with your `secretId` and `vaultUrl` values. 
+  2. Edit/modify the BIG-IQ secret runtime-parameter in the runtime-init config file [runtime-init-conf-bigiq_with_app.yaml](../bigip-configurations/runtime-init-conf-bigiq_with_app.yaml) with your `secretId` and `vaultUrl` values. 
 
 ```yaml
   - name: BIGIQ_PASSWORD
@@ -301,16 +360,11 @@ Example:
       vaultUrl: 'https://<YOUR-VAULT-NAME>.vault.azure.net'
       secretId: <YOUR_SECRET_ID>
 ```
-  3. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc.) or render/format to send as inline json.
-  4. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline json of the updated configuration
-  5. Update other required BIG-IQ related input parameters to match.
-        - **bigIqAddress**
-        - **bigIqAddressType**
-        - **bigIqUsername**
-        - **bigIqLicensePool**
-        - **bigIqUtilitySku**
-        - **bigIqTenant**
-  6. Deploy or Re-Deploy the template
+  3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc.) or render/format to send as inline json.
+  4. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
+  5. Update required BIG-IQ related input parameters to match.
+        - **bigIqVnetId**: This parameter is only required when the BIG-IQ device is accessed via a private IP address on an Azure virtual network.
+  6. Deploy or Re-Deploy the template.
 
 
 This example configuration does not require any further modification to deploy successfully. *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, the configurations are commonly customized further. Some additional examples of customizations or modifications are provided below for illustration. 
@@ -320,7 +374,7 @@ The example AS3 declaration in this config uses [Service Discovery](https://clou
 
 To change the Pool configuration:
 
-  1. edit/modify the AS3 Declaration (AS3) declaration in a corresponding runtime-init config file with the new `Pool` values. 
+  1. Edit/modify the AS3 Declaration (AS3) declaration in a corresponding runtime-init config file with the new `Pool` values. 
 
 Example:
 ```yaml
@@ -354,9 +408,9 @@ Example:
                 servicePort: 80
 ```
 
-  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc) or render/format to send as inline json.
-  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline json of the updated configuration 
-  4. Deploy or Re-Deploy
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc) or render/format to send as inline json.
+  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
+  4. Deploy or Re-Deploy.
 
 
 To change the logging destination: 
@@ -428,7 +482,6 @@ Expected deploy time for the entire stack =~ 13-15 minutes.
 
 If any of the deployments are in a failed state, proceed to the [Troubleshooting Steps](#troubleshooting-steps) section below.
 
-
 ### Testing the WAF Service
 
 To test the WAF service, perform the following steps:
@@ -473,7 +526,6 @@ To test the WAF service, perform the following steps:
 
 ### Accessing the BIG-IP
 
-
 - Obtain the IP address of the BIG-IP Management Port:
 
   - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bigip-vmss > Instances > *instance name* > Essentials > Public address**.
@@ -481,7 +533,6 @@ To test the WAF service, perform the following steps:
       ```shell
       az vmss list-instance-public-ips --name ${uniqueId}-bigip-vmss -g ${RESOURCE_GROUP} -o tsv --query [].ipAddress
       ```
-
   - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
        - Obtain the Public IP address of a bastion host: 
          - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Overview > *uniqueId*-bastion-vmss > Instances > *instance name* > Essentials > Public address**.
@@ -503,7 +554,7 @@ To test the WAF service, perform the following steps:
       ```bash
       ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
 
-  - OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+  - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
 
     From your desktop client/shell, create an SSH tunnel:
     ```bash
@@ -531,9 +582,7 @@ To test the WAF service, perform the following steps:
   - Open a browser to the Management IP
     - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
 
-        
-
-    - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+    - Or when you are going through a bastion host (when **provisionPublicIP** = **false**):
 
         From your desktop client/shell, create an SSH tunnel:
         ```bash
@@ -557,7 +606,6 @@ To test the WAF service, perform the following steps:
   - username: `<YOUR_WEBUI_USERNAME>`
   - password: `<YOUR_STRONG_PASSWORD>`
       
-
 ### Further Exploring
 
 #### WebUI
@@ -590,7 +638,7 @@ By default, Rolling Upgrades are configured to upgrade in batches of 20% with ze
 
 #### Updating the Configuration
 
-1. Modify the **bigIpRuntimeInitConfig** parameter value to trigger a model update. If using inline json, make a configuration change in parameter payload. If using a URL, reference a new URL. Example:
+1. Modify the **bigIpRuntimeInitConfig** parameter value to trigger a model update. If using inline JSON, make a configuration change in parameter payload. If using a URL, reference a new URL. Example:
   - If using tags for versions, change from`
     ```json
         "bigIpRuntimeInitConfig": {
@@ -658,7 +706,7 @@ If a new configuration update fails (for example, invalid config, typo, etc) and
 
 You can add notifications when scale up/down events happen, either in the form of email or webhooks. The following shows an example of adding an email address via the Azure Resources Explorer that receives an email from Azure whenever a scale up/down event occurs.
 
-Log in to the [Azure Resource Explorer](https://resources.azure.com) and then navigate to the Autoscale settings (**Subscriptions > Resource Groups >** *resource group where deployed* **> Providers > Microsoft.Insights > Autoscalesettings > autoscaleconfig**). At the top of the screen click **Read/Write**, and then from the Autoscale settings, click **Edit**. Replace the current **notifications** json key with the example below, making sure to update the email address(es). Select PUT and notifications will be sent to the email addresses listed.
+Log in to the [Azure Resource Explorer](https://resources.azure.com) and then navigate to the Autoscale settings (**Subscriptions > Resource Groups >** *resource group where deployed* **> Providers > Microsoft.Insights > Autoscalesettings > autoscaleconfig**). At the top of the screen click **Read/Write**, and then from the Autoscale settings, click **Edit**. Replace the current **notifications** JSON key with the example below, making sure to update the email address(es). Select PUT and notifications will be sent to the email addresses listed.
 
 ```json
     "notifications": [
