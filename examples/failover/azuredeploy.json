@@ -221,7 +221,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg1RulesArray": [
+    "appNsgRulesArray": [
       {
         "destinationPortRanges": [
           "80",
@@ -239,7 +239,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg2RulesArray": [
+    "internalNsgRulesArray": [
       {
         "destinationPortRanges": [
           "80",
@@ -257,9 +257,9 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg0": "[variables('mgmtNsgRulesArray')]",
-    "nsg1": "[variables('nsg1RulesArray')]",
-    "nsg2": "[variables('nsg2RulesArray')]",
+    "mgmtSecurityGroup": "[variables('mgmtNsgRulesArray')]",
+    "appSecurityGroup": "[variables('appNsgRulesArray')]",
+    "internalSecurityGroup": "[variables('internalNsgRulesArray')]",
     "bastionInstanceName": "[variables('uniqueString')]",
     "bastionInstanceType": "Standard_D2s_v3",
     "appInstanceName": "[variables('uniqueString')]",
@@ -376,13 +376,13 @@
             "value": "[variables('loadBalancerRulePorts')]"
           },
           "nsg0": {
-            "value": "[variables('nsg0')]"
+            "value": "[variables('mgmtSecurityGroup')]"
           },
           "nsg1": {
-            "value": "[variables('nsg1')]"
+            "value": "[variables('appSecurityGroup')]"
           },
           "nsg2": {
-            "value": "[variables('nsg2')]"
+            "value": "[variables('internalSecurityGroup')]"
           },
           "numberPublicExternalIpAddresses": {
             "value": "[if(parameters('provisionExampleApp'), 3, 2)]"

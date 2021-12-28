@@ -1,15 +1,14 @@
----
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.25.0
-      extensionHash: 2c990f6185b16acf0234ebba02afc24863f538c955f51c7a3ebe01d5db58b859
+      extensionVersion: 1.26.0
+      extensionHash: f1f4a23cd7d3ac3d9f38fed520c373f5a16284fab001ebd26593ddc97c011ef3
     - extensionType: as3
-      extensionVersion: 3.32.0
-      extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
+      extensionVersion: 3.33.0
+      extensionHash: 368d7b22738fe707655ca3a104c7c79c5c185eb07021e41eebe0e19d70ca63ee
     - extensionType: cf
-      extensionVersion: 1.9.0
-      extensionHash: da3118eacc4fe9ff925d95d4bf8d1993810560e07260825306cb0721862defdf
+      extensionVersion: 1.10.0
+      extensionHash: d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace
 extension_services:
   service_operations:
     - extensionType: do
@@ -18,7 +17,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
+          BYOL license
         Common:
           class: Tenant
           My_DbVariables:

@@ -127,6 +127,33 @@
     "internalLoadBalancerName": "None",
     "internalLoadBalancerProbePort": "3456",
     "loadBalancerRulePorts": [],
+    "applicationRulesArray": [
+      {
+        "destinationPortRanges": [
+          "80",
+          "443"
+        ],
+        "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
+        "protocol": "Tcp"
+      },
+      {
+        "destinationPortRanges": [
+          "80",
+          "443"
+        ],
+        "sourceAddressPrefix": "10.0.0.0/8",
+        "protocol": "Tcp"
+      }
+    ],
+    "bastionNsgRulesArray": [
+      {
+        "destinationPortRanges": [
+          "22"
+        ],
+        "sourceAddressPrefix": "[parameters('restrictedSrcAddressMgmt')]",
+        "protocol": "Tcp"
+      }
+    ],
     "mgmtNsgRulesArray": [
       {
         "destinationPortRanges": [
@@ -137,7 +164,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg1RulesArray": [
+    "externalRulesArray": [
       {
         "destinationPortRanges": [
           "80",
@@ -155,7 +182,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg2RulesArray": [
+    "internalRulesArray": [
       {
         "destinationPortRanges": [
           "80",
@@ -173,9 +200,9 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg0": "[if(equals(parameters('numNics'), 1), union(variables('mgmtNsgRulesArray'), variables('nsg1RulesArray'), variables('nsg2RulesArray')), variables('mgmtNsgRulesArray'))]",
-    "nsg1": "[if(greaterOrEquals(parameters('numNics'), 2), variables('nsg1RulesArray'), createArray())]",
-    "nsg2": "[if(greaterOrEquals(parameters('numNics'), 3), variables('nsg2RulesArray'), createArray())]",
+    "mgmtSecurityGroup": "[if(equals(parameters('numNics'), 1), union(variables('mgmtNsgRulesArray'), variables('externalRulesArray'), variables('internalRulesArray')), variables('mgmtNsgRulesArray'))]",
+    "externalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 2), variables('externalRulesArray'), createArray())]",
+    "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalRulesArray'), createArray())]",
     "bastionInstanceName": "[variables('uniqueString')]",
     "bastionInstanceType": "Standard_D2s_v3",
     "provisionApp": "[not(empty(parameters('appContainerName')))]",
@@ -251,14 +278,26 @@
           "loadBalancerRulePorts": {
             "value": "[variables('loadBalancerRulePorts')]"
           },
+          "appSg": {
+            "value": "[variables('applicationRulesArray')]"
+          },
+          "bastionSg": {
+            "value": "[variables('bastionNsgRulesArray')]"
+          },
           "nsg0": {
-            "value": "[variables('nsg0')]"
+            "value": "[variables('mgmtSecurityGroup')]"
           },
           "nsg1": {
-            "value": "[variables('nsg1')]"
+            "value": "[variables('externalSecurityGroup')]"
           },
           "nsg2": {
-            "value": "[variables('nsg2')]"
+            "value": "[variables('internalSecurityGroup')]"
+          },
+          "nsg3": {
+            "value": "[variables('applicationRulesArray')]"
+          },
+          "nsg4": {
+            "value": "[variables('bastionRulesArray')]"
           },
           "numberPublicExternalIpAddresses": {
             "value": 2
@@ -307,7 +346,7 @@
             "value": "[reference('networkTemplate').outputs.subnets.value[parameters('numNics')]]"
           },
           "nsgId": {
-            "value": "[if(equals(parameters('numNics'), 1), reference('dagTemplate').outputs.nsg0Id.value, reference('dagTemplate').outputs.nsg1Id.value)]"
+            "value": "[reference('dagTemplate').outputs.nsg3.value]"
           },
           "appContainerName": {
             "value": "[parameters('appContainerName')]"
@@ -349,7 +388,7 @@
             "value": "[variables('bastionInstanceType')]"
           },
           "nsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
+            "value": "[reference('dagTemplate').outputs.nsg4Id.value]"
           },
           "publicIpId": {
             "value": "[reference('dagTemplate').outputs.mgmtIpIds.value[0]]"

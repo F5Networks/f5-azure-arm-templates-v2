@@ -262,7 +262,7 @@
       "80",
       "443"
     ],
-    "nsg0": [
+    "mgmtSecurityGroup": [
       {
         "destinationPortRanges": [
           "22",
@@ -280,7 +280,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg1": [
+    "appSecurityGroup": [
       {
         "destinationPortRanges": [
           "80",
@@ -298,7 +298,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg2": [
+    "bastionSecurityGroup": [
       {
         "destinationPortRanges": [
           "22"
@@ -554,13 +554,13 @@
             "value": "[variables('loadBalancerRulePorts')]"
           },
           "nsg0": {
-            "value": "[variables('nsg0')]"
+            "value": "[variables('mgmtSecurityGroup')]"
           },
           "nsg1": {
-            "value": "[variables('nsg1')]"
+            "value": "[variables('appSecurityGroup')]"
           },
           "nsg2": {
-            "value": "[if(parameters('provisionPublicIp'), createArray(), variables('nsg2'))]"
+            "value": "[if(parameters('provisionPublicIp'), createArray(), variables('bastionSecurityGroup'))]"
           },
           "numberPublicExternalIpAddresses": {
             "value": "[variables('numberPublicExternalIpAddresses')]"
