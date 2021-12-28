@@ -20,6 +20,8 @@ LOAD BALANCER RULE PORTS:
 NSG0: '[{"destinationPortRanges": ["22","8443"],"sourceAddressPrefix": "*", "protocol": "Tcp"},{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
 NSG1: '[]'
 NSG2: '[]'
+NSG3: '[]'
+NSG4: '[]'
 NUMBER PUBLIC EXT IP ADDRESSES: 1
 NUMBER PUBLIC MGMT IP ADDRESSES: 1
 PROVISION PUBLIC IP: {}

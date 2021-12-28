@@ -16,6 +16,8 @@ LOAD BALANCER RULE PORTS: []
 NSG0: '[{"destinationPortRanges": ["22"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
 NSG1: '[]'
 NSG2: '[]'
+NSG3: '[]'
+NSG4: '[]'
 LICENSE TYPE: opensource
 NUMBER PUBLIC EXT IP ADDRESSES: 0
 NUMBER PUBLIC MGMT IP ADDRESSES: 1

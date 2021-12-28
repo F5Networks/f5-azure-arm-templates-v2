@@ -12,6 +12,8 @@ NSG2 PROTOCOL: "Tcp"
 NSG0: '[{"destinationPortRanges": <NSG0 MGMT PORTS>,"sourceAddressPrefix": "<NSG0 SOURCE>","protocol": "<NSG0 PROTOCOL>"},{"destinationPortRanges": <NSG0 EXT PORTS>,"sourceAddressPrefix": "<NSG0 SOURCE>","protocol": "<NSG0 PROTOCOL>"}]'
 NSG1: '[]'
 NSG2: '[{"destinationPortRanges": <NSG2 PORTS>,"sourceAddressPrefix": "<NSG2 SOURCE>","protocol": "<NSG2 PROTOCOL>"}]'
+NSG3: '[]'
+NSG4: '[]'
 NUMBER PUBLIC MGMT IP ADDRESSES: 0
 NUMBER PUBLIC EXT IP ADDRESSES: 1
 NUM SUBNETS: 2
