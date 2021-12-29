@@ -145,7 +145,7 @@
         "protocol": "Tcp"
       }
     ],
-    "bastionNsgRulesArray": [
+    "bastionRulesArray": [
       {
         "destinationPortRanges": [
           "22"
@@ -154,7 +154,7 @@
         "protocol": "Tcp"
       }
     ],
-    "mgmtNsgRulesArray": [
+    "mgmtRulesArray": [
       {
         "destinationPortRanges": [
           "22",
@@ -200,7 +200,7 @@
         "protocol": "Tcp"
       }
     ],
-    "mgmtSecurityGroup": "[if(equals(parameters('numNics'), 1), union(variables('mgmtNsgRulesArray'), variables('externalRulesArray'), variables('internalRulesArray')), variables('mgmtNsgRulesArray'))]",
+    "mgmtSecurityGroup": "[if(equals(parameters('numNics'), 1), union(variables('mgmtRulesArray'), variables('externalRulesArray'), variables('internalRulesArray')), variables('mgmtRulesArray'))]",
     "externalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 2), variables('externalRulesArray'), createArray())]",
     "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalRulesArray'), createArray())]",
     "bastionInstanceName": "[variables('uniqueString')]",
@@ -278,12 +278,6 @@
           "loadBalancerRulePorts": {
             "value": "[variables('loadBalancerRulePorts')]"
           },
-          "appSg": {
-            "value": "[variables('applicationRulesArray')]"
-          },
-          "bastionSg": {
-            "value": "[variables('bastionNsgRulesArray')]"
-          },
           "nsg0": {
             "value": "[variables('mgmtSecurityGroup')]"
           },
@@ -346,7 +340,7 @@
             "value": "[reference('networkTemplate').outputs.subnets.value[parameters('numNics')]]"
           },
           "nsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg3.value]"
+            "value": "[reference('dagTemplate').outputs.nsg3Id.value]"
           },
           "appContainerName": {
             "value": "[parameters('appContainerName')]"
