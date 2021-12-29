@@ -3,6 +3,7 @@
 CUR_DIR := $(cwd)
 PROJECT_DIR := .
 LINK_CHECK_DIR := cloud-tools/link_checker
+POLICY_CHECK_DIR := cloud-tools/test-policy-parser
 CRAWLER_DIR := cloud-tools/crawler
 SMOKE_TEST_DIR := tests/smoke
 LINTER_DIR := cloud-tools/arm-ttk
@@ -24,6 +25,11 @@ link_check_release:
 	echo "Running link checker against all markdown files";
 	cd ${LINK_CHECK_DIR} && npm install && cd ${CUR_DIR};
 	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived automated-test-scripts" link_checker_config_release.json
+
+test_policy_check:
+	echo "Running parameter checker against all test policy files";
+	cd ${POLICY_CHECK_DIR} && pip install -r requirements.txt && cd ${CUR_DIR};
+	python ${POLICY_CHECK_DIR}/test_policy_parser.py
 
 run_linter:
 	echo "Running arm-ttk against templates";
