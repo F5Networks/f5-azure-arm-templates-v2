@@ -10,6 +10,9 @@
 ../../examples/autoscale/payg/azuredeploy.json:
 - No Key Diff
 - No Value Diff
+../../examples/failover/azuredeploy-existing-network.json:
+- No Key Diff
+- No Value Diff
 ../../examples/failover/azuredeploy.json:
 - No Key Diff
 - No Value Diff
@@ -65,6 +68,9 @@
 - No Key Diff
 - No Value Diff
 ../../examples/modules/telemetry/telemetry.json:
+- No Key Diff
+- No Value Diff
+../../examples/quickstart/azuredeploy-existing-network.json:
 - No Key Diff
 - No Value Diff
 ../../examples/quickstart/azuredeploy.json:

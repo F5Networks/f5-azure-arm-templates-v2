@@ -32,7 +32,7 @@ extension_services:
             class: Provision
             asm: nominal
             ltm: nominal
-          my_Ntp:
+          My_Ntp:
             class: NTP
             servers:
               - 0.pool.ntp.org
@@ -42,7 +42,7 @@ extension_services:
             class: DNS
             nameServers:
               - 168.63.129.16
-          my_System:
+          My_System:
             autoPhonehome: true
             class: System
             hostname: 'failover0.local'

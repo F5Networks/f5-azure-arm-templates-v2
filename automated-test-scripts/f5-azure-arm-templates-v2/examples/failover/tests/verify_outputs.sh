@@ -49,16 +49,10 @@ if [[ <PROVISION PUBLIC IP> == True ]]; then
     outputs[bigIpInstance01ManagementPublicUrl]="https://${mgmt_public_ip_1}:${mgmt_port}/"
     outputs[bigIpInstance02ManagementPublicIp]=$mgmt_public_ip_2
     outputs[bigIpInstance02ManagementPublicUrl]="https://${mgmt_public_ip_2}:${mgmt_port}/"
-else
-    bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
-    outputs[bastionPublicIp]=$bastion_public_ip
 fi
 
 if [[ <PROVISION APP> == True ]]; then
     vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
-    outputs[appPrivateIp]="10.0.3.4"
-    outputs[appUsername]="azureuser"
-    outputs[appVmName]="<RESOURCE GROUP>-app-vm"
     outputs[vip1PrivateIp]=$vip_1_private_ip
     outputs[vip1PrivateUrlHttp]="http://${vip_1_private_ip}/"
     outputs[vip1PrivateUrlHttps]="https://${vip_1_private_ip}/"
@@ -66,7 +60,20 @@ if [[ <PROVISION APP> == True ]]; then
     outputs[vip1PublicUrlHttp]="http://${vip_1_public_ip}/"
     outputs[vip1PublicUrlHttps]="https://${vip_1_public_ip}/"
 fi
-outputs[virtualNetworkId]="/subscriptions/${subscription}/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/<RESOURCE GROUP>-vnet"
+
+if echo "<TEMPLATE URL>" | grep "azuredeploy.json"; then
+    outputs[virtualNetworkId]="/subscriptions/${subscription}/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/<RESOURCE GROUP>-vnet"
+    if [[ <PROVISION APP> == True ]]; then
+        outputs[appPrivateIp]="10.0.3.4"
+        outputs[appUsername]="azureuser"
+        outputs[appVmName]="<RESOURCE GROUP>-app-vm"
+    fi
+    if [[ <PROVISION PUBLIC IP> == False ]]; then
+        bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+        outputs[bastionPublicIp]=$bastion_public_ip
+    fi
+fi
+
 outputs[bigIpInstance01VmId]="${id_1}"
 outputs[bigIpInstance02VmId]="${id_2}"
 

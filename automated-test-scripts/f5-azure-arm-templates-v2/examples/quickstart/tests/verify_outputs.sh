@@ -45,29 +45,38 @@ fi
 vip_1_private_ip="10.0.${nic1_service_index}.101"
 
 declare -A outputs
-outputs[appPrivateIp]="10.0.<NIC COUNT>.4"
-outputs[appUsername]="azureuser"
-outputs[appVmName]="<RESOURCE GROUP>-app-vm"
 outputs[bigIpManagementPrivateIp]=$mgmt_private_ip
 outputs[bigIpManagementPrivateUrl]="https://${mgmt_private_ip}:${mgmt_port}/"
+outputs[bigIpVmId]="${id}"
 
 if [[ <PROVISION PUBLIC IP> == True ]]; then
     mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     outputs[bigIpManagementPublicIp]=$mgmt_public_ip
     outputs[bigIpManagementPublicUrl]="https://${mgmt_public_ip}:${mgmt_port}/"
-else
-    bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
-    outputs[bigIpManagementPublicIp]=$bastion_public_ip
 fi
 
 outputs[vip1PrivateIp]=$vip_1_private_ip
 outputs[vip1PrivateUrlHttp]="http://${vip_1_private_ip}/"
 outputs[vip1PrivateUrlHttps]="https://${vip_1_private_ip}/"
-outputs[vip1PublicIp]=$vip_1_public_ip
-outputs[vip1PublicUrlHttp]="http://${vip_1_public_ip}/"
-outputs[vip1PublicUrlHttps]="https://${vip_1_public_ip}/"
-outputs[virtualNetworkId]="/subscriptions/${subscription}/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/<RESOURCE GROUP>-vnet"
-outputs[bigIpVmId]="${id}"
+
+if [[ <PROVISION APP> == True ]]; then
+    outputs[vip1PublicIp]=$vip_1_public_ip
+    outputs[vip1PublicUrlHttp]="http://${vip_1_public_ip}/"
+    outputs[vip1PublicUrlHttps]="https://${vip_1_public_ip}/"
+fi
+
+if echo "<TEMPLATE URL>" | grep "azuredeploy.json"; then
+    outputs[virtualNetworkId]="/subscriptions/${subscription}/resourceGroups/<RESOURCE GROUP>/providers/Microsoft.Network/virtualNetworks/<RESOURCE GROUP>-vnet"
+    if [[ <PROVISION APP> == True ]]; then
+        outputs[appPrivateIp]="10.0.<NIC COUNT>.4"
+        outputs[appUsername]="azureuser"
+        outputs[appVmName]="<RESOURCE GROUP>-app-vm"
+    fi
+    if [[ <PROVISION PUBLIC IP> == False ]]; then
+        bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+        outputs[bastionPublicIp]=$bastion_public_ip
+    fi
+fi
 
 # Run array through function
 response=$(verify_outputs "outputs")

@@ -13,7 +13,7 @@ DEPLOYMENT=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | 
 if [[ "<PROVISION PUBLIC IP>" == "False" ]]; then
     echo 'MGMT PUBLIC IP IS NOT ENABLED'
 
-    bastion_public_ip=$(echo $DEPLOYMENT | jq -r '.properties.outputs["bastionPublicIp"].value')
+    bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     echo "BASTION PUBLIC IP: $bastion_public_ip"
     bigip1_private_ip=$(echo $DEPLOYMENT | jq -r '.properties.outputs["bigIpInstance01ManagementPrivateIp"].value')
     echo "BIGIP1 PRIVATE IP: $bigip1_private_ip"
