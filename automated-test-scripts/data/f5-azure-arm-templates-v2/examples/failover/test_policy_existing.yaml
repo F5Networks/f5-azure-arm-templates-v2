@@ -1,0 +1,19 @@
+---
+# Failover Existing Test
+azure-arm-failover-byol-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 2
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/prepub_parameters2.yaml"
+
+azure-arm-failover-payg-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 2
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/existing/prepub_parameters2.yaml"

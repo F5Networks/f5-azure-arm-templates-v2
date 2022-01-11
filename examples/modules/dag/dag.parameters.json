@@ -64,6 +64,12 @@
         }
       ]
     },
+    "nsg3": {
+      "value": []
+    },
+    "nsg4": {
+      "value": []
+    },
     "numberPublicExternalIpAddresses": {
       "value": 1
     },

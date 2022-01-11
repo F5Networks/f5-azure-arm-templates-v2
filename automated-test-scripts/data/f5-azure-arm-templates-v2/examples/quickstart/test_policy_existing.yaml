@@ -1,0 +1,42 @@
+---
+# quickstart byol existing test
+azure-arm-quickstart-byol-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 2
+  parameters-files:
+    # 3nic
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters.yaml"
+    # 2nic
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters1.yaml"
+    # 1nic
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters2.yaml"
+    # 3nic - prod stack
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters3.yaml"
+    # 2nic - prod stack
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters4.yaml"
+    # 1nic - prod stack
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters5.yaml"
+
+# quickstart payg existing test
+azure-arm-quickstart-payg-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 2
+  parameters-files:
+    # 3nic
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters.yaml"
+    # 2nic
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters1.yaml"
+    # 1nic
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters2.yaml"
+    # 3nic - prod stack
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters3.yaml"
+    # 2nic - prod stack
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters4.yaml"
+    # 1nic - prod stack
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters5.yaml"
+    # v14 public IP
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters6_v14.yaml"
+    # v14 no public IP
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters7_v14.yaml"

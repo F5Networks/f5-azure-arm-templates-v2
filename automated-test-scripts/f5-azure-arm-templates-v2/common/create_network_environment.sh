@@ -17,7 +17,12 @@ if [[ "<PROVISION PUBLIC IP>" == "False" ]]; then
     NAT_GATEWAY=True
 fi
 
-DEPLOY_PARAMS='{"vnetName":{"value":"vnet-<DEWPOINT JOB ID>"},"numSubnets":{"value":2},"vnetAddressPrefix":{"value":"10.0"},"createNatGateway":{"value":'$NAT_GATEWAY'}}'
+NUM_SUBNETS=4
+if echo "<TEMPLATE URL>" | grep "autoscale"; then
+    NUM_SUBNETS=2
+fi
+
+DEPLOY_PARAMS='{"vnetName":{"value":"vnet-<DEWPOINT JOB ID>"},"numSubnets":{"value":'$NUM_SUBNETS'},"vnetAddressPrefix":{"value":"10.0"},"createNatGateway":{"value":'$NAT_GATEWAY'}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

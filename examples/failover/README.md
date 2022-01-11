@@ -13,6 +13,8 @@
   - [Important Configuration Notes](#important-configuration-notes)
     - [Template Input Parameters](#template-input-parameters)
     - [Template Outputs](#template-outputs)
+    - [Existing Network Template Input Parameters](#existing-network-template-input-parameters)
+    - [Existing Network Template Outputs](#existing-network-template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the Azure Deploy button](#deploying-via-the-azure-deploy-button)
     - [Deploying via the Azure CLI](#deploying-via-the-azure-cli)
@@ -45,6 +47,8 @@ The goal of this solution is to reduce prerequisites and complexity to a minimum
 
 This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are located in the `examples/modules` directory in this repository. *F5 recommends cloning this repository and modifying these templates to fit your use case.*
 
+***Existing Stack Deployments (azuredeploy-existing-network.json)***<br>
+Use azuredeploy-existing-network.json parent template to deploy the autoscale solution into an existing infrastructure. This template expects virtual network, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
 
 The modules below create the following cloud resources:
 
@@ -119,22 +123,20 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
 | cfeStorageAccountName | Yes | CFE storage account created and used for cloud-failover-extension. |
 | cfeTag | No | Cloud Failover deployment tag value. |
-| externalSelfAddress01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| externalSelfAddress02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| internalSelfAddress01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| internalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| mgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| mgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| provisionExampleApp | No | Flag to deploy the demo web application.. |
+| bigIpExternalSelfAddress01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfAddress02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfAddress01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| provisionExampleApp | No | Flag to deploy the demo web application. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the Azure instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
-| restrictedSrcAddressVip | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the Azure instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
-| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
+| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
-
 
 ### Template Outputs
 
@@ -166,6 +168,65 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | wafPublicIps | External Public IP Addresses | Dag Template | array |
 
 
+### Existing Network Template Input Parameters
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpInstanceType | No | Enter a valid instance type. |
+| bigIpPasswordSecretId | Yes | REQUIRED: The URL of the Azure Key Vault, including secret ID, where the BIG-IP password is stored. |
+| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
+| cfeStorageAccountName | Yes | CFE storage account created and used for cloud-failover-extension. |
+| cfeTag | No | Cloud Failover deployment tag value. |
+| bigIpExternalSubnetId | Yes | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
+| bigIpInternalSubnetId | Yes | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
+| bigIpMgmtSubnetId | Yes | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
+| bigIpExternalSelfAddress01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfAddress02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfAddress01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| provisionServicePublicIp | No | Flag to deploy public IP address resource for application. |
+| servicePrivateIpAddress | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfAddress. |
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the Azure instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
+| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
+| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+| userAssignManagedIdentity | No | Enter user assigned pre-existing management identity ID to be associated to vmss. If not specified, a new identity will be created. |
+
+
+### Existing Network Template Outputs
+
+| Name | Description | Required Resource | Type |
+| --- | --- | --- | --- |
+| bigIpInstance01ManagementPublicIp | Management Private IP Address | BIG-IP Template | string |
+| bigIpInstance01ManagementPrivateIp | Management Private IP Address | BIG-IP Template | string |
+| bigIpInstance01ManagementPublicUrl | Management Public IP Address | Dag Template | string |
+| bigIpInstance01ManagementPrivateUrl | Management Public IP Address | Dag Template | string |
+| bigIpInstance02ManagementPublicIp | Management Private IP Address | BIG-IP Template | string |
+| bigIpInstance02ManagementPrivateIp | Management Private IP Address | BIG-IP Template | string |
+| bigIpInstance02ManagementPublicUrl | Management Public IP Address | Dag Template | string |
+| bigIpInstance02ManagementPrivateUrl | Management Public IP Address | Dag Template | string |
+| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
+| bigIpInstance01VmId | Virtual Machine resource ID | BIG-IP Template | string |
+| bigIpInstance02VmId | Virtual Machine resource ID | BIG-IP Template | string |
+| vip1PrivateIp | Service (VIP) Private IP Address | Service Private IP Address | string |
+| vip1PrivateUrlHttp | Service (VIP) Private HTTP URL | Service Private IP Address| string |
+| vip1PrivateUrlHttps | Service (VIP) Private HTTPS URL | Service Private IP Address| string |
+| vip1PublicIp | Service (VIP) Public IP Address | Dag Template | string |
+| vip1PublicIpDns | Service (VIP) Public DNS | Dag Template | string |
+| vip1PublicUrlHttp | Service (VIP) Public HTTP URL | Dag Template | string |
+| vip1PublicUrlHttps | Service (VIP) Public HTTPS URL | Dag Template | string |
+| wafPublicIps | External Public IP Addresses | Dag Template | array |
+
 ## Deploying this Solution
 
 Two options for deploying this solution include:
@@ -177,7 +238,11 @@ Two options for deploying this solution include:
 
 The easiest way to deploy this Azure Arm templates is to use the deploy button below:<br>
 
+**Full Stack**
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.4.0.0%2Fexamples%2Ffailover%2Fazuredeploy.json)
+
+**Existing Stack**
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv1.4.0.0%2Fexamples%2Ffailover%2Fazuredeploy-existing-network.json)
 
 *Step 1: Custom Template Page* 
   - Select or Create New Resource Group.
@@ -185,7 +250,6 @@ The easiest way to deploy this Azure Arm templates is to use the deploy button b
     - **sshKey**
     - **restrictedSrcAddressApp**
     - **restrictedSrcAddressMgmt**
-    - **restrictedSrcAddressVip**
     - **uniqueString**
     - **cfeStorageAccountName**
   - Click "Next: Review + Create".
@@ -214,6 +278,8 @@ echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 az group create -n ${RESOURCE_GROUP} -l ${REGION}
 az deployment group create --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} --template-uri ${TEMPLATE_URI}  --parameters @${DEPLOY_PARAMS_FILE}
 ```
+
+When deploying **azuredeploy-existing-network.json**, modify the deployment parameters to match the requirements specified in the **Existing Network Template Input Parameters** table above.
 
 For next steps, see [Validating the Deployment](#validating-the-deployment).
 

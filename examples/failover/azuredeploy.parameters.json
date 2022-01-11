@@ -8,11 +8,29 @@
     "artifactLocation": {
       "value": "f5-azure-arm-templates-v2/v1.4.0.0/examples/"
     },
+    "bigIpExternalSelfAddress01": {
+      "value": "10.0.1.11"
+    },
+    "bigIpExternalSelfAddress02": {
+      "value": "10.0.1.12"
+    },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
     },
     "bigIpInstanceType": {
       "value": "Standard_DS3_v2"
+    },
+    "bigIpInternalSelfAddress01": {
+      "value": "10.0.2.11"
+    },
+    "bigIpInternalSelfAddress02": {
+      "value": "10.0.2.12"
+    },
+    "bigIpMgmtSelfAddress01": {
+      "value": "10.0.0.11"
+    },
+    "bigIpMgmtSelfAddress02": {
+      "value": "10.0.0.12"
     },
     "bigIpPasswordSecretId": {
       "value": ""
@@ -31,24 +49,6 @@
     },
     "cfeTag": {
       "value": "bigip-high-availability-solution"
-    },
-    "externalSelfAddress01": {
-      "value": "10.0.1.11"
-    },
-    "externalSelfAddress02": {
-      "value": "10.0.1.12"
-    },
-    "internalSelfAddress01": {
-      "value": "10.0.2.11"
-    },
-    "internalSelfAddress02": {
-      "value": "10.0.2.12"
-    },
-    "mgmtSelfAddress01": {
-      "value": "10.0.0.11"
-    },
-    "mgmtSelfAddress02": {
-      "value": "10.0.0.12"
     },
     "provisionExampleApp": {
       "value": true
