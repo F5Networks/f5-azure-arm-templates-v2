@@ -62,7 +62,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -172,6 +172,20 @@
       "maxValue": 60,
       "type": "int"
     },
+    "provisionExternalBigIpLoadBalancer": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "Select true if you would like to provision an external Azure load balancer."
+      },
+      "type": "bool"
+    },
+    "provisionInternalBigIpLoadBalancer": {
+      "defaultValue": false,
+      "metadata": {
+        "description": "Select true if you would like to provision an internal Azure load balancer."
+      },
+      "type": "bool"
+    },
     "provisionPublicIp": {
       "defaultValue": true,
       "metadata": {
@@ -252,12 +266,14 @@
     "keyVaultPermissionsKeys": [],
     "keyVaultPermissionsSecrets": [],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
+    "createNatGateway": "[and(not(parameters('provisionPublicIp')), not(variables('provisionExternalBigIpLoadBalancer')))]",
     "numSubnets": 2,
     "vnetAddressPrefix": "10.0",
     "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
-    "externalLoadBalancerName": "[concat(variables('uniqueString'), '-alb')]",
-    "internalLoadBalancerName": "None",
-    "internalLoadBalancerProbePort": "3456",
+    "provisionExternalBigIpLoadBalancer": "[parameters('provisionExternalBigIpLoadBalancer')]",
+    "provisionInternalBigIpLoadBalancer": "[parameters('provisionInternalBigIpLoadBalancer')]",
+    "externalLoadBalancerName": "[if(variables('provisionExternalBigIpLoadBalancer'), concat(variables('uniqueString'), '-alb'), '')]",
+    "internalLoadBalancerName": "[if(variables('provisionInternalBigIpLoadBalancer'), concat(variables('uniqueString'), '-ilb'), '')]",
     "loadBalancerRulePorts": [
       "80",
       "443"
@@ -307,7 +323,7 @@
         "protocol": "Tcp"
       }
     ],
-    "numberPublicExternalIpAddresses": 1,
+    "numberPublicExternalIpAddresses": "[if(variables('provisionExternalBigIpLoadBalancer'), 1, 0)]",
     "numberPublicMgmtIpAddresses": 0,
     "bastionInstanceName": "[variables('uniqueString')]",
     "bastionInstanceType": "Standard_D2s_v3",
@@ -506,6 +522,9 @@
           "contentVersion": "[variables('contentVersion')]"
         },
         "parameters": {
+          "createNatGateway": {
+            "value": "[variables('createNatGateway')]"
+          },
           "numSubnets": {
             "value": "[variables('numSubnets')]"
           },
@@ -539,16 +558,13 @@
             "value": "[variables('uniqueString')]"
           },
           "externalLoadBalancerName": {
-            "value": "[variables('externalLoadBalancerName')]"
+            "value": "[if(variables('provisionExternalBigIpLoadBalancer'), variables('externalLoadBalancerName'), 'None')]"
           },
           "internalLoadBalancerName": {
-            "value": "[variables('internalLoadBalancerName')]"
-          },
-          "internalLoadBalancerProbePort": {
-            "value": "[variables('internalLoadBalancerProbePort')]"
+            "value": "[if(variables('provisionInternalBigIpLoadBalancer'), variables('internalLoadBalancerName'), 'None')]"
           },
           "internalSubnetId": {
-            "value": ""
+            "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
           },
           "loadBalancerRulePorts": {
             "value": "[variables('loadBalancerRulePorts')]"
@@ -608,7 +624,7 @@
             "value": "[parameters('sshKey')]"
           },
           "subnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[0]]"
+            "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -710,23 +726,19 @@
             "value": "[variables('bigIpImage')]"
           },
           "inboundMgmtNatPoolId": {
-            "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundMgmtNatPool.value, '')]"
+            "value": "[if(and(variables('provisionExternalBigIpLoadBalancer'), greater(variables('numberPublicMgmtIpAddresses'), 0)), reference('dagTemplate').outputs.inboundMgmtNatPool.value, '')]"
           },
           "inboundSshNatPoolId": {
-            "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundSshNatPool.value, '')]"
+            "value": "[if(and(variables('provisionExternalBigIpLoadBalancer'), greater(variables('numberPublicMgmtIpAddresses'), 0)), reference('dagTemplate').outputs.inboundSshNatPool.value, '')]"
           },
           "instanceHealthProbeId": {
-            "value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesId.value[0]]"
+            "value": "[if(variables('provisionExternalBigIpLoadBalancer'), reference('dagTemplate').outputs.externalLoadBalancerProbesId.value[0], if(variables('provisionInternalBigIpLoadBalancer'), reference('dagTemplate').outputs.internalLoadBalancerProbesId.value[0], ''))]"
           },
           "instanceType": {
             "value": "[variables('bigIpInstanceType')]"
           },
           "loadBalancerBackendAddressPoolsArray": {
-            "value": [
-              {
-                "id": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value]"
-              }
-            ]
+            "value": "[if(variables('provisionExternalBigIpLoadBalancer'), if(variables('provisionInternalBigIpLoadBalancer'), createArray(createObject('id', reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value), createObject('id', reference('dagTemplate').outputs.internalBackEndLoadBalancerId.value)), createArray(createObject('id', reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value))), if(variables('provisionInternalBigIpLoadBalancer'), createArray(createObject('id', reference('dagTemplate').outputs.internalBackEndLoadBalancerId.value)), createArray()))]"
           },
           "nsgId": {
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
@@ -850,9 +862,14 @@
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
     "wafPublicIps": {
-      "condition": "[variables('provisionApp')]",
+      "condition": "[and(variables('provisionApp'), variables('provisionExternalBigIpLoadBalancer'))]",
       "type": "array",
       "value": "[reference('dagTemplate').outputs.externalIps.value]"
+    },
+    "wafPrivateIp": {
+      "condition": "[and(variables('provisionApp'), variables('provisionInternalBigIpLoadBalancer'))]",
+      "type": "string",
+      "value": "[reference('dagTemplate').outputs.internalFrontEndLoadBalancerIp.value]"
     }
   }
 }

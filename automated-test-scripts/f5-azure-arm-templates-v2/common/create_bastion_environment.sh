@@ -22,12 +22,13 @@ else
     if echo "<TEMPLATE URL>" | grep "autoscale"; then
         CREATE_AUTOSCALE=True
         PUBLIC_IP_ID=''
+        SUBNET_INDEX=1
     else
         CREATE_AUTOSCALE=False
         az network public-ip create -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-pip  --allocation-method Static --zone 1 --sku Standard
         PUBLIC_IP_ID=$(az network public-ip show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-pip | jq -r .id)
+        SUBNET_INDEX=0
     fi
-    SUBNET_INDEX=0
     SUBNET_ID=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-net-env | jq -r '.properties.outputs["subnets"].value['${SUBNET_INDEX}']')
 
     echo "NSG_ID is "

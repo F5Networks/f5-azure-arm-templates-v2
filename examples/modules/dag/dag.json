@@ -22,13 +22,6 @@
             },
             "type": "string"
         },
-        "internalLoadBalancerProbePort": {
-            "defaultValue": "3456",
-            "metadata": {
-                "description": "Specify a TCP port for the internal load balancer to monitor. If you specified None for provision internal load balancer, this setting has no effect."
-            },
-            "type": "string"
-        },
         "internalSubnetId": {
             "defaultValue": "",
             "metadata": {
@@ -210,6 +203,42 @@
                 "name": "constructLoadBalancerProbes"
             },
             {
+                "count": "[variables('loadBalancerRulePortsLength')]",
+                "input": {
+                    "name": "[concat('app-internal-', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')])]",
+                    "properties": {
+                        "backendAddressPool": {
+                            "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('internalLoadBalancerName'), 'loadBalancerBackEnd')]"
+                        },
+                        "backendPort": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')]]",
+                        "frontendIPConfiguration": {
+                            "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', parameters('internalLoadBalancerName'), 'loadBalancerFrontEnd')]"
+                        },
+                        "frontendPort": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')]]",
+                        "idleTimeoutInMinutes": 15,
+                        "loadDistribution": "SourceIP",
+                        "probe": {
+                            "id": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp_probe_internal_', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')]))]"
+                        },
+                        "protocol": "Tcp"
+                    }
+                },
+                "name": "constructLoadBalancerRuleInternal"
+            },
+            {
+                "count": "[variables('loadBalancerRulePortsLength')]",
+                "input": {
+                    "name": "[concat('tcp_probe_internal_', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerProbesInternal')])]",
+                    "properties": {
+                        "intervalInSeconds": 15,
+                        "numberOfProbes": 3,
+                        "port": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerProbesInternal')]]",
+                        "protocol": "Tcp"
+                    }
+                },
+                "name": "constructLoadBalancerProbesInternal"
+            },
+            {
                 "count": "[variables('nsg0Length')]",
                 "input": {
                     "name": "[concat('nsg0_allow_', copyIndex('constructNsg0Array'))]",
@@ -342,6 +371,8 @@
         "loadBalancerRulePortsLength": "[length(parameters('loadBalancerRulePorts'))]",
         "loadBalancingProbesArray": "[variables('constructLoadBalancerProbes')]",
         "loadBalancingRulesArray": "[variables('constructLoadBalancerRule')]",
+        "loadBalancingProbesArrayInternal": "[variables('constructLoadBalancerProbesInternal')]",
+        "loadBalancingRulesArrayInternal": "[variables('constructLoadBalancerRuleInternal')]",
         "mgmtLoadBalancerFrontEnd": [
             {
                 "name": "loadBalancerMgmtFrontEnd",
@@ -549,39 +580,8 @@
                         }
                     }
                 ],
-                "loadBalancingRules": [
-                    {
-                        "name": "allProtocolLbRule",
-                        "properties": {
-                            "backendAddressPool": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('internalLoadBalancerName'), 'loadBalancerBackEnd')]"
-                            },
-                            "backendPort": 0,
-                            "enableFloatingIP": false,
-                            "frontendIPConfiguration": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', parameters('internalLoadBalancerName'), 'loadBalancerFrontEnd')]"
-                            },
-                            "frontendPort": 0,
-                            "idleTimeoutInMinutes": 15,
-                            "loadDistribution": "Default",
-                            "probe": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp-probe-', parameters('internalLoadBalancerProbePort')))]"
-                            },
-                            "protocol": "All"
-                        }
-                    }
-                ],
-                "probes": [
-                    {
-                        "name": "[concat('tcp-probe-', parameters('internalLoadBalancerProbePort'))]",
-                        "properties": {
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 2,
-                            "port": "[parameters('internalLoadBalancerProbePort')]",
-                            "protocol": "Tcp"
-                        }
-                    }
-                ]
+                "loadBalancingRules": "[variables('loadBalancingRulesArrayInternal')]",
+                "probes": "[variables('loadBalancingProbesArrayInternal')]"
             },
             "sku": {
                 "name": "Standard"
@@ -665,12 +665,12 @@
             "type": "array"
         },
         "inboundMgmtNatPool": {
-            "condition": "[greater(parameters('numberPublicMgmtIpAddresses'), 0)]",
+            "condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), greater(parameters('numberPublicMgmtIpAddresses'), 0))]",
             "type": "string",
             "value": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', parameters('externalLoadBalancerName'), 'mgmtnatpool')]"
         },
         "inboundSshNatPool": {
-            "condition": "[greater(parameters('numberPublicMgmtIpAddresses'), 0)]",
+            "condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), greater(parameters('numberPublicMgmtIpAddresses'), 0))]",
             "type": "string",
             "value": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', parameters('externalLoadBalancerName'), 'sshnatpool')]"
         },
@@ -684,10 +684,13 @@
             "type": "string",
             "value": "[reference(parameters('internalLoadBalancerName')).frontendIPConfigurations[0].properties.privateIPAddress]"
         },
-        "internalLoadBalancerProbeId": {
+        "internalLoadBalancerProbesId": {
             "condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",
-            "type": "string",
-            "value": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp-probe-', parameters('internalLoadBalancerProbePort')))]"
+            "copy": {
+                "count": "[variables('loadBalancerRulePortsLength')]",
+                "input": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp_probe_internal_', parameters('loadBalancerRulePorts')[copyIndex()]))]"
+            },
+            "type": "array"
         },
         "internalLoadBalancer": {
             "condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",

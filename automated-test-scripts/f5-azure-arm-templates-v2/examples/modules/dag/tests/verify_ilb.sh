@@ -29,8 +29,7 @@ else
     declare -A ilb
     ilb[backendAddressPools\[\].id]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.internalBackEndLoadBalancerId.value)
     ilb[frontendIpConfigurations\[\].privateIpAddress]=$(az deployment group show --name dd-dag-<DEWPOINT JOB ID> --resource-group dd-dag-<DEWPOINT JOB ID> | jq -r .properties.outputs.internalFrontEndLoadBalancerIp.value)
-    ilb[probes\[\].port]=<INTERNAL LOAD BALANCER PROBE PORT>
-    ilb[loadBalancingRules\[\].protocol]=All
+    ilb[loadBalancingRules\[\].protocol]=Tcp
     # Run array's through function
     response=$(verify_ilb "ilb")
 fi

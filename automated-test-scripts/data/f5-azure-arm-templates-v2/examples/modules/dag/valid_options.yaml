@@ -53,9 +53,6 @@ LOAD BALANCER RULE PORTS:
 INTERNAL LOAD BALANCER NAME:
   - some_unique_ilb_name
   - None
-INTERNAL LOAD BALANCER PROBE PORT:
-  - 3456
-  - any_int
 RESOURCE GROUP:
   - some_resource_group
 TEMPLATE URL:
