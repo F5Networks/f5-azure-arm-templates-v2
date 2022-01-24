@@ -156,7 +156,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -225,7 +225,6 @@
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
     "externalLoadBalancerName": "None",
     "internalLoadBalancerName": "None",
-    "internalLoadBalancerProbePort": "3456",
     "loadBalancerRulePorts": [],
     "mgmtNsgRulesArray": [
       {
@@ -328,9 +327,6 @@
           },
           "internalLoadBalancerName": {
             "value": "[variables('internalLoadBalancerName')]"
-          },
-          "internalLoadBalancerProbePort": {
-            "value": "[variables('internalLoadBalancerProbePort')]"
           },
           "internalSubnetId": {
             "value": ""

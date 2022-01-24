@@ -25,7 +25,7 @@ else
 fi
 
 
-DEPLOY_PARAMS='{"nsg0":{"value":<NSG0>},"nsg1":{"value":<NSG1>},"nsg2":{"value":<NSG2>},"nsg3":{"value":<NSG3>},"nsg4":{"value":<NSG4>},"numberPublicMgmtIpAddresses":{"value":<NUMBER PUBLIC MGMT IP ADDRESSES>},"numberPublicExternalIpAddresses":{"value":<NUMBER PUBLIC EXT IP ADDRESSES>},"uniqueString":{"value":"<DNSLABEL>"},"externalLoadBalancerName":{"value":"<EXTERNAL LOAD BALANCER NAME>"},"internalLoadBalancerName":{"value":"<INTERNAL LOAD BALANCER NAME>"},"internalLoadBalancerProbePort":{"value":"<INTERNAL LOAD BALANCER PROBE PORT>"}'${SUBNETID}''${PORTARRAY}'}'
+DEPLOY_PARAMS='{"nsg0":{"value":<NSG0>},"nsg1":{"value":<NSG1>},"nsg2":{"value":<NSG2>},"nsg3":{"value":<NSG3>},"nsg4":{"value":<NSG4>},"numberPublicMgmtIpAddresses":{"value":<NUMBER PUBLIC MGMT IP ADDRESSES>},"numberPublicExternalIpAddresses":{"value":<NUMBER PUBLIC EXT IP ADDRESSES>},"uniqueString":{"value":"<DNSLABEL>"},"externalLoadBalancerName":{"value":"<EXTERNAL LOAD BALANCER NAME>"},"internalLoadBalancerName":{"value":"<INTERNAL LOAD BALANCER NAME>"}'${SUBNETID}''${PORTARRAY}'}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

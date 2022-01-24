@@ -147,6 +147,8 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutTimeWindow | No | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
 | bigIqVnetId | No | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
 | createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
+| provisionExternalBigIpLoadBalancer | No | Select true if you would like to provision an external Azure load balancer. |
+| provisionInternalBigIpLoadBalancer | No | Select true if you would like to provision an internal Azure load balancer. |
 | provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, for example: access via bastion host, clustering, etc. *IMPORTANT: Please restrict to your client. For example: 'X.X.X.X/32'.* *WARNING - For evaluation purposes only. Production should never have the BIG-IP Management interface exposed to Internet.*|
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the EC2 instances, for example `X.X.X.X/32` for a host, `0.0.0.0/0` for the Internet, etc. *NOTE: The VPC CIDR is automatically added for internal usage.* |
@@ -172,6 +174,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpVmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | String |
 | bigIpVmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | String |
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | Array |
+| wafPrivateIp | WAF Service Private IP Addresses | DAG Template | array |
 
 
 ### Existing Network Template Input Parameters
@@ -197,11 +200,14 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutTimeWindow | No | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
 | bigIqVnetId | No | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
 | createWorkspace | No | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
+| provisionExternalBigIpLoadBalancer | No | Select true if you would like to provision an external Azure load balancer. |
+| provisionInternalBigIpLoadBalancer | No | Select true if you would like to provision an internal Azure load balancer. |
 | provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, for example: access via bastion host, clustering, etc. *IMPORTANT: Please restrict to your client. For example: 'X.X.X.X/32'.* *WARNING - For evaluation purposes only. Production should never have the BIG-IP Management interface exposed to Internet.*|
 | secretId | Yes | Enter the full URI of an existing secret, which should contain the password to the BIG-IQ. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
-| subnetId | Yes | Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed. |
+| bigIpSubnetId | Yes | Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed. |
+| internalSubnetId | No | Supply the Azure resource ID of the subnet where the internal load balancer will be deployed. Leave empty if not deploying an internal load balancer. |
 | tagValues | No | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
@@ -216,6 +222,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpVmssId | BIG-IP Virtual Machine Scale Set resource ID | BIG-IP Template | String |
 | bigIpVmssName | BIG-IP Virtual Machine Scale Set name| BIG-IP Template | String |
 | wafPublicIps | WAF Service Public IP Addresses | DAG Template | Array |
+| wafPrivateIp | WAF Service Private IP Addresses | DAG Template | array |
 
 
 ## Deploying this Solution

@@ -36,9 +36,6 @@
 					"internalLoadBalancerName": {
 						"value": "None"
 					},
-					"internalLoadBalancerProbePort": {
-						"value": "3456"
-					},
 					"internalSubnetId": {
 						"value": ""
 					},

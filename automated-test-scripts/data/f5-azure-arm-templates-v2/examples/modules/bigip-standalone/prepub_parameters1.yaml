@@ -9,7 +9,6 @@ EXTERNAL LOAD BALANCER NAME: None
 IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.000000
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: None
-INTERNAL LOAD BALANCER PROBE PORT: ''
 LOAD BALANCER RULE PORTS: []
 NSG0: '[{"destinationPortRanges": ["22","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
 NSG1: '[{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
