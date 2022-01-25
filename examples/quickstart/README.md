@@ -294,22 +294,22 @@ F5 has provided the following example configuration files in the `examples/quick
   - `runtime-init-conf-2nic-payg.yaml`
   - `runtime-init-conf-3nic-payg.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
-  - `runtime-init-conf-1nic-payg_with_app.yaml`
-  - `runtime-init-conf-2nic-payg_with_app.yaml`
-  - `runtime-init-conf-3nic-payg_with_app.yaml`
+  - `runtime-init-conf-1nic-payg-with-app.yaml`
+  - `runtime-init-conf-2nic-payg-with-app.yaml`
+  - `runtime-init-conf-3nic-payg-with-app.yaml`
 - These examples install Automation Tool Chain packages for a BYOL licensed deployment.
   - `runtime-init-conf-1nic-byol.yaml`
   - `runtime-init-conf-2nic-byol.yaml`
   - `runtime-init-conf-3nic-byol.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
-  - `runtime-init-conf-1nic-byol_with_app.yaml`
-  - `runtime-init-conf-2nic-byol_with_app.yaml`
-  - `runtime-init-conf-3nic-byol_with_app.yaml`
+  - `runtime-init-conf-1nic-byol-with-app.yaml`
+  - `runtime-init-conf-2nic-byol-with-app.yaml`
+  - `runtime-init-conf-3nic-byol-with-app.yaml`
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
 
-By default, this solution deploys a 3NIC BIG-IP using the example `runtime-init-conf-3nic-payg_with_app.yaml`.
+By default, this solution deploys a 3NIC BIG-IP using the example `runtime-init-conf-3nic-payg-with-app.yaml`.
 
 To deploy a **1NIC** instance:
   1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `1nic` config file (for example, runtime-init-conf-1nic-payg.yaml).

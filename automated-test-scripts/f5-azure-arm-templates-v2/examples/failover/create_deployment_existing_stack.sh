@@ -32,11 +32,11 @@ echo $INT_SUBNET_ID
 
 ## Create runtime configs with yq
 if [[ "<PROVISION APP>" == "False" ]]; then
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance01.yaml <DEWPOINT JOB ID>01.yaml
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance02.yaml <DEWPOINT JOB ID>02.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml <DEWPOINT JOB ID>01.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml <DEWPOINT JOB ID>02.yaml
 else
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance01_with_app.yaml <DEWPOINT JOB ID>01.yaml
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance02_with_app.yaml <DEWPOINT JOB ID>02.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml <DEWPOINT JOB ID>01.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml <DEWPOINT JOB ID>02.yaml
 fi
 
 # Set log level
@@ -67,10 +67,8 @@ fi
 
 if [[ "<PROVISION APP>" == "True" ]]; then
     # Use CDN for WAF policy since failover not published yet
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>01.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>01.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>02.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>02.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>01.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>02.yaml
 fi
 
 # print out config files

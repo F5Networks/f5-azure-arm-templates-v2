@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 extension_packages:
   install_operations:
     - extensionType: do
@@ -18,7 +21,7 @@ extension_services:
         class: Device
         async: true
         label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+          BYOL license
         Common:
           class: Tenant
           My_DbVariables:
@@ -46,6 +49,10 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: 'failover1.local'
+          My_License:
+            class: License
+            licenseType: regKey
+            regKey: REPLACE_WITH_VALID_REGKEY
           admin:
             class: User
             userType: regular
@@ -75,7 +82,7 @@ extension_services:
             interfaces:
               - name: '1.1'
                 tagged: false
-          externalSelf:
+          external-self:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
@@ -96,10 +103,10 @@ extension_services:
             trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
-            configsyncIp: /Common/externalSelf/address
+            configsyncIp: /Common/external-self/address
           failoverAddress:
             class: FailoverUnicast
-            address: /Common/externalSelf/address
+            address: /Common/external-self/address
           failoverGroup:
             class: DeviceGroup
             type: sync-failover
@@ -127,14 +134,14 @@ extension_services:
         environment: azure
         controls:
           class: Controls
-          logLevel: info
+          logLevel: silly
         externalStorage:
           scopingTags:
-            f5_cloud_failover_label: bigip-high-availability-solution
+            f5_cloud_failover_label: bigip_high_availability_solution
         failoverAddresses:
           enabled: true
           scopingTags:
-            f5_cloud_failover_label: bigip-high-availability-solution
+            f5_cloud_failover_label: bigip_high_availability_solution
           requireScopingTags: false
     - extensionType: as3
       type: inline
@@ -148,7 +155,7 @@ extension_services:
           Shared:
             class: Application
             template: shared
-            shared_pool:
+            Shared_Pool:
               class: Pool
               remark: Service 1 shared pool
               members:
@@ -157,49 +164,49 @@ extension_services:
                   servicePort: 80
               monitors:
                 - http
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: >-
+                https://f5-cft.s3.amazonaws.com/quickstarts-v2/declarations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+            Service_Address_01:
+              class: Service_Address
+              virtualAddress: 10.0.1.101
           HTTP_Service:
             class: Application
             template: http
             serviceMain:
               class: Service_HTTP
               virtualAddresses:
-                - 10.0.1.101
+                - use: /Tenant_1/Shared/Service_Address_01
               snat: auto
-              policyWAF:
-                use: WAFPolicy
-              pool: /Tenant_1/Shared/shared_pool
-            WAFPolicy:
-              class: WAF_Policy
-              url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
+              pool: /Tenant_1/Shared/Shared_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF: 
+                use: /Tenant_1/Shared/Custom_WAF_Policy
           HTTPS_Service:
             class: Application
             template: https
             serviceMain:
               class: Service_HTTPS
               virtualAddresses:
-                - 10.0.1.101
+                - use: /Tenant_1/Shared/Service_Address_01
               snat: auto
-              policyWAF:
-                use: WAFPolicy
-              pool: /Tenant_1/Shared/shared_pool
+              pool: /Tenant_1/Shared/Shared_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF: 
+                use: /Tenant_1/Shared/Custom_WAF_Policy
               serverTLS:
                 bigip: /Common/clientssl
               redirect80: false
-            WAFPolicy:
-              class: WAF_Policy
-              url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
 post_onboard_enabled: []
 pre_onboard_enabled:
-  - name: disable_1nic_config
-    type: inline
-    commands:
-      - /usr/bin/setdb provision.1nicautoconfig disable
   - name: provision_rest
     type: inline
     commands:

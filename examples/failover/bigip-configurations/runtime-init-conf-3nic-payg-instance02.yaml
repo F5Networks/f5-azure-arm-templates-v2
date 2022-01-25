@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 extension_packages:
   install_operations:
     - extensionType: do
@@ -18,7 +21,7 @@ extension_services:
         class: Device
         async: true
         label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          BYOL license
+          PAYG license
         Common:
           class: Tenant
           My_DbVariables:
@@ -45,10 +48,6 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: 'failover1.local'
-          My_License:
-            class: License
-            licenseType: regKey
-            regKey: REPLACE_WITH_VALID_REGKEY
           admin:
             class: User
             userType: regular
@@ -78,7 +77,7 @@ extension_services:
             interfaces:
               - name: '1.1'
                 tagged: false
-          externalSelf:
+          external-self:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
@@ -99,10 +98,10 @@ extension_services:
             trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
-            configsyncIp: /Common/externalSelf/address
+            configsyncIp: /Common/external-self/address
           failoverAddress:
             class: FailoverUnicast
-            address: /Common/externalSelf/address
+            address: /Common/external-self/address
           failoverGroup:
             class: DeviceGroup
             type: sync-failover
@@ -130,21 +129,17 @@ extension_services:
         environment: azure
         controls:
           class: Controls
-          logLevel: info
+          logLevel: silly
         externalStorage:
           scopingTags:
-            f5_cloud_failover_label: bigip-high-availability-solution
+            f5_cloud_failover_label: bigip_high_availability_solution
         failoverAddresses:
           enabled: true
           scopingTags:
-            f5_cloud_failover_label: bigip-high-availability-solution
+            f5_cloud_failover_label: bigip_high_availability_solution
           requireScopingTags: false
 post_onboard_enabled: []
 pre_onboard_enabled:
-  - name: disable_1nic_config
-    type: inline
-    commands:
-      - /usr/bin/setdb provision.1nicautoconfig disable
   - name: provision_rest
     type: inline
     commands:

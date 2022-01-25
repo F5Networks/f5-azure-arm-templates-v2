@@ -307,13 +307,13 @@ F5 has provided the following example configuration files in the `examples/autos
 
 - `runtime-init-conf-bigiq.yaml` - This configuration file installs packages for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
 - `runtime-init-conf-payg.yaml` - This inline configuration file installs packages for a PAYG licensed deployment.
-- `runtime-init-conf-bigiq_with_app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
-- `runtime-init-conf-payg_with_app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
+- `runtime-init-conf-bigiq-with-app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
+- `runtime-init-conf-payg-with-app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples. 
  
-By default, this solution deploys the `runtime-init-conf-payg_with_app.yaml` configuration. 
+By default, this solution deploys the `runtime-init-conf-payg-with-app.yaml` configuration. 
 
 This example configuration does not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, in production, these files are commonly customized further. Some examples of small customizations or modifications are provided below. 
  

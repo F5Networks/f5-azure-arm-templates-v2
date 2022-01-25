@@ -81,7 +81,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitConfig": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg_with_app.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
