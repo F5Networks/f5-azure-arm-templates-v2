@@ -19,7 +19,7 @@ STORAGE_ACCOUNT_FQDN=$(az storage account show -n ${STORAGE_ACCOUNT_NAME} -g <RE
 if [[ "<PROVISION APP>" == "False" ]]; then
     cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>.yaml <DEWPOINT JOB ID>.yaml
 else
-    cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>_with_app.yaml <DEWPOINT JOB ID>.yaml
+    cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-with-app.yaml <DEWPOINT JOB ID>.yaml
 fi
 
 # Disable AutoPhoneHome

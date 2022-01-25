@@ -47,7 +47,7 @@ if [[ "<CREATE WORKSPACE>" == "False" ]]; then
 fi
 
 ## Create runtime configs with yq
-cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-<LICENSE TYPE>_with_app.yaml <DEWPOINT JOB ID>.yaml
+cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-<LICENSE TYPE>-with-app.yaml <DEWPOINT JOB ID>.yaml
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>.yaml
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"<SECRET VALUE>\"" -i <DEWPOINT JOB ID>.yaml
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>.yaml
