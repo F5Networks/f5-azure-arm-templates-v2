@@ -538,10 +538,12 @@
       "value": "[variables('nic1ServiceIP1')]"
     },
     "vip1PublicIp": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.externalIps.value[1]]"
     },
     "vip1PublicIpDns": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.externalIpDns.value[1]]"
     },
@@ -550,6 +552,7 @@
       "value": "[concat('http://', variables('nic1ServiceIP1'), '/')]"
     },
     "vip1PublicUrlHttp": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[concat('http://', reference('dagTemplate').outputs.externalIps.value[1], '/')]"
     },
@@ -558,6 +561,7 @@
       "value": "[concat('https://', variables('nic1ServiceIP1'), '/')]"
     },
     "vip1PublicUrlHttps": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[concat('https://', reference('dagTemplate').outputs.externalIps.value[1], '/')]"
     },
