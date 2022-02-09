@@ -55,7 +55,7 @@
       "type": "string"
     },
     "bigIpInstanceType": {
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_D2s_v3",
       "metadata": {
         "description": "Enter valid instance type."
       },

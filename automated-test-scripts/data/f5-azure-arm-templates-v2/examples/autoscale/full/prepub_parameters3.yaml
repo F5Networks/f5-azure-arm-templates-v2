@@ -10,7 +10,7 @@ BIGIQ TENANT: <RESOURCE GROUP>-vmss
 CREATE WORKSPACE: true
 DISAGGREGATOR: LB
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.000000
-INSTANCE TYPE: Standard_DS3_v2
+INSTANCE TYPE: Standard_D4_v3
 LICENSE TYPE: payg
 PROVISION EXTERNAL LB: false
 PROVISION INTERNAL LB: true
