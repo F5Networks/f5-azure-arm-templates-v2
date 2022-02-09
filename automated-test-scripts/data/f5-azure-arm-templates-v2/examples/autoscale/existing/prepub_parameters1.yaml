@@ -9,7 +9,7 @@ BIGIQ TENANT: myTenant
 CREATE WORKSPACE: false
 DISAGGREGATOR: LB
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.000000
-INSTANCE TYPE: Standard_DS3_v2
+INSTANCE TYPE: Standard_D4_v3
 LICENSE TYPE: payg
 NIC COUNT: 1
 PROVISION EXTERNAL LB: true

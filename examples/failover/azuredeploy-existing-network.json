@@ -30,7 +30,7 @@
       "type": "string"
     },
     "bigIpInstanceType": {
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_D8_v3",
       "metadata": {
         "description": "Enter valid instance type."
       },

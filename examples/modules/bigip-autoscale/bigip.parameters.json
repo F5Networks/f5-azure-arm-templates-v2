@@ -36,7 +36,7 @@
       "value": ""
     },
     "instanceType": {
-      "value": "Standard_DS2_v2"
+      "value": "Standard_D4_v3"
     },
     "loadBalancerBackendAddressPoolsArray": {
       "value": []

@@ -38,7 +38,7 @@
       "type": "string"
     },
     "instanceType": {
-      "defaultValue": "Standard_DS2_v2",
+      "defaultValue": "Standard_D8_v3",
       "metadata": {
         "description": "Enter valid instance type."
       },

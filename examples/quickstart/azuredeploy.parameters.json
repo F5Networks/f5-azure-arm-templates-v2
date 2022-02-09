@@ -12,7 +12,7 @@
       "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
     },
     "bigIpInstanceType": {
-      "value": "Standard_DS3_v2"
+      "value": "Standard_D8_v3"
     },
     "bigIpRuntimeInitConfig": {
       "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml"

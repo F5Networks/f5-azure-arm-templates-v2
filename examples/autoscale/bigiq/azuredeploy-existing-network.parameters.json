@@ -9,7 +9,7 @@
       "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.000000"
     },
     "bigIpInstanceType": {
-      "value": "Standard_DS3_v2"
+      "value": "Standard_D2s_v3"
     },
     "bigIpMaxBatchInstancePercent": {
       "value": 20
