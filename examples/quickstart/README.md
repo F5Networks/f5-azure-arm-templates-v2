@@ -628,13 +628,14 @@ List of endpoints BIG-IP may contact during onboarding:
 
 ## BIG-IP Versions
 
-These templates have been tested and validated with the following versions of BIG-IP. 
+These templates have only been explicitly tested and validated with the following versions of BIG-IP.
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
 | 16.1.000000 | 16.1.0 Build 0.0.0 |
 | 14.1.404001 | 14.1.4.4 Build 0.0.1 |
 
+These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 
 ## Supported Instance Types and Hypervisors
 
