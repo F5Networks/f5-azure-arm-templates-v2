@@ -45,18 +45,22 @@
 
 The goal of this solution is to reduce prerequisites and complexity to a minimum so with a few clicks, a user can quickly deploy a BIG-IP, login and begin exploring the BIG-IP platform in a working full-stack deployment capable of passing traffic. 
 
-This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are located in the `examples/modules` directory in this repository. *F5 recommends cloning this repository and modifying these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create an example BIG-IP solution. The linked templates are in the [examples/modules](https://github.com/F5Networks/f5-azure-arm-templates-v2/tree/main/examples/modules) directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
 
-***Existing Stack Deployments (azuredeploy-existing-network.json)***<br>
-Use azuredeploy-existing-network.json parent template to deploy the autoscale solution into an existing infrastructure. This template expects virtual network, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+***Full Stack (azuredeploy.json)***<br>
+Use the *azuredeploy.json* parent template to deploy an example full stack BIG-IP solution, complete with virtual network, bastion *(optional)*, dag/ingress, BIG-IP and example web application.  
 
-The modules below create the following cloud resources:
+***Existing Network Stack (azuredeploy-existing-network.json)***<br>
+Use *azuredeploy-existing-network.json* parent template to deploy an example BIG-IP solution into an existing infrastructure. This template expects the virtual network, subnets, and bastion host(s) have already been deployed. The example web application is also not part of this parent template as it intended use is for an existing environment.
 
-- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables.
-- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance.
-- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces.
+The modules below create the following resources:
+
+- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables. *(Full stack only)*
+- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. *(Full stack only)*
+- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. *(Full stack only)*
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Network Security Groups, Public IP Addresses, NAT rules and probes.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
+
 
 By default, this solution creates a VNet with four subnets, an example Web Application instance and a PAYG BIG-IP instance with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 

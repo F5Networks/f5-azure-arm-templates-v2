@@ -5,7 +5,7 @@
 
 ## Contents
 
-- [Deploying the BIG-IP VE in Azure - Example Failover BIG-IP HA Cluster - Virtual Machines(#deploying-the-big-ip-ve-in-azure---example-failover-big-ip-ha-cluster---virtual-machines)
+- [Deploying the BIG-IP VE in Azure - Example Failover BIG-IP HA Cluster - Virtual Machines](#deploying-the-big-ip-ve-in-azure---example-failover-big-ip-ha-cluster---virtual-machines)
   - [Contents](#contents)
   - [Introduction](#introduction)
   - [Diagram](#diagram)
@@ -29,6 +29,7 @@
       - [WebUI](#webui-1)
       - [SSH](#ssh-1)
     - [Testing the WAF Service](#testing-the-waf-service)
+    - [Testing Failover](#testing-failover)
   - [Deleting this Solution](#deleting-this-solution)
     - [Deleting the deployment via Azure Portal](#deleting-the-deployment-via-azure-portal)
     - [Deleting the deployment using the Azure CLI](#deleting-the-deployment-using-the-azure-cli)
@@ -45,28 +46,34 @@
 
 The goal of this solution is to reduce prerequisites and complexity to a minimum so with a few clicks, a user can quickly deploy a BIG-IP, login and begin exploring the BIG-IP platform in a working full-stack deployment capable of passing traffic. 
 
-This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are located in the `examples/modules` directory in this repository. *F5 recommends cloning this repository and modifying these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create an example BIG-IP Highly Available (HA) solution using the F5 Cloud Failover Extension (CFE).  For information about this deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/azure.html). The linked templates are located in the [`examples/modules`](https://github.com/F5Networks/f5-azure-arm-templates-v2/tree/main/examples/modules) directory in this repository. *F5 recommends cloning this repository and modifying these templates to fit your use case.*
 
-***Existing Stack Deployments (azuredeploy-existing-network.json)***<br>
-Use azuredeploy-existing-network.json parent template to deploy the autoscale solution into an existing infrastructure. This template expects virtual network, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+***Full Stack (azuredeploy.json)***<br>
+Use the *azuredeploy.json* parent template to deploy an example full stack HA solution, complete with virtual network, bastion *(optional)*, dag/ingress, access, BIG-IP(s) and example web application.  
+
+***Existing Network Stack (azuredeploy-existing-network.json)***<br>
+Use the *azuredeploy-existing-network.json* parent template to deploy HA solution into an existing network infrastructure. This template expects the virtual network, subnets, and bastion host(s) have already been deployed. A example web application is also not part of this parent template as it intended use is for an existing environment.
 
 The modules below create the following cloud resources:
 
-- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables.
-- **Access**: This template creates a User-Assigned Managed Identity, grants it access to the supplied BIG-IP password Key Vault secret, and assigns it to the BIG-IP instances.
-- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance.
-- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces.
+- **Network**: This template creates Azure Virtual Networks, Subnets, and Route Tables. *(Full stack only)*
+- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. *(Full stack only)*
+- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. *(Full stack only)* 
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Network Security Groups, Public IP Addresses, NAT rules and probes.
+- **Access**: This template creates a User-Assigned Managed Identity, grants it access to the supplied BIG-IP password Key Vault secret, and assigns it to the BIG-IP instances.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
+
 
 By default, this solution creates a VNet with four subnets, an example Web Application instance two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 
-***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this quickstart provides immediate access to the management interface via a Public IP. At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jumpboxes/bastion hosts, VPNs, etc.
+***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this solution optionally allows immediate access to the management interface via a Public IP. At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jumpboxes/bastion hosts, VPNs, etc.
 
 
 ## Diagram
 
 ![Configuration Example](diagram.png)
+
+For information about this type of deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/azure.html).
 
 ## Prerequisites
 
@@ -129,6 +136,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpInternalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
 | provisionExampleApp | No | Flag to deploy the demo web application. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the Azure instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
@@ -190,6 +198,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpInternalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
 | provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | provisionServicePublicIp | No | Flag to deploy public IP address resource for application. |
 | servicePrivateIpAddress | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfAddress. |
@@ -497,18 +506,23 @@ From Parent Template Outputs:
 
 #### SSH
 
-  - From tmsh shell, type 'bash' to enter the bash shell
+  - From tmsh shell, type 'bash' to enter the bash shell:
     - Examine BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
     ```bash
     curl -u admin: http://localhost:8100/mgmt/shared/declarative-onboarding | jq .
-    curl -u admin: http://localhost:8100/mgmt/shared/appsvcs/declare | jq .
-    curl -u admin: http://localhost:8100/mgmt/shared/telemetry/declare | jq . 
     ```
-  - Examine the Runtime-Init Config downloaded: 
+    - If you deployed the example application (**provisionExampleApp** = **true**), examine the Application Services declaration:
+    ```bash
+    curl -u admin: http://localhost:8100/mgmt/shared/appsvcs/declare | jq .
+    ```
+    - Exampine the BIG-IP [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) declaration:
+    ```bash
+    curl -su admin: http://localhost:8100/mgmt/shared/cloud-failover/declare | jq . 
+    ```
+    - Examine the [Runtime-Init](https://github.com/F5Networks/f5-bigip-runtime-init) Config downloaded: 
     ```bash 
     cat /config/cloud/runtime-init.conf
     ```
-
 
 ### Testing the WAF Service
 
@@ -539,6 +553,22 @@ When **provisionExampleApp** is **true**, to test the WAF service, perform the f
     <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 2394594827598561347<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
     ```
 
+### Testing Failover
+
+ When **provisionExampleApp** is **true**, to test failover, perform the following steps:
+
+1. Log on the BIG-IPs per instructions above:
+
+  - **WebUI**: Go to Device Management of Active Instance -> Traffic-Groups -> Select box next to *traffic-group-1* -> Click the "Force to Standby" button *.
+  - **BIG-IP CLI**: 
+      ```bash 
+      tmsh run sys failover standby
+      ```
+
+Verify the IPs associated w/ the Virtual Service (**vip1PrivateIp** and **vip1PublicIp**) is remapped to the peer BIG-IP's external NIC. 
+  - **Console**: Navigate to  **Resource Groups > *RESOURCE_GROUP* > Overview > *BIGIP* Virtual Machines > Networking > external-nic > IP Configurations**
+
+For information on the Cloud Failover solution, see [F5 Cloud Failover Extension](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/azure.html).
 
 ## Deleting this Solution
 

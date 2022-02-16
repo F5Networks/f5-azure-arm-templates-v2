@@ -9,8 +9,15 @@
       },
       "type": "string"
     },
+    "bigIpPeerAddr": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device."
+      },
+      "type": "string"
+    },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -368,7 +375,10 @@
     "cfeTag": {
       "f5_cloud_failover_label": "[parameters('cfeTag')]"
     },
-    "cfeTagValue": "[union(if(empty(parameters('tagValues')), json('null'), parameters('tagValues')), variables('cfeTag'))]"
+    "cfeTagValue": "[union(if(empty(parameters('tagValues')), json('null'), parameters('tagValues')), variables('cfeTag'))]",
+    "bigIpPeerTag": {
+      "bigIpPeerAddr": "[parameters('bigIpPeerAddr')]"
+    }
   },
   "resources": [
     {
@@ -486,7 +496,7 @@
         },
         "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
       },
-      "tags": "[union(variables('runtimeInitTag'), parameters('tagValues'))]",
+      "tags": "[union(variables('runtimeInitTag'), variables('bigIpPeerTag'), parameters('tagValues'))]",
       "zones": "[if(parameters('useAvailabilityZones'), createArray(1), json('null'))]",
       "type": "Microsoft.Compute/virtualMachines"
     },
