@@ -30,6 +30,9 @@
 					"adminUsername": {
 						"value": "my-admin"
 					},
+					"bigIpPeerAddr": {
+						"value": ""
+					},
 					"image": {
 						"value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.200000"
 					},

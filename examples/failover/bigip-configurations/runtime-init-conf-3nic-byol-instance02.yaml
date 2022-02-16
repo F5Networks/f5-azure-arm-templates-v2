@@ -122,7 +122,7 @@ extension_services:
             class: DeviceTrust
             localUsername: admin
             localPassword: '{{{BIGIP_PASSWORD}}}'
-            remoteHost: 10.0.1.11
+            remoteHost: '{{{REMOTE_HOST}}}'
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
     - extensionType: cf
@@ -171,3 +171,8 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 2
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerAddr
