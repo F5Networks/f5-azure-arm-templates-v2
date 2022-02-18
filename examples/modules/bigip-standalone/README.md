@@ -209,24 +209,24 @@ Example on one line:
 	"label": "Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license",
 	"Common": {
 		"class": "Tenant",
-		"myNtp": {
+		"My_Ntp": {
 			"class": "NTP",
 			"servers": [
 				"0.pool.ntp.org"
 			],
 			"timezone": "UTC"
 		},
-		"mySystem": {
+		"My_System": {
 			"autoPhonehome": true,
 			"class": "System",
 			"hostname": "{{{ HOST_NAME }}}.local"
 		},
-		"myLicense": {
+		"My_License": {
             "class": "License",
             "licenseType": "regKey",
             "regKey": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE"
         },
-		"myProvisioning": {
+		"My_Provisioning": {
             "class": "Provision",
             "ltm": "nominal",
             "asm": "nominal"

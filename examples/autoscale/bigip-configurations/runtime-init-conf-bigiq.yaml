@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 pre_onboard_enabled: []
 runtime_parameters:
   - name: HOST_NAME
