@@ -278,25 +278,25 @@ Example on one line:
             "provision.extramb": 500,
             "restjavad.useextramb": true
         },
-        "myDns": {
+        "My_Dns": {
             "class": "DNS",
             "nameServers": [
                 "8.8.8.8"
             ]
         },
-        "myNtp": {
+        "My_Ntp": {
             "class": "NTP",
             "servers": [
                 "0.pool.ntp.org"
             ],
             "timezone": "UTC"
         },
-        "myProvisioning": {
+        "My_Provisioning": {
             "asm": "nominal",
             "class": "Provision",
             "ltm": "nominal"
         },
-        "mySystem": {
+        "My_System": {
             "autoPhonehome": false,
             "class": "System",
             "hostname": "{{ HOST_NAME }}"
