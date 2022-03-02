@@ -96,6 +96,105 @@ extension_services:
             vlan: internal
             allowService: default
             trafficGroup: traffic-group-local-only
+    - extensionType: cf
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Cloud_Failover
+        environment: azure
+        controls:
+          class: Controls
+          logLevel: silly
+        externalStorage:
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+        failoverAddresses:
+          enabled: true
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+          requireScopingTags: false
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
+          PAYG license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            dhclient.mgmt: disable
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            class: Provision
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: 'failover1.local'
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: 10.0.1.1
+            network: default
+            mtu: 1500
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: '{{{SELF_IP_INTERNAL}}}'
+            vlan: internal
+            allowService: default
+            trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
             configsyncIp: /Common/external-self/address
@@ -121,23 +220,6 @@ extension_services:
             remoteHost: '{{{REMOTE_HOST}}}'
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
-    - extensionType: cf
-      type: inline
-      value:
-        schemaVersion: 1.0.0
-        class: Cloud_Failover
-        environment: azure
-        controls:
-          class: Controls
-          logLevel: silly
-        externalStorage:
-          scopingTags:
-            f5_cloud_failover_label: bigip_high_availability_solution
-        failoverAddresses:
-          enabled: true
-          scopingTags:
-            f5_cloud_failover_label: bigip_high_availability_solution
-          requireScopingTags: false
 post_onboard_enabled: []
 pre_onboard_enabled:
   - name: provision_rest

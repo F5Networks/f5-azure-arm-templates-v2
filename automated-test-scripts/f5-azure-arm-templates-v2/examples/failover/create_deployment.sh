@@ -22,9 +22,11 @@ echo $SECRET_ID
 if [[ "<PROVISION APP>" == "False" ]]; then
     cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml <DEWPOINT JOB ID>01.yaml
     cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml <DEWPOINT JOB ID>02.yaml
+    do_index=2
 else
     cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml <DEWPOINT JOB ID>01.yaml
     cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml <DEWPOINT JOB ID>02.yaml
+    do_index=3
 fi
 
 # Set log level
@@ -40,6 +42,9 @@ fi
 # Disable AutoPhoneHome
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>01.yaml
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>02.yaml
+
+/usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>01.yaml
+/usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>02.yaml
 
 # Add BYOL license to declarations
 if [[ <LICENSE TYPE> == "byol" ]]; then
