@@ -20,24 +20,6 @@ else
     fi
 fi
 
-TEMP_VAR="<KEY VAULT NAME>"
-if [[ $TEMP_VAR =~ "KEY VAULT NAME" || -z $TEMP_VAR ]]; then
-   echo "KeyVault creation was not requested"
-else
-   if [[ -z $(echo $deploymentOutputs | jq .keyVaultName) ]]; then
-      echo "OUTPUTS ERROR - KEY VAULT"
-   fi
-fi
-
-TEMP_VAR="<SECRET NAME>"
-if [[ $TEMP_VAR =~ "SECRET NAME" || -z $TEMP_VAR ]]; then
-   echo "Secret creation was not requested"
-else
-   if [[ -z $(echo $deploymentOutputs | jq .secretName) ]]; then
-      echo "OUTPUTS ERROR - SECRET NAME"
-   fi
-fi
-
 TEMP_VAR="<USER ASSIGNED IDENT NAME>"
 if [[ $TEMP_VAR =~ "USER ASSIGNED IDENT NAME" || -z $TEMP_VAR ]]; then
    echo "User Identity creation was not requested"

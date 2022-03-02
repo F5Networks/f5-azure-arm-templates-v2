@@ -1,0 +1,151 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
+pre_onboard_enabled:
+  - name: provision_rest
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.extramb 1000
+      - /usr/bin/setdb restjavad.useextramb true
+runtime_parameters:
+  - name: HOST_NAME
+    type: metadata
+    metadataProvider:
+      type: compute
+      environment: azure
+      field: name
+  - name: BIGIP_PASSWORD
+    type: url
+    query: vmId
+    value: 'http://169.254.169.254/metadata/instance/compute?api-version=2017-08-01'
+    headers:
+      - name: Metadata
+        value: true
+bigip_ready_enabled: []
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.27.0
+      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
+    - extensionType: as3
+      extensionVersion: 3.34.0
+      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
+    - extensionType: ts
+      extensionVersion: 1.26.0
+      extensionHash: 128ec4fb6fd93e4dd7f43520a58f4810a9e20d45b60e7098a3c65ee960964bfa
+    - extensionType: fast
+      extensionVersion: 1.15.0
+      extensionHash: 4980984355ef03cfe61442e8c0563518e292961aaca0da024d2a038d1c8601ca
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        label: >-
+          Quickstart 1NIC BIG-IP declaration for Declarative Onboarding with BYOL
+          license
+        async: true
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            ui.advisory.enabled: true
+            ui.advisory.color: blue
+            ui.advisory.text: BIG-IP VE Quickstart
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          My_License:
+            class: License
+            licenseType: regKey
+            regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+            timezone: UTC
+          My_Provisioning:
+            class: Provision
+            ltm: nominal
+            asm: nominal
+          My_System:
+            class: System
+            autoPhonehome: true
+            hostname: '{{{HOST_NAME}}}.local'
+          quickstart:
+            class: User
+            userType: regular
+            partitionAccess:
+              all-partitions:
+                role: admin
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+    - extensionType: as3
+      type: inline
+      value:
+        class: ADC
+        schemaVersion: 3.0.0
+        label: Quickstart
+        remark: Quickstart
+        Tenant_1:
+          class: Tenant
+          Shared:
+            class: Application
+            template: shared
+            Shared_Pool:
+              class: Pool
+              remark: Service 1 shared pool
+              members:
+                - serverAddresses:
+                    - 10.0.1.4
+                  servicePort: 80
+              monitors:
+                - http
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+            Service_Address_01:
+              class: Service_Address
+              virtualAddress: 10.0.0.101
+              trafficGroup: none
+          HTTP_Service:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - use: /Tenant_1/Shared/Service_Address_01
+              snat: auto
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+              pool: /Tenant_1/Shared/Shared_Pool
+          HTTPS_Service:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - use: /Tenant_1/Shared/Service_Address_01
+              snat: auto
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+              pool: /Tenant_1/Shared/Shared_Pool
+              serverTLS:
+                bigip: /Common/clientssl
+              redirect80: false
+post_onboard_enabled: []

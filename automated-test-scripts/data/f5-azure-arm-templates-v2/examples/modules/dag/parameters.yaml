@@ -18,7 +18,6 @@ NUM SUBNETS: 5
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
 INTERNAL LOAD BALANCER NAME: None
-INTERNAL LOAD BALANCER PROBE PORT: 3456
 REGION: westus
 RESOURCE GROUP: dd-dag-<DEWPOINT JOB ID>
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/dag/dag.json

@@ -1,5 +1,11 @@
-azure-quickstart-byol-example-test:
+azure-quickstart-byol-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/prepub_parameters.yaml
-  run: all
-  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml'
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters4.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters5.yaml"

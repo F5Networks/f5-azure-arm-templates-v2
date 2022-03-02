@@ -1,6 +1,6 @@
 # Application Module Tests 
 azure-arm-application-module-test:
-    test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/daily_test.yaml"
-    run: "all"
-    parameters-files:
-        - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/prepub_parameters.yaml"
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/prepub_parameters.yaml"

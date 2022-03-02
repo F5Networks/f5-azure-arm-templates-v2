@@ -284,25 +284,25 @@ Example on one line:
             "provision.extramb": 500,
             "restjavad.useextramb": true
         },
-        "myDns": {
+        "My_Dns": {
             "class": "DNS",
             "nameServers": [
                 "8.8.8.8"
             ]
         },
-        "myNtp": {
+        "My_Ntp": {
             "class": "NTP",
             "servers": [
                 "0.pool.ntp.org"
             ],
             "timezone": "UTC"
         },
-        "myProvisioning": {
+        "My_Provisioning": {
             "asm": "nominal",
             "class": "Provision",
             "ltm": "nominal"
         },
-        "mySystem": {
+        "My_System": {
             "autoPhonehome": false,
             "class": "System",
             "hostname": "{{ HOST_NAME }}"
@@ -368,7 +368,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -410,5 +410,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.4.0.0/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.0.0.0/examples/images/azure-bigip-autoscale-module.png)
 

@@ -3,7 +3,6 @@ image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
 services:
   - ${ARTIFACTORY_SERVER}/dockerhub-remote/docker:dind
 
-
 stages:
   - smoke-tests
   - release_test_prep
@@ -12,7 +11,6 @@ stages:
   - publish
   - release
   - post-release-tests
-  - merge
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -102,6 +100,22 @@ run_link_checker:
   script:
     - make link_check
 
+# validate test policy parameters are present
+run_test_param_checker:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7
+  stage: smoke-tests
+  tags:
+    - docker-executor
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $RELEASE_RUNTIME_INIT_TESTS == "true"
+  script:
+    - make test_policy_check
+
 # validate parameters match style guide
 verify_parameters_match_style_guide:
   stage: smoke-tests
@@ -164,8 +178,8 @@ azure_access_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/**/*
       - examples/modules/access/access.json
   except:
     refs:
@@ -174,6 +188,7 @@ azure_access_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -195,8 +210,8 @@ azure_network_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/network/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/network/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/network/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/network/**/*
       - examples/modules/network/network.json
   except:
     refs:
@@ -205,6 +220,7 @@ azure_network_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/network/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -226,8 +242,8 @@ azure_application_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/**/*
       - examples/modules/application/application.json
   except:
     refs:
@@ -236,6 +252,7 @@ azure_application_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -257,8 +274,8 @@ azure_bastion_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/**/*
       - examples/modules/bastion/bastion.json
   except:
     refs:
@@ -267,6 +284,7 @@ azure_bastion_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -288,8 +306,8 @@ azure_dag_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/dag/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/dag/**/*
       - examples/modules/dag/dag.json
   except:
     refs:
@@ -298,6 +316,7 @@ azure_dag_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -319,8 +338,8 @@ azure_function_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/**/*
       - examples/modules/function/function.json
   except:
     refs:
@@ -329,6 +348,7 @@ azure_function_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -350,8 +370,8 @@ azure_telemetry_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/telemetry/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/telemetry/**/*
       - examples/modules/telemetry/telemetry.json
   except:
     refs:
@@ -360,6 +380,7 @@ azure_telemetry_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/telemetry/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -381,14 +402,16 @@ azure_bigip_autoscale_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/**/*
       - examples/modules/bigip-autoscale/bigip.json
   except:
     refs:
       - schedules
       - triggers
       - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -410,14 +433,16 @@ azure_bigip_standalone_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/**/*
       - examples/modules/bigip-standalone/bigip.json
   except:
     refs:
       - schedules
       - triggers
       - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -439,17 +464,58 @@ azure_autoscale_example_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
       - examples/autoscale/bigiq/azuredeploy.json
       - examples/autoscale/payg/azuredeploy.json
+      - examples/modules/bigip-autoscale/bigip.json
+      - examples/modules/access/access.json
+      - examples/modules/application/application.json
+      - examples/modules/bastion/bastion.json
+      - examples/modules/dag/dag.json
+      - examples/modules/function/function.json
+      - examples/modules/network/network.json
+      - examples/modules/telemetry/telemetry.json
   except:
     refs:
       - schedules
       - triggers
       - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/test_policy.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/test_policy_full.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+azure_autoscale_existing_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
+      - examples/autoscale/bigiq/azuredeploy-existing-network.json
+      - examples/autoscale/payg/azuredeploy-existing-network.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -469,16 +535,119 @@ azure_quickstart_example_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
       - examples/quickstart/azuredeploy.json
+      - examples/modules/bigip-standalone/bigip.json
+      - examples/modules/application/application.json
+      - examples/modules/bastion/bastion.json
+      - examples/modules/dag/dag.json
+      - examples/modules/network/network.json
   except:
     refs:
       - schedules
       - triggers
       - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy_full.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+azure_quickstart_existing_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - examples/quickstart/azuredeploy-existing-network.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy_existing.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+# Module: Failover Template
+azure_failover_example_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/**/*
+      - examples/failover/azuredeploy.json
+      - examples/modules/bigip-standalone/bigip.json
+      - examples/modules/application/application.json
+      - examples/modules/bastion/bastion.json
+      - examples/modules/dag/dag.json
+      - examples/modules/network/network.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/test_policy_full.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+azure_failover_existing_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/**/*
+      - examples/failover/azuredeploy-existing-network.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -574,7 +743,6 @@ scheduled_test_job:
     when:
       - runner_system_failure
       - stuck_or_timeout_failure
-
 
 # Push the examples/ folder to CDN when a tag in the form of "publish-v9.0.0.0" is added to the main branch
 # publish_azure_modules_cdn:
@@ -672,22 +840,6 @@ run_link_checker_release:
   script:
     - make link_check_release
 
-# Create a merge request develop into staging
-create_merge_request:
-  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
-  stage: merge
-  only:
-    - develop
-  script:
-    - apt-get update
-    - apt-get install -y jq
-    - ./cloud-tools/merge-request/merge-request.sh
-  variables:
-    GIT_LAB_API_URL: "$AZURE_V2_URL"
-    GIT_LAB_PRIVATE_TOKEN: "$AZURE_V2_GITLAB_API_TOKEN"
-    MR_SOURCE_BRANCH: "$CI_COMMIT_REF_NAME"
-    MR_TARGET_BRANCH: staging
-
 # verifies all examples use the latest AT Components versions
 check_at_components_metadata:
   stage: smoke-tests
@@ -701,8 +853,10 @@ check_at_components_metadata:
     - curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt-get install -yq nodejs build-essential
     - apt-get install -y jq
     - pip3 install yq
-    - if [[ ! -z ${RUNTIME_INIT_PACKAGE_URL} && ! $CI_COMMIT_BRANCH == "main" ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure --runtime-init-package-url $RUNTIME_INIT_PACKAGE_URL; fi
-    - if [[ -z $RUNTIME_INIT_PACKAGE_URL ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations --template-directory examples --cloud azure; fi
+    - if [[ ! -z ${RUNTIME_INIT_PACKAGE_URL} && ! $CI_COMMIT_BRANCH == "main" ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations,examples/failover/bigip-configurations --template-directory examples --cloud azure --runtime-init-package-url $RUNTIME_INIT_PACKAGE_URL; fi
+    - if [[ -z $RUNTIME_INIT_PACKAGE_URL ]]; then ./cloud-tools/sync-at-components-metadata/sync_at_components_metadata.sh --config-directories examples/autoscale/bigip-configurations,examples/quickstart/bigip-configurations,examples/failover/bigip-configurations --template-directory examples --cloud azure; fi
+
+
     - if git diff | grep 'diff --git'; then exit 1; else exit 0; fi
   tags:
     - cm-official-docker-executor

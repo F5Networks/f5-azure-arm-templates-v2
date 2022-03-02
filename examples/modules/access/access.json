@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-	"contentVersion": "1.4.0.0",
+	"contentVersion": "2.0.0.0",
 	"parameters": {
 		"builtInRoleType": {
 			"allowedValues": [
@@ -43,13 +43,6 @@
 			},
 			"type": "string"
 		},
-		"keyVaultName": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "KeyVault name. This is required for provisioning KeyVault."
-			},
-			"type": "string"
-		},
 		"keyVaultPermissionsKeys": {
 			"defaultValue": [
 				"get",
@@ -70,19 +63,12 @@
 			},
 			"type": "array"
 		},
-		"secretName": {
+		"secretId": {
 			"defaultValue": "",
 			"metadata": {
-				"description": "Enter secret name. This is required for creating secret."
+				"description": "Enter full URI of existing secret."
 			},
 			"type": "string"
-		},
-		"secretValue": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "Enter secret value. This is required for creating secret."
-			},
-			"type": "securestring"
 		},
 		"userAssignedIdentityName": {
 			"defaultValue": "",
@@ -107,7 +93,9 @@
 	},
 	"variables": {
 		"customRoleAssignScopes": "[if(empty(parameters('customRoleAssignableScopes')), createArray(resourceGroup().id), parameters('customRoleAssignableScopes'))]",
-		"keyVaultNameVariable": "[if(empty(parameters('keyVaultName')), concat(resourceGroup().name, '-keyvault'), parameters('keyVaultName'))]",
+		"secretIdSplitDelimiters": [ "https://", "[environment().suffixes.keyvaultDns]" ],
+		"secretIdSplitArray": "[split(parameters('secretId'),variables('secretIdSplitDelimiters'))]",
+		"keyVaultNameVariable": "[if(not(empty(parameters('secretId'))), variables('secretIdSplitArray')[1], 'null')]",
 		"roleDefName": "[guid(resourceGroup().id, string(parameters('customRolePermissions')), string(parameters('customRoleName')))]",
 		"roleTypeArray": {
 			"Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
@@ -115,7 +103,6 @@
 			"Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
 			"UserAccessAdministrator": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9')]"
 		},
-		"secretNameVariable": "[if(or(empty(parameters('secretName')), empty(parameters('keyVaultName'))), concat(resourceGroup().name, '-secret', '/', 'secret'), concat(parameters('keyVaultName'), '/', parameters('secretName')))]",
 		"tenantId": "[subscription().tenantId]",
 		"userAssignedIdentityNameVariable": "[if(empty(parameters('userAssignedIdentityName')), concat(resourceGroup().name, '-identity'), parameters('userAssignedIdentityName'))]"
 	},
@@ -175,12 +162,11 @@
 		},
 		{
 			"apiVersion": "2019-09-01",
-			"condition": "[and(not(empty(parameters('keyVaultName'))), not(empty(parameters('userAssignedIdentityName'))))]",
+			"condition": "[and(not(empty(parameters('secretId'))), not(empty(parameters('userAssignedIdentityName'))))]",
 			"dependsOn": [
 				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]"
 			],
-			"location": "[resourceGroup().location]",
-			"name": "[variables('keyVaultNameVariable')]",
+			"name": "[concat(variables('keyVaultNameVariable'), '/add')]",
 			"properties": {
 				"accessPolicies": [
 					{
@@ -199,27 +185,10 @@
 					"bypass": "AzureServices",
 					"defaultAction": "Allow"
 				},
-				"sku": {
-					"family": "A",
-					"name": "standard"
-				},
 				"tenantId": "[variables('tenantId')]"
 			},
 			"tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
-			"type": "Microsoft.KeyVault/vaults"
-		},
-		{
-			"apiVersion": "2019-09-01",
-			"condition": "[and(not(empty(parameters('secretValue'))),not(empty(parameters('secretName'))))]",
-			"dependsOn": [
-				"[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultNameVariable'))]"
-			],
-			"location": "[resourceGroup().location]",
-			"name": "[variables('secretNameVariable')]",
-			"properties": {
-				"value": "[parameters('secretValue')]"
-			},
-			"type": "Microsoft.KeyVault/vaults/secrets"
+			"type": "Microsoft.KeyVault/vaults/accessPolicies"
 		}
 	],
 	"outputs": {
@@ -233,14 +202,14 @@
 			"value": "[resourceId('Microsoft.Authorization/roleDefinitions/', variables('roleDefName'))]"
 		},
 		"keyVaultName": {
-			"condition": "[not(empty(parameters('keyVaultName')))]",
+			"condition": "[not(empty(parameters('secretId')))]",
 			"type": "string",
 			"value": "[variables('keyVaultNameVariable')]"
 		},
-		"secretName": {
-			"condition": "[not(empty(parameters('secretName')))]",
+		"secretId": {
+			"condition": "[not(empty(parameters('secretId')))]",
 			"type": "string",
-			"value": "[concat(parameters('keyVaultName'), '/', parameters('secretName'))]"
+			"value": "[parameters('secretId')]"
 		},
 		"userAssignedIdentityId": {
 			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",

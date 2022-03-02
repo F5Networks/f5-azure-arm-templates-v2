@@ -1,15 +1,12 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.4.0.0",
+  "contentVersion": "2.0.0.0",
   "parameters": {
     "externalLoadBalancerName": {
       "value": "None"
     },
     "internalLoadBalancerName": {
       "value": "None"
-    },
-    "internalLoadBalancerProbePort": {
-      "value": "3456"
     },
     "internalSubnetId": {
       "value": ""
@@ -63,6 +60,12 @@
           "sourceAddressPrefix": ""
         }
       ]
+    },
+    "nsg3": {
+      "value": []
+    },
+    "nsg4": {
+      "value": []
     },
     "numberPublicExternalIpAddresses": {
       "value": 1

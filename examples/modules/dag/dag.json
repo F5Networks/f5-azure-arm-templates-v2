@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.4.0.0",
+    "contentVersion": "2.0.0.0",
     "parameters": {
         "uniqueString": {
             "metadata": {
@@ -19,13 +19,6 @@
             "defaultValue": "None",
             "metadata": {
                 "description": "Valid values include 'None', or an internal load balancer name. A value of 'None' will not create internal load balancer. Specifying a name creates a internal load balancer with the name specified."
-            },
-            "type": "string"
-        },
-        "internalLoadBalancerProbePort": {
-            "defaultValue": "3456",
-            "metadata": {
-                "description": "Specify a TCP port for the internal load balancer to monitor. If you specified None for provision internal load balancer, this setting has no effect."
             },
             "type": "string"
         },
@@ -85,6 +78,20 @@
                     "protocol": "Tcp"
                 }
             ],
+            "type": "array",
+            "metadata": {
+                "description": "Valid values include an array containing network security rule property objects, or an empty array. A non-empty array value creates a security group and inbound rules using the destinationPortRanges and sourceAddressPrefix values provided for each object."
+            }
+        },
+        "nsg3": {
+            "defaultValue": [],
+            "type": "array",
+            "metadata": {
+                "description": "Valid values include an array containing network security rule property objects, or an empty array. A non-empty array value creates a security group and inbound rules using the destinationPortRanges and sourceAddressPrefix values provided for each object."
+            }
+        },
+        "nsg4": {
+            "defaultValue": [],
             "type": "array",
             "metadata": {
                 "description": "Valid values include an array containing network security rule property objects, or an empty array. A non-empty array value creates a security group and inbound rules using the destinationPortRanges and sourceAddressPrefix values provided for each object."
@@ -196,6 +203,42 @@
                 "name": "constructLoadBalancerProbes"
             },
             {
+                "count": "[variables('loadBalancerRulePortsLength')]",
+                "input": {
+                    "name": "[concat('app-internal-', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')])]",
+                    "properties": {
+                        "backendAddressPool": {
+                            "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('internalLoadBalancerName'), 'loadBalancerBackEnd')]"
+                        },
+                        "backendPort": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')]]",
+                        "frontendIPConfiguration": {
+                            "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', parameters('internalLoadBalancerName'), 'loadBalancerFrontEnd')]"
+                        },
+                        "frontendPort": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')]]",
+                        "idleTimeoutInMinutes": 15,
+                        "loadDistribution": "SourceIP",
+                        "probe": {
+                            "id": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp_probe_internal_', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerRuleInternal')]))]"
+                        },
+                        "protocol": "Tcp"
+                    }
+                },
+                "name": "constructLoadBalancerRuleInternal"
+            },
+            {
+                "count": "[variables('loadBalancerRulePortsLength')]",
+                "input": {
+                    "name": "[concat('tcp_probe_internal_', parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerProbesInternal')])]",
+                    "properties": {
+                        "intervalInSeconds": 15,
+                        "numberOfProbes": 3,
+                        "port": "[parameters('loadBalancerRulePorts')[copyIndex('constructLoadBalancerProbesInternal')]]",
+                        "protocol": "Tcp"
+                    }
+                },
+                "name": "constructLoadBalancerProbesInternal"
+            },
+            {
                 "count": "[variables('nsg0Length')]",
                 "input": {
                     "name": "[concat('nsg0_allow_', copyIndex('constructNsg0Array'))]",
@@ -248,6 +291,42 @@
                     }
                 },
                 "name": "constructNsg2Array"
+            },
+            {
+                "count": "[variables('nsg3Length')]",
+                "input": {
+                    "name": "[concat('nsg3_allow_', copyIndex('constructNsg3Array'))]",
+                    "properties": {
+                        "access": "Allow",
+                        "description": "NSG3 Allow",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRanges": "[parameters('nsg3')[copyIndex('constructNsg3Array')].destinationPortRanges]",
+                        "direction": "Inbound",
+                        "priority": "[int(concat('10', copyIndex('constructNsg3Array')))]",
+                        "protocol": "[parameters('nsg3')[copyIndex('constructNsg3Array')].protocol]",
+                        "sourceAddressPrefix": "[parameters('nsg3')[copyIndex('constructNsg3Array')].sourceAddressPrefix]",
+                        "sourcePortRange": "*"
+                    }
+                },
+                "name": "constructNsg3Array"
+            },
+            {
+                "count": "[variables('nsg4Length')]",
+                "input": {
+                    "name": "[concat('nsg4_allow_', copyIndex('constructNsg4Array'))]",
+                    "properties": {
+                        "access": "Allow",
+                        "description": "NSG4 Allow",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRanges": "[parameters('nsg4')[copyIndex('constructNsg4Array')].destinationPortRanges]",
+                        "direction": "Inbound",
+                        "priority": "[int(concat('10', copyIndex('constructNsg4Array')))]",
+                        "protocol": "[parameters('nsg4')[copyIndex('constructNsg4Array')].protocol]",
+                        "sourceAddressPrefix": "[parameters('nsg4')[copyIndex('constructNsg4Array')].sourceAddressPrefix]",
+                        "sourcePortRange": "*"
+                    }
+                },
+                "name": "constructNsg4Array"
             }
         ],
         "uniqueString": "[toLower(parameters('uniqueString'))]",
@@ -292,6 +371,8 @@
         "loadBalancerRulePortsLength": "[length(parameters('loadBalancerRulePorts'))]",
         "loadBalancingProbesArray": "[variables('constructLoadBalancerProbes')]",
         "loadBalancingRulesArray": "[variables('constructLoadBalancerRule')]",
+        "loadBalancingProbesArrayInternal": "[variables('constructLoadBalancerProbesInternal')]",
+        "loadBalancingRulesArrayInternal": "[variables('constructLoadBalancerRuleInternal')]",
         "mgmtLoadBalancerFrontEnd": [
             {
                 "name": "loadBalancerMgmtFrontEnd",
@@ -314,6 +395,14 @@
         "nsg2Id": "[if(greater(variables('nsg2Length'), 0), createArray(resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg2Name'))), variables('emptyArray'))]",
         "nsg2Length": "[length(parameters('nsg2'))]",
         "nsg2Name": "[concat(variables('uniqueString'), '-nsg2')]",
+        "nsg3Array": "[variables('constructNsg3Array')]",
+        "nsg3Id": "[if(greater(variables('nsg3Length'), 0), createArray(resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg3Name'))), variables('emptyArray'))]",
+        "nsg3Length": "[length(parameters('nsg3'))]",
+        "nsg3Name": "[concat(variables('uniqueString'), '-nsg3')]",
+        "nsg4Array": "[variables('constructNsg4Array')]",
+        "nsg4Id": "[if(greater(variables('nsg4Length'), 0), createArray(resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg4Name'))), variables('emptyArray'))]",
+        "nsg4Length": "[length(parameters('nsg4'))]",
+        "nsg4Name": "[concat(variables('uniqueString'), '-nsg4')]",
         "outboundNsgRule": [
             {
                 "name": "allow_loadBalancer_traffic",
@@ -380,6 +469,28 @@
                 "securityRules": "[union(variables('nsg2Array'), variables('outboundNsgRule'))]"
             },
             "condition": "[not(empty(parameters('nsg2')))]"
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('nsg3Name')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+            "properties": {
+                "securityRules": "[union(variables('nsg3Array'), variables('outboundNsgRule'))]"
+            },
+            "condition": "[not(empty(parameters('nsg3')))]"
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('nsg4Name')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+            "properties": {
+                "securityRules": "[union(variables('nsg4Array'), variables('outboundNsgRule'))]"
+            },
+            "condition": "[not(empty(parameters('nsg4')))]"
         },
         {
             "apiVersion": "2020-06-01",
@@ -469,39 +580,8 @@
                         }
                     }
                 ],
-                "loadBalancingRules": [
-                    {
-                        "name": "allProtocolLbRule",
-                        "properties": {
-                            "backendAddressPool": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('internalLoadBalancerName'), 'loadBalancerBackEnd')]"
-                            },
-                            "backendPort": 0,
-                            "enableFloatingIP": false,
-                            "frontendIPConfiguration": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', parameters('internalLoadBalancerName'), 'loadBalancerFrontEnd')]"
-                            },
-                            "frontendPort": 0,
-                            "idleTimeoutInMinutes": 15,
-                            "loadDistribution": "Default",
-                            "probe": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp-probe-', parameters('internalLoadBalancerProbePort')))]"
-                            },
-                            "protocol": "All"
-                        }
-                    }
-                ],
-                "probes": [
-                    {
-                        "name": "[concat('tcp-probe-', parameters('internalLoadBalancerProbePort'))]",
-                        "properties": {
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 2,
-                            "port": "[parameters('internalLoadBalancerProbePort')]",
-                            "protocol": "Tcp"
-                        }
-                    }
-                ]
+                "loadBalancingRules": "[variables('loadBalancingRulesArrayInternal')]",
+                "probes": "[variables('loadBalancingProbesArrayInternal')]"
             },
             "sku": {
                 "name": "Standard"
@@ -585,12 +665,12 @@
             "type": "array"
         },
         "inboundMgmtNatPool": {
-            "condition": "[greater(parameters('numberPublicMgmtIpAddresses'), 0)]",
+            "condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), greater(parameters('numberPublicMgmtIpAddresses'), 0))]",
             "type": "string",
             "value": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', parameters('externalLoadBalancerName'), 'mgmtnatpool')]"
         },
         "inboundSshNatPool": {
-            "condition": "[greater(parameters('numberPublicMgmtIpAddresses'), 0)]",
+            "condition": "[and(not(equals(toLower(parameters('externalLoadBalancerName')), string('none'))), greater(parameters('numberPublicMgmtIpAddresses'), 0))]",
             "type": "string",
             "value": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', parameters('externalLoadBalancerName'), 'sshnatpool')]"
         },
@@ -604,10 +684,13 @@
             "type": "string",
             "value": "[reference(parameters('internalLoadBalancerName')).frontendIPConfigurations[0].properties.privateIPAddress]"
         },
-        "internalLoadBalancerProbeId": {
+        "internalLoadBalancerProbesId": {
             "condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",
-            "type": "string",
-            "value": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp-probe-', parameters('internalLoadBalancerProbePort')))]"
+            "copy": {
+                "count": "[variables('loadBalancerRulePortsLength')]",
+                "input": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('internalLoadBalancerName'), concat('tcp_probe_internal_', parameters('loadBalancerRulePorts')[copyIndex()]))]"
+            },
+            "type": "array"
         },
         "internalLoadBalancer": {
             "condition": "[not(equals(toLower(parameters('internalLoadBalancerName')), string('none')))]",
@@ -645,8 +728,18 @@
             "type": "string",
             "value": "[variables('nsg2Id')[0]]"
         },
+        "nsg3Id": {
+            "condition": "[not(empty(parameters('nsg3')))]",
+            "type": "string",
+            "value": "[variables('nsg3Id')[0]]"
+        },
+        "nsg4Id": {
+            "condition": "[not(empty(parameters('nsg4')))]",
+            "type": "string",
+            "value": "[variables('nsg4Id')[0]]"
+        },
         "nsgIds": {
-            "value": "[union(variables('nsg0Id'), variables('nsg1Id'), variables('nsg2Id'))]",
+            "value": "[union(variables('nsg0Id'), variables('nsg1Id'), variables('nsg2Id'), variables('nsg3Id'), variables('nsg4Id'))]",
             "type": "array"
         }
     }

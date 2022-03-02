@@ -3,6 +3,7 @@
 CUR_DIR := $(cwd)
 PROJECT_DIR := .
 LINK_CHECK_DIR := cloud-tools/link_checker
+POLICY_CHECK_DIR := cloud-tools/test-policy-parser
 CRAWLER_DIR := cloud-tools/crawler
 SMOKE_TEST_DIR := tests/smoke
 LINTER_DIR := cloud-tools/arm-ttk
@@ -25,6 +26,11 @@ link_check_release:
 	cd ${LINK_CHECK_DIR} && npm install && cd ${CUR_DIR};
 	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived automated-test-scripts" link_checker_config_release.json
 
+test_policy_check:
+	echo "Running parameter checker against all test policy files";
+	cd ${POLICY_CHECK_DIR} && pip install -r requirements.txt && cd ${CUR_DIR};
+	python ${POLICY_CHECK_DIR}/test_policy_parser.py
+
 run_linter:
 	echo "Running arm-ttk against templates";
 	cd ${LINTER_DIR} && bash ./lint.sh && cd ${CUR_DIR};
@@ -42,7 +48,7 @@ run_smoke_tests: run_crawler
 
 run_sync_at_metadata:
 	echo "Syncing AT component metadata"
-	cd ${SYNC_AT_DIR} && ./sync_at_components_metadata.sh --config-directories ../../examples/autoscale/bigip-configurations,../../examples/quickstart/bigip-configurations --template-directory ../../examples --runtime-init-package-url https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run --cloud azure
+	cd ${SYNC_AT_DIR} && ./sync_at_components_metadata.sh --config-directories ../../examples/autoscale/bigip-configurations,../../examples/quickstart/bigip-configurations,../../examples/failover/bigip-configurations --template-directory ../../examples --runtime-init-package-url https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run --cloud azure
 
 run_parameter_generator:
 	echo "Generating v2 input parameters files"

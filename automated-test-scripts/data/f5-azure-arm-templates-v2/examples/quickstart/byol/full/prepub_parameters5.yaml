@@ -1,0 +1,18 @@
+---
+ADMIN USERNAME: azureuser
+APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
+ARTIFACT LOCATION: 'templates/'
+AUTOFILL EVAL LICENSE KEY: ''
+INSTANCE TYPE: Standard_D4_v3
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.000000
+LICENSE TYPE: byol
+NIC COUNT: 1
+PROVISION APP: true
+PROVISION PUBLIC IP: true
+REGION: westus
+RESOURCE GROUP: dd-quick-<DEWPOINT JOB ID>
+RESTRICTED SRC ADDRESS: '*'
+RESTRICTED SRC ADDRESS APP: '*'
+TEMPLATE URL: file://$PWD/examples/quickstart/azuredeploy.json
+USE AVAILABILITY ZONES: false
+USE DEFAULT PARAMETERS: 'No'

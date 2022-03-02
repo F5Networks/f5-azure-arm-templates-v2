@@ -1,14 +1,22 @@
 # Azure autoscale example tests
 azure-autoscale-example-test:
-  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test.yaml"
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_full.yaml"
   run: "all"
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters3.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters4.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/prepub_parameters5.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters4.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters5.yaml"
+
+azure-autoscale-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters2.yaml"
 
 azure-quickstart-byol-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml"
