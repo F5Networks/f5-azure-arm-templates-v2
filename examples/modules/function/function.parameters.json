@@ -1,23 +1,8 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.4.0.0",
+  "contentVersion": "2.0.0.0",
   "parameters": {
-    "bigIqAddress": {
-      "value": ""
-    },
-    "bigIqLicensePool": {
-      "value": ""
-    },
-    "bigIqPassword": {
-      "value": ""
-    },
-    "bigIqTenant": {
-      "value": ""
-    },
-    "bigIqUsername": {
-      "value": ""
-    },
-    "bigIqUtilitySku": {
+    "bigIpRuntimeInitConfig": {
       "value": ""
     },
     "functionAppName": {
@@ -32,6 +17,9 @@
     "functionAppVnetId": {
       "value": ""
     },
+    "secretId": {
+      "value": ""
+    },
     "tagValues": {
       "value": {
         "application": "APP",
@@ -40,6 +28,9 @@
         "group": "GROUP",
         "owner": "OWNER"
       }
+    },
+    "userAssignManagedIdentity": {
+      "value": ""
     },
     "vmssId": {
       "value": ""

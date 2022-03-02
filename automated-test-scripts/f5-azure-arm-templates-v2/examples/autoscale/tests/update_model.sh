@@ -15,26 +15,35 @@ SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public |
 STORAGE_ACCOUNT_NAME=$(echo st<RESOURCE GROUP>tmpl | tr -d -)
 STORAGE_ACCOUNT_FQDN=$(az storage account show -n ${STORAGE_ACCOUNT_NAME} -g <RESOURCE GROUP> | jq -r .primaryEndpoints.blob)
 
-if [[ <LICENSE TYPE> == "bigiq" ]]; then
-    BIGIQ_ADDRESS=`az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-env | jq '.properties.outputs["bigiqIp"].value' --raw-output | cut -d' ' -f1`
-    BIGIQ_VNET_ID=$(az network vnet show -g <RESOURCE GROUP> -n existingStackVnet | jq -r .id)
-    BIGIQ_PARAMS=',"bigIqAddress":{"value":"'"${BIGIQ_ADDRESS}"'"},"bigIqUsername":{"value":"azureuser"},"bigIqPassword":{"value":"B!giq2017"},"bigIqLicensePool":{"value":"production"},"bigIqTenant":{"value":"<BIGIQ TENANT>"},"bigIqUtilitySku":{"value":"F5-BIG-MSP-BT-1G"},"bigIqVnetId":{"value":"'"${BIGIQ_VNET_ID}"'"}'
+SECRET_ID=''
+BIGIQ_PARAMS=''
+if [[ "<LICENSE TYPE>" == "bigiq" ]]; then
+    if [ -f "${TMP_DIR}/bigiq_info.json" ]; then
+        echo "Found existing BIG-IQ"
+        cat ${TMP_DIR}/bigiq_info.json
+        bigiq_stack_name=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_name)
+        bigiq_stack_region=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_region)
+        bigiq_address=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_address)
+    else
+        echo "Template validation failed - No BIG-IQ found"
+    fi
+
+    SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
+    BIGIQ_PARAMS=',"bigIqVnetId":{"value":""},"secretId":{"value":"'"${SECRET_ID}"'"}'
+fi
+
+if [[ "<CREATE WORKSPACE>" == "False" ]]; then
+    WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group <RESOURCE GROUP> --workspace-name <RESOURCE GROUP>-log-wrkspc --query customerId | tr -d '"')
 else
-    BIGIQ_PARAMS=''
+    WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group <RESOURCE GROUP> --workspace-name f5telemetry --query customerId | tr -d '"')
 fi
 
 UPDATE_RUNTIME_CONFIG_URL=${STORAGE_ACCOUNT_FQDN}templates/update_<DEWPOINT JOB ID>.yaml
 
-if [[ ! <CREATE WORKSPACE> == True ]]; then
-    WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group <RESOURCE GROUP> --workspace-name f5telemetry --query customerId | tr -d '"')
-else
-    WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group <RESOURCE GROUP> --workspace-name <RESOURCE GROUP>-log-wrkspc --query customerId | tr -d '"')
-fi
-
 if [[ -z <BIGIP RUNTIME INIT PACKAGEURL> ]]; then
-    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"createWorkspace":{"value":<CREATE WORKSPACE>},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"bigIpScaleOutCpuThreshold":{"value":<SCALE OUT CPU THRESHOLD>},"bigIpScaleInCpuThreshold":{"value":<SCALE IN CPU THRESHOLD>},"bigIpScaleOutTimeWindow":{"value":<SCALE OUT TIME WINDOW>},"bigIpScaleInTimeWindow":{"value":<SCALE IN TIME WINDOW>},"bigIpScaleOutThroughputThreshold":{"value":<SCALE OUT THROUGHPUT THRESHOLD>},"bigIpScaleInThroughputThreshold":{"value":<SCALE IN THROUGHPUT THRESHOLD>},"appScalingMinSize":{"value":<APP VM SCALE SET MIN COUNT>},"appScalingMaxSize":{"value":<APP VM SCALE SET MAX COUNT>},"bigIpMaxBatchInstancePercent":{"value":<UPGRADE MAX BATCH>},"bigIpMaxUnhealthyInstancePercent":{"value":<UPGRADE MAX UNHEALTHY>},"bigIpMaxUnhealthyUpgradedInstancePercent":{"value":<UPGRADE MAX UNHEALTHY UPGRADED>},"bigIpPauseTimeBetweenBatches":{"value":<UPGRADE PAUSE TIME>},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
 else
-    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpRuntimeInitPackageUrl":{"value":"<BIGIP RUNTIME INIT PACKAGEURL>"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"createWorkspace":{"value":<CREATE WORKSPACE>},"uniqueString":{"value":"<RESOURCE GROUP>"},"workspaceId":{"value":"'"${WORKSPACE_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"'"${UPDATE_RUNTIME_CONFIG_URL}"'"},"bigIpRuntimeInitPackageUrl":{"value":"<BIGIP RUNTIME INIT PACKAGEURL>"},"bigIpScalingMaxSize":{"value":<SCALING MAX>},"bigIpScalingMinSize":{"value":<SCALING MIN>},"bigIpScaleOutCpuThreshold":{"value":<SCALE OUT CPU THRESHOLD>},"bigIpScaleInCpuThreshold":{"value":<SCALE IN CPU THRESHOLD>},"bigIpScaleOutTimeWindow":{"value":<SCALE OUT TIME WINDOW>},"bigIpScaleInTimeWindow":{"value":<SCALE IN TIME WINDOW>},"bigIpScaleOutThroughputThreshold":{"value":<SCALE OUT THROUGHPUT THRESHOLD>},"bigIpScaleInThroughputThreshold":{"value":<SCALE IN THROUGHPUT THRESHOLD>},"appScalingMinSize":{"value":<APP VM SCALE SET MIN COUNT>},"appScalingMaxSize":{"value":<APP VM SCALE SET MAX COUNT>},"bigIpMaxBatchInstancePercent":{"value":<UPGRADE MAX BATCH>},"bigIpMaxUnhealthyInstancePercent":{"value":<UPGRADE MAX UNHEALTHY>},"bigIpMaxUnhealthyUpgradedInstancePercent":{"value":<UPGRADE MAX UNHEALTHY UPGRADED>},"bigIpPauseTimeBetweenBatches":{"value":<UPGRADE PAUSE TIME>},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>}'${BIGIQ_PARAMS}'}'
 fi
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/update_deploy_params.json

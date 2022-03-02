@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 pre_onboard_enabled:
   - name: provision_rest
     type: inline
@@ -29,17 +32,17 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.23.0
-      extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
+      extensionVersion: 1.27.0
+      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
     - extensionType: as3
-      extensionVersion: 3.30.0
-      extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
+      extensionVersion: 3.34.0
+      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
     - extensionType: ts
-      extensionVersion: 1.22.0
-      extensionHash: bff1b0695b7408e05a5e22492c8fce4805fc84c10408f82b60b14a0a206406a7
+      extensionVersion: 1.26.0
+      extensionHash: 128ec4fb6fd93e4dd7f43520a58f4810a9e20d45b60e7098a3c65ee960964bfa
     - extensionType: fast
-      extensionVersion: 1.11.0
-      extensionHash: 1816159f73f684d0b81f60341d7eda4907b2bbf72ca80cae2dcae2d1b059d3ce
+      extensionVersion: 1.15.0
+      extensionHash: 4980984355ef03cfe61442e8c0563518e292961aaca0da024d2a038d1c8601ca
 extension_services:
   service_operations:
     - extensionType: do
@@ -120,62 +123,4 @@ extension_services:
             vlan: external
             allowService: none
             trafficGroup: traffic-group-local-only
-    - extensionType: as3
-      type: inline
-      value:
-        class: ADC
-        schemaVersion: 3.0.0
-        label: Quickstart
-        remark: Quickstart
-        Tenant_1:
-          class: Tenant
-          Shared:
-            class: Application
-            template: shared
-            shared_pool:
-              class: Pool
-              remark: Service 1 shared pool
-              members:
-                - serverAddresses:
-                    - 10.0.2.4
-                  servicePort: 80
-              monitors:
-                - http
-          HTTP_Service:
-            class: Application
-            template: http
-            serviceMain:
-              class: Service_HTTP
-              virtualAddresses:
-                - 10.0.1.101
-              snat: auto
-              policyWAF:
-                use: WAFPolicy
-              pool: /Tenant_1/Shared/shared_pool
-            WAFPolicy:
-              class: WAF_Policy
-              url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/v1.4.0.0/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
-          HTTPS_Service:
-            class: Application
-            template: https
-            serviceMain:
-              class: Service_HTTPS
-              virtualAddresses:
-                - 10.0.1.101
-              snat: auto
-              policyWAF:
-                use: WAFPolicy
-              pool: /Tenant_1/Shared/shared_pool
-              serverTLS:
-                bigip: /Common/clientssl
-              redirect80: false
-            WAFPolicy:
-              class: WAF_Policy
-              url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/master/v1.4.0.0/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
 post_onboard_enabled: []

@@ -1,0 +1,19 @@
+---
+# Autoscale Example Test
+azure-arm-autoscale-existing-payg-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 2
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters2.yaml"
+
+azure-arm-autoscale-existing-bigiq-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 2
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters4.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters5.yaml"

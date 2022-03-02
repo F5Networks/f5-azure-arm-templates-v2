@@ -24,19 +24,17 @@ function verify_function_app_settings() {
     echo "$results"
 }
 
+USER_ASSIGNED_ID=$(az identity show --name <USER ASSIGNED IDENT NAME> --resource-group <RESOURCE GROUP> | jq -r .clientId)
+
 # Build associative array
 # array_name[jq_filter]=expected_response
 declare -A function_app_settings
+function_app_settings[AZURE_CLIENT_ID]="${USER_ASSIGNED_ID}"
 function_app_settings[AZURE_RESOURCE_GROUP]="<RESOURCE GROUP>"
 function_app_settings[AZURE_VMSS_NAME]="<RESOURCE GROUP>"
-function_app_settings[BIGIQ_ADDRESS]="<BIGIQ ADDRESS>"
-function_app_settings[BIGIQ_LICENSE_POOL]="<BIGIQ LICENSE POOL NAME>"
-function_app_settings[BIGIQ_UTILITY_SKU]="<BIGIQ UTILITY SKU>"
-function_app_settings[BIGIQ_USERNAME]="<USERNAME>"
-function_app_settings[TENANT]="<TENANT>"
 function_app_settings[FUNCTIONS_WORKER_RUNTIME]="python"
+function_app_settings[RUNTIME_INIT_CONFIG]="<BIGIP RUNTIME INIT CONFIG>"
 function_app_settings[WEBSITE_ENABLE_SYNC_UPDATE_SITE]="True"
-
 
 # Run array through function
 response=$(verify_function_app_settings "function_app_settings")

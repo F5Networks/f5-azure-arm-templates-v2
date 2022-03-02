@@ -1,9 +1,10 @@
-azure-autoscale-example-test:
+azure-autoscale-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters.yaml
-    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/postpub_parameters2.yaml
-  run: all
-  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test.yaml'
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/postpub_parameters1.yaml"
 
 azure-access-module-test:
   parameters-files:
@@ -15,6 +16,7 @@ azure-access-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/daily_test.yaml'
+
 azure-application-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/postpub_parameters.yaml
@@ -22,6 +24,7 @@ azure-application-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/application/daily_test.yaml'
+
 azure-bigip-autoscale-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/postpub_parameters.yaml
@@ -34,6 +37,7 @@ azure-bigip-autoscale-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/daily_test.yaml'
+
 azure-bigip-standalone-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/postpub_parameters.yaml
@@ -45,6 +49,7 @@ azure-bigip-standalone-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/daily_test.yaml'
+
 azure-dag-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/dag/postpub_parameters.yaml
@@ -54,6 +59,7 @@ azure-dag-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/dag/daily_test.yaml'
+
 azure-function-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/function/postpub_parameters.yaml
@@ -62,6 +68,7 @@ azure-function-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/function/daily_test.yaml'
+
 azure-network-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/network/postpub_parameters.yaml

@@ -1,0 +1,315 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.27.0
+      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
+    - extensionType: as3
+      extensionVersion: 3.34.0
+      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
+    - extensionType: cf
+      extensionVersion: 1.10.0
+      extensionHash: d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
+          PAYG license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            dhclient.mgmt: disable
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            class: Provision
+            asm: nominal
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: 'failover0.local'
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: 10.0.1.1
+            network: default
+            mtu: 1500
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: '{{{SELF_IP_INTERNAL}}}'
+            vlan: internal
+            allowService: default
+            trafficGroup: traffic-group-local-only
+    - extensionType: cf
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Cloud_Failover
+        environment: azure
+        controls:
+          class: Controls
+          logLevel: silly
+        externalStorage:
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+        failoverAddresses:
+          enabled: true
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+          requireScopingTags: false
+    - extensionType: as3
+      type: inline
+      value:
+        class: ADC
+        schemaVersion: 3.0.0
+        label: Failover
+        remark: Failover
+        Tenant_1:
+          class: Tenant
+          Shared:
+            class: Application
+            template: shared
+            Shared_Pool:
+              class: Pool
+              remark: Service 1 shared pool
+              members:
+                - serverAddresses:
+                    - 10.0.3.4
+                  servicePort: 80
+              monitors:
+                - http
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+            Service_Address_01:
+              class: Service_Address
+              virtualAddress: 10.0.1.101
+          HTTP_Service:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - use: /Tenant_1/Shared/Service_Address_01
+              snat: auto
+              pool: /Tenant_1/Shared/Shared_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+          HTTPS_Service:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - use: /Tenant_1/Shared/Service_Address_01
+              snat: auto
+              pool: /Tenant_1/Shared/Shared_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+              serverTLS:
+                bigip: /Common/clientssl
+              redirect80: false
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
+          PAYG license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            dhclient.mgmt: disable
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            class: Provision
+            asm: nominal
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: 'failover0.local'
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: 10.0.0.1
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: 10.0.1.1
+            network: default
+            mtu: 1500
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: '{{{SELF_IP_INTERNAL}}}'
+            vlan: internal
+            allowService: default
+            trafficGroup: traffic-group-local-only
+          configSync:
+            class: ConfigSync
+            configsyncIp: /Common/external-self/address
+          failoverAddress:
+            class: FailoverUnicast
+            address: /Common/external-self/address
+          failoverGroup:
+            class: DeviceGroup
+            type: sync-failover
+            members:
+              - failover0.local
+              - failover1.local
+            owner: /Common/failoverGroup/members/0
+            autoSync: true
+            saveOnAutoSync: false
+            networkFailover: true
+            fullLoadOnSync: false
+            asmSync: false
+          trust:
+            class: DeviceTrust
+            localUsername: admin
+            localPassword: '{{{BIGIP_PASSWORD}}}'
+            remoteHost: /Common/failoverGroup/members/0
+            remoteUsername: admin
+            remotePassword: '{{{BIGIP_PASSWORD}}}'
+post_onboard_enabled: []
+pre_onboard_enabled:
+  - name: provision_rest
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.extramb 1000
+      - /usr/bin/setdb restjavad.useextramb true
+runtime_parameters:
+  - name: BIGIP_PASSWORD
+    type: secret
+    secretProvider:
+      type: KeyVault
+      environment: azure
+      vaultUrl: 'https://myVaultName.vault.azure.net'
+      secretId: mySecretId
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 1
+  - name: SELF_IP_INTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 2
