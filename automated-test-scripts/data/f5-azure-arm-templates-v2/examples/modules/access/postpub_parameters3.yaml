@@ -1,9 +1,0 @@
-REGION: westus
-RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
-BUILT IN ROLE TYPE: Reader
-KEY VAULT NAME: dd-n-<DEWPOINT JOB ID>fv
-SECRET NAME: secert-<DEWPOINT JOB ID>
-PASSWORD: StrongPassword212+
-SECRET VALUE: StrongPassword212+
-USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
-TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/access/access.json
