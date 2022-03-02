@@ -1,12 +1,12 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.4.0.0",
+  "contentVersion": "2.0.0.0",
   "parameters": {
     "appContainerName": {
       "value": "f5devcentral/f5-demo-app:latest"
     },
     "artifactLocation": {
-      "value": "f5-azure-arm-templates-v2/v1.4.0.0/examples/"
+      "value": "f5-azure-arm-templates-v2/v2.0.0.0/examples/"
     },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
@@ -15,7 +15,7 @@
       "value": "Standard_D8_v3"
     },
     "bigIpRuntimeInitConfig": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
       "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"

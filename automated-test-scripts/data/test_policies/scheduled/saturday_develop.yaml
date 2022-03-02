@@ -1,5 +1,9 @@
-azure-quickstart-payg-example-test:
+azure-failover-payg-example-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_full.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/prepub_parameters2.yaml
-  run: all
-  test-url: 'file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test.yaml'
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/full/prepub_parameters2.yaml"
+    
