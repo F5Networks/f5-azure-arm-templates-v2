@@ -12,7 +12,6 @@ EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
 IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
-INTERNAL LOAD BALANCER PROBE PORT: 3456
 LOAD BALANCER RULE PORTS:
   - 80
   - 443
@@ -20,6 +19,8 @@ LOAD BALANCER RULE PORTS:
 NSG0: '[{"destinationPortRanges": ["22","8443"],"sourceAddressPrefix": "*", "protocol": "Tcp"},{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
 NSG1: '[]'
 NSG2: '[]'
+NSG3: '[]'
+NSG4: '[]'
 NUMBER PUBLIC EXT IP ADDRESSES: 1
 NUMBER PUBLIC MGMT IP ADDRESSES: 1
 PROVISION PUBLIC IP: {}
@@ -32,6 +33,7 @@ SCALE IN TIME WINDOW: 10
 SCALE OUT CPU THRESHOLD: 80
 SCALE OUT THROUGHPUT THRESHOLD: 20000000
 SCALE OUT TIME WINDOW: 10
+SECRET VALUE: StrongPassword212+
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/bigip-autoscale/bigip.json
 THROUGHPUT METRIC NAME: Network In
 UPGRADE MAX BATCH: 20

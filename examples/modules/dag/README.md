@@ -35,7 +35,6 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 | --- | --- | --- |
 | externalLoadBalancerName | No | Valid values include 'None', or an external load balancer name. A value of 'None' will not create an external load balancer. Specifying a name creates an external load balancer with the name specified. |
 | internalLoadBalancerName | No | Valid values include 'None', or an internal load balancer name. A value of 'None' will not create an internal load balancer. Specifying a name creates an internal load balancer with the name specified. |
-| internalLoadBalancerProbePort | No | Specify a TCP port for the internal load balancer to monitor. If you specify 'None' for provision internal load balancer, this setting has no effect. |
 | internalSubnetId | No | Enter the subnet ID to use for frontend internal load balancer configuration. If you specify 'None' for provision internal load balancer, this setting has no effect. |
 | loadBalancerRulePorts | No | Valid values include valid TCP ports. Enter an array of ports that your applications use. For example: '[80,443,445]' |
 | nsg0 | No | Valid values include an array containing network security rule property objects, or an empty array. A non-empty array value creates a security group and inbound rules using the destinationPortRanges, sourceAddressPrefix, and protocol values provided for each object. For example, this value will combine management and application security rules for 1NIC deployments: ```[{"destinationPortRanges": ["22","8443"],"sourceAddressPrefix": "1.2.3.4/32", "protocol": "Tcp"},{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]``` |
@@ -65,7 +64,7 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 | internalBackEndLoadBalancerId | Internal Back End Address Pool resource ID | Internal Load Balancer | string |
 | internalFrontEndLoadBalancerIp | Internal Front End resource ID | Internal Load Balancer | string |
 | internalLoadBalancer | Internal Load Balancer resource ID | Internal Load Balancer | string |
-| internalLoadBalancerProbeId | Internal Load Balancer Probe ID | Internal Load Balancer | string |
+| internalLoadBalancerProbesId | Internal Load Balancer Probe resource IDs | Internal Load Balancer | array |
 | mgmtIpIds | Management Public IP Address resource IDs | Management Public IP Address | array |
 | mgmtIps | Management Public IP Addresses | Management Public IP Address | array |
 | nsg0Id | Network Security Group resource ID | Network Security Group | string |
@@ -76,4 +75,4 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.4.0.0/examples/images/azure-dag-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.0.0.0/examples/images/azure-dag-module.png)

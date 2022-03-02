@@ -14,7 +14,13 @@ echo "TEMPLATE URI: <TEMPLATE URL>"
 VNET_ID=$(az network vnet show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vnet | jq -r .id)
 VMSS_ID=$(az vmss show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-vmss | jq -r .id)
 
-DEPLOY_PARAMS='{"vmssId":{"value":"'"${VMSS_ID}"'"},"bigIqAddress":{"value":"<BIGIQ ADDRESS>"},"bigIqPassword":{"value":"<PASSWORD>"},"bigIqLicensePool":{"value":"production"},"bigIqUsername":{"value":"<USERNAME>"},"bigIqTenant":{"value":"<TENANT>"},"bigIqUtilitySku":{"value":"F5-BIG-MSP-BT-1G"},"functionAppName":{"value":"<FUNCTION APP NAME>"},"functionAppSku":{"value":<FUNCTION APP SKU>},"functionAppVnetId":{"value":"'"${VNET_ID}"'"},"tagValues":{"value":{"application":"APP","cost":"COST","environment":"ENV","group":"GROUP","owner":"OWNER"}}}'
+echo "VMSS_ID: ${VMSS_ID}"
+
+SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
+
+USER_ASSIGNED_ID=$(az identity show --name <USER ASSIGNED IDENT NAME> --resource-group <RESOURCE GROUP> | jq .id --raw-output)
+
+DEPLOY_PARAMS='{"userAssignManagedIdentity":{"value":"'"$USER_ASSIGNED_ID"'"},"secretId":{"value":"'"$SECRET_ID"'"},"bigIpRuntimeInitConfig":{"value":"<BIGIP RUNTIME INIT CONFIG>"},"vmssId":{"value":"'"${VMSS_ID}"'"},"functionAppName":{"value":"<FUNCTION APP NAME>"},"functionAppSku":{"value":<FUNCTION APP SKU>},"functionAppVnetId":{"value":"'"${VNET_ID}"'"},"tagValues":{"value":{"application":"APP","cost":"COST","environment":"ENV","group":"GROUP","owner":"OWNER"}}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

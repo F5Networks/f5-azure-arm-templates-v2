@@ -46,15 +46,12 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 
 | Parameter | Required | Description |
 | --- | --- | --- |
-| bigIqAddress | No | The public or private IP address of the BIG-IQ to be used when revoking licenses from the BIG-IP. Note: The Azure function will make a REST call to the BIG-IQ (already existing) to let it know a BIG-IP needs to be revoked. It will then revoke the license of the BIG-IP using the provided BIG-IQ credentials and license pool name/utility license info. |
-| bigIqLicensePool | No | The BIG-IQ license pool used during BIG-IP licensing via BIG-IQ. |
-| bigIqPassword | No | The BIG-IQ password to use during BIG-IP license revocation via BIG-IQ. This password will be securely stored in an Azure KeyVault secret. |
-| bigIqTenant | No | The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. This limits the scope of licenses eligible for revocation to those that were licensed with the specified tenant value. |
-| bigIqUsername | No | The BIG-IQ username to use during BIG-IP license revocation via BIG-IQ. |
-| bigIqUtilitySku | No | The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. ***Important***: This is only required when revoking a license from an ELA/subscription (utility) pool on the BIG-IQ, if not using this pool type leave the default of **Default**. |
+| bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | functionAppName | No | Supply a name for the new function app. |
 | functionAppSku | No | Supply a configuration for the function app server farm plan SKU (premium or appservice) in JSON format. Information about server farm plans is available [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2018-02-01/serverfarms). |
 | functionAppVnetId | No | The fully-qualified resource ID of the Azure Virtual Network where BIG-IQ is deployed. This is required when connecting to BIG-IQ via a private IP address; the Azure function app will be granted ingress permission to the virtual network. When specifying an Azure public IP address for bigIqAddress, leave the default of **Default**. |
+| secretId | No | Enter full URI of existing secret. |
+| userAssignManagedIdentity | No | Enter user assigned management identity ID to be associated to vmss. Leave default if not used. |
 | tagValues| No | List of tags to add to created resources. |
 | vmssId | No | Supply the fully-qualified resource ID of the Azure Virtual Machine Scale Set to be monitored. |
 
@@ -71,7 +68,7 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v1.4.0.0/examples/images/azure-function-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.0.0.0/examples/images/azure-function-module.png)
 
 
 ### Contributor License Agreement

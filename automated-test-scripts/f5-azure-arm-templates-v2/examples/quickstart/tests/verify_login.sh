@@ -15,7 +15,7 @@ else
 fi
 
 if [[ <PROVISION PUBLIC IP> == False ]]; then
-    BASTION_HOST=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
+    BASTION_HOST=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     echo "Host: $BASTION_HOST"
     IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPrivateIp"].value')
     echo "IP: $IP"

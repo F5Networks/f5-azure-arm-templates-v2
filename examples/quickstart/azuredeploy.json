@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.4.0.0",
+  "contentVersion": "2.0.0.0",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -30,7 +30,7 @@
       "type": "string"
     },
     "bigIpInstanceType": {
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_D8_v3",
       "metadata": {
         "description": "Enter valid instance type."
       },
@@ -81,14 +81,14 @@
       "type": "string"
     },
     "bigIpRuntimeInitConfig": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -125,9 +125,35 @@
     "createAutoscaleGroup": false,
     "externalLoadBalancerName": "None",
     "internalLoadBalancerName": "None",
-    "internalLoadBalancerProbePort": "3456",
     "loadBalancerRulePorts": [],
-    "mgmtNsgRulesArray": [
+    "applicationRulesArray": [
+      {
+        "destinationPortRanges": [
+          "80",
+          "443"
+        ],
+        "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
+        "protocol": "Tcp"
+      },
+      {
+        "destinationPortRanges": [
+          "80",
+          "443"
+        ],
+        "sourceAddressPrefix": "10.0.0.0/8",
+        "protocol": "Tcp"
+      }
+    ],
+    "bastionRulesArray": [
+      {
+        "destinationPortRanges": [
+          "22"
+        ],
+        "sourceAddressPrefix": "[parameters('restrictedSrcAddressMgmt')]",
+        "protocol": "Tcp"
+      }
+    ],
+    "mgmtRulesArray": [
       {
         "destinationPortRanges": [
           "22",
@@ -137,7 +163,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg1RulesArray": [
+    "externalRulesArray": [
       {
         "destinationPortRanges": [
           "80",
@@ -155,7 +181,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg2RulesArray": [
+    "internalRulesArray": [
       {
         "destinationPortRanges": [
           "80",
@@ -173,9 +199,9 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg0": "[if(equals(parameters('numNics'), 1), union(variables('mgmtNsgRulesArray'), variables('nsg1RulesArray'), variables('nsg2RulesArray')), variables('mgmtNsgRulesArray'))]",
-    "nsg1": "[if(greaterOrEquals(parameters('numNics'), 2), variables('nsg1RulesArray'), createArray())]",
-    "nsg2": "[if(greaterOrEquals(parameters('numNics'), 3), variables('nsg2RulesArray'), createArray())]",
+    "mgmtSecurityGroup": "[if(equals(parameters('numNics'), 1), union(variables('mgmtRulesArray'), variables('externalRulesArray'), variables('internalRulesArray')), variables('mgmtRulesArray'))]",
+    "externalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 2), variables('externalRulesArray'), createArray())]",
+    "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalRulesArray'), createArray())]",
     "bastionInstanceName": "[variables('uniqueString')]",
     "bastionInstanceType": "Standard_D2s_v3",
     "provisionApp": "[not(empty(parameters('appContainerName')))]",
@@ -242,9 +268,6 @@
           "internalLoadBalancerName": {
             "value": "[variables('internalLoadBalancerName')]"
           },
-          "internalLoadBalancerProbePort": {
-            "value": "[variables('internalLoadBalancerProbePort')]"
-          },
           "internalSubnetId": {
             "value": ""
           },
@@ -252,13 +275,19 @@
             "value": "[variables('loadBalancerRulePorts')]"
           },
           "nsg0": {
-            "value": "[variables('nsg0')]"
+            "value": "[variables('mgmtSecurityGroup')]"
           },
           "nsg1": {
-            "value": "[variables('nsg1')]"
+            "value": "[variables('externalSecurityGroup')]"
           },
           "nsg2": {
-            "value": "[variables('nsg2')]"
+            "value": "[variables('internalSecurityGroup')]"
+          },
+          "nsg3": {
+            "value": "[variables('applicationRulesArray')]"
+          },
+          "nsg4": {
+            "value": "[variables('bastionRulesArray')]"
           },
           "numberPublicExternalIpAddresses": {
             "value": 2
@@ -307,7 +336,7 @@
             "value": "[reference('networkTemplate').outputs.subnets.value[parameters('numNics')]]"
           },
           "nsgId": {
-            "value": "[if(equals(parameters('numNics'), 1), reference('dagTemplate').outputs.nsg0Id.value, reference('dagTemplate').outputs.nsg1Id.value)]"
+            "value": "[reference('dagTemplate').outputs.nsg3Id.value]"
           },
           "appContainerName": {
             "value": "[parameters('appContainerName')]"
@@ -349,7 +378,7 @@
             "value": "[variables('bastionInstanceType')]"
           },
           "nsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
+            "value": "[reference('dagTemplate').outputs.nsg4Id.value]"
           },
           "publicIpId": {
             "value": "[reference('dagTemplate').outputs.mgmtIpIds.value[0]]"
@@ -473,6 +502,11 @@
       "type": "string",
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
+    "bastionPublicIp": {
+      "condition": "[not(parameters('provisionPublicIp'))]",
+      "type": "string",
+      "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
+    },
     "bigIpVmId": {
       "type": "string",
       "value": "[reference('bigIpTemplate').outputs.vmId.value]"
@@ -504,10 +538,12 @@
       "value": "[variables('nic1ServiceIP1')]"
     },
     "vip1PublicIp": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.externalIps.value[1]]"
     },
     "vip1PublicIpDns": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.externalIpDns.value[1]]"
     },
@@ -516,6 +552,7 @@
       "value": "[concat('http://', variables('nic1ServiceIP1'), '/')]"
     },
     "vip1PublicUrlHttp": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[concat('http://', reference('dagTemplate').outputs.externalIps.value[1], '/')]"
     },
@@ -524,6 +561,7 @@
       "value": "[concat('https://', variables('nic1ServiceIP1'), '/')]"
     },
     "vip1PublicUrlHttps": {
+      "condition": "[variables('provisionApp')]",
       "type": "string",
       "value": "[concat('https://', reference('dagTemplate').outputs.externalIps.value[1], '/')]"
     },

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "2.0.0.0",
+  "parameters": {
+    "artifactLocation": {
+      "value": "f5-azure-arm-templates-v2/v2.0.0.0/examples/"
+    },
+    "bigIpExternalSelfAddress01": {
+      "value": "10.0.1.11"
+    },
+    "bigIpExternalSelfAddress02": {
+      "value": "10.0.1.12"
+    },
+    "bigIpExternalSubnetId": {
+      "value": ""
+    },
+    "bigIpImage": {
+      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
+    },
+    "bigIpInstanceType": {
+      "value": "Standard_D8_v3"
+    },
+    "bigIpInternalSelfAddress01": {
+      "value": "10.0.2.11"
+    },
+    "bigIpInternalSelfAddress02": {
+      "value": "10.0.2.12"
+    },
+    "bigIpInternalSubnetId": {
+      "value": ""
+    },
+    "bigIpMgmtSelfAddress01": {
+      "value": "10.0.0.11"
+    },
+    "bigIpMgmtSelfAddress02": {
+      "value": "10.0.0.12"
+    },
+    "bigIpMgmtSubnetId": {
+      "value": ""
+    },
+    "bigIpPasswordSecretId": {
+      "value": ""
+    },
+    "bigIpPeerAddr": {
+      "value": "10.0.1.11"
+    },
+    "bigIpRuntimeInitConfig01": {
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
+    },
+    "bigIpRuntimeInitConfig02": {
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
+    },
+    "bigIpRuntimeInitPackageUrl": {
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"
+    },
+    "cfeStorageAccountName": {
+      "value": ""
+    },
+    "cfeTag": {
+      "value": "bigip_high_availability_solution"
+    },
+    "provisionPublicIp": {
+      "value": false
+    },
+    "provisionServicePublicIp": {
+      "value": false
+    },
+    "restrictedSrcAddressApp": {
+      "value": ""
+    },
+    "restrictedSrcAddressMgmt": {
+      "value": ""
+    },
+    "servicePrivateIpAddress": {
+      "value": ""
+    },
+    "sshKey": {
+      "value": ""
+    },
+    "tagValues": {
+      "value": {
+        "application": "APP",
+        "cost": "COST",
+        "environment": "ENV",
+        "group": "GROUP",
+        "owner": "OWNER"
+      }
+    },
+    "templateBaseUrl": {
+      "value": "https://cdn.f5.com/product/cloudsolutions/"
+    },
+    "uniqueString": {
+      "value": ""
+    },
+    "useAvailabilityZones": {
+      "value": false
+    },
+    "userAssignManagedIdentity": {
+      "value": ""
+    }
+  }
+}

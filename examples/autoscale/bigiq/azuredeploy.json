@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.4.0.0",
+  "contentVersion": "2.0.0.0",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -19,6 +19,12 @@
     "uniqueString": {
       "metadata": {
         "description": "REQUIRED - A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value."
+      },
+      "type": "string"
+    },
+    "secretId": {
+      "metadata": {
+        "description": "REQUIRED - the full URI of the secretId, including KeyVault Name"
       },
       "type": "string"
     },
@@ -48,21 +54,21 @@
       "type": "string"
     },
     "bigIpInstanceType": {
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_D2s_v3",
       "metadata": {
         "description": "Enter valid instance type."
       },
       "type": "string"
     },
     "bigIpRuntimeInitConfig": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v1.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -172,6 +178,20 @@
       "maxValue": 60,
       "type": "int"
     },
+    "provisionExternalBigIpLoadBalancer": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "Select true if you would like to provision an external Azure load balancer."
+      },
+      "type": "bool"
+    },
+    "provisionInternalBigIpLoadBalancer": {
+      "defaultValue": false,
+      "metadata": {
+        "description": "Select true if you would like to provision an internal Azure load balancer."
+      },
+      "type": "bool"
+    },
     "provisionPublicIp": {
       "defaultValue": true,
       "metadata": {
@@ -185,43 +205,6 @@
         "description": "This deployment can deploy resources into Azure Availability Zones (if the region supports it).  If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false."
       },
       "type": "bool"
-    },
-    "bigIqAddress": {
-      "metadata": {
-        "description": "REQUIRED - The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP.  Note: The Azure function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqUsername": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqPassword": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ password to use during BIG-IP licensing via BIG-IQ; it will be stored as a secret in the Azure function KeyVault created by this template. This value should match the BIG-IQ password specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "securestring"
-    },
-    "bigIqLicensePool": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ license pool specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqTenant": {
-      "metadata": {
-        "description": "REQUIRED - The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
-    },
-    "bigIqUtilitySku": {
-      "defaultValue": "",
-      "metadata": {
-        "description": "The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter."
-      },
-      "type": "string"
     },
     "bigIqVnetId": {
       "defaultValue": "",
@@ -287,28 +270,35 @@
     "contentVersion": "[deployment().properties.template.contentVersion]",
     "uniqueString": "[toLower(parameters('uniqueString'))]",
     "adminUsername": "[string('azureuser')]",
-    "assignManagedIdentity": "[not(empty(variables('customAutoscaleRules')))]",
+    "assignManagedIdentity": true,
     "builtInRoleType": "Contributor",
     "customRoleAssignableScopes": [],
     "customRoleDescription": "",
     "customRoleName": "",
     "customRolePermissions": [],
     "keyVaultName": "",
-    "keyVaultPermissionsKeys": [],
-    "keyVaultPermissionsSecrets": [],
-    "secretName": "",
+    "keyVaultPermissionsKeys": [
+      "get",
+      "list"
+    ],
+    "keyVaultPermissionsSecrets": [
+      "get",
+      "list"
+    ],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
+    "createNatGateway": "[and(not(parameters('provisionPublicIp')), not(variables('provisionExternalBigIpLoadBalancer')))]",
     "numSubnets": 2,
     "vnetAddressPrefix": "10.0",
     "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
-    "externalLoadBalancerName": "[concat(variables('uniqueString'), '-alb')]",
-    "internalLoadBalancerName": "None",
-    "internalLoadBalancerProbePort": "3456",
+    "provisionExternalBigIpLoadBalancer": "[parameters('provisionExternalBigIpLoadBalancer')]",
+    "provisionInternalBigIpLoadBalancer": "[parameters('provisionInternalBigIpLoadBalancer')]",
+    "externalLoadBalancerName": "[if(variables('provisionExternalBigIpLoadBalancer'), concat(variables('uniqueString'), '-alb'), '')]",
+    "internalLoadBalancerName": "[if(variables('provisionInternalBigIpLoadBalancer'), concat(variables('uniqueString'), '-ilb'), '')]",
     "loadBalancerRulePorts": [
       "80",
       "443"
     ],
-    "nsg0": [
+    "mgmtSecurityGroup": [
       {
         "destinationPortRanges": [
           "22",
@@ -326,7 +316,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg1": [
+    "appSecurityGroup": [
       {
         "destinationPortRanges": [
           "80",
@@ -344,7 +334,7 @@
         "protocol": "Tcp"
       }
     ],
-    "nsg2": [
+    "bastionSecurityGroup": [
       {
         "destinationPortRanges": [
           "22"
@@ -353,7 +343,7 @@
         "protocol": "Tcp"
       }
     ],
-    "numberPublicExternalIpAddresses": 1,
+    "numberPublicExternalIpAddresses": "[if(variables('provisionExternalBigIpLoadBalancer'), 1, 0)]",
     "numberPublicMgmtIpAddresses": 0,
     "bastionInstanceName": "[variables('uniqueString')]",
     "bastionInstanceType": "Standard_D2s_v3",
@@ -495,6 +485,9 @@
           "contentVersion": "[variables('contentVersion')]"
         },
         "parameters": {
+          "uniqueString": {
+            "value": "[variables('uniqueString')]"
+          },
           "tagValues": {
             "value": "[parameters('tagValues')]"
           }
@@ -528,20 +521,14 @@
           "customRolePermissions": {
             "value": "[variables('customRolePermissions')]"
           },
-          "keyVaultName": {
-            "value": "[variables('keyVaultName')]"
-          },
           "keyVaultPermissionsKeys": {
             "value": "[variables('keyVaultPermissionsKeys')]"
           },
           "keyVaultPermissionsSecrets": {
             "value": "[variables('keyVaultPermissionsSecrets')]"
           },
-          "secretName": {
-            "value": "[variables('secretName')]"
-          },
-          "secretValue": {
-            "value": ""
+          "secretId": {
+            "value": "[parameters('secretId')]"
           },
           "userAssignedIdentityName": {
             "value": "[variables('userAssignedIdentityName')]"
@@ -563,6 +550,9 @@
           "contentVersion": "[variables('contentVersion')]"
         },
         "parameters": {
+          "createNatGateway": {
+            "value": "[variables('createNatGateway')]"
+          },
           "numSubnets": {
             "value": "[variables('numSubnets')]"
           },
@@ -596,28 +586,25 @@
             "value": "[variables('uniqueString')]"
           },
           "externalLoadBalancerName": {
-            "value": "[variables('externalLoadBalancerName')]"
+            "value": "[if(variables('provisionExternalBigIpLoadBalancer'), variables('externalLoadBalancerName'), 'None')]"
           },
           "internalLoadBalancerName": {
-            "value": "[variables('internalLoadBalancerName')]"
-          },
-          "internalLoadBalancerProbePort": {
-            "value": "[variables('internalLoadBalancerProbePort')]"
+            "value": "[if(variables('provisionInternalBigIpLoadBalancer'), variables('internalLoadBalancerName'), 'None')]"
           },
           "internalSubnetId": {
-            "value": ""
+            "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
           },
           "loadBalancerRulePorts": {
             "value": "[variables('loadBalancerRulePorts')]"
           },
           "nsg0": {
-            "value": "[variables('nsg0')]"
+            "value": "[variables('mgmtSecurityGroup')]"
           },
           "nsg1": {
-            "value": "[variables('nsg1')]"
+            "value": "[variables('appSecurityGroup')]"
           },
           "nsg2": {
-            "value": "[if(parameters('provisionPublicIp'), createArray(), variables('nsg2'))]"
+            "value": "[if(parameters('provisionPublicIp'), createArray(), variables('bastionSecurityGroup'))]"
           },
           "numberPublicExternalIpAddresses": {
             "value": "[variables('numberPublicExternalIpAddresses')]"
@@ -665,7 +652,7 @@
             "value": "[parameters('sshKey')]"
           },
           "subnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[0]]"
+            "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -767,23 +754,19 @@
             "value": "[variables('bigIpImage')]"
           },
           "inboundMgmtNatPoolId": {
-            "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundMgmtNatPool.value, '')]"
+            "value": "[if(and(variables('provisionExternalBigIpLoadBalancer'), greater(variables('numberPublicMgmtIpAddresses'), 0)), reference('dagTemplate').outputs.inboundMgmtNatPool.value, '')]"
           },
           "inboundSshNatPoolId": {
-            "value": "[if(greater(variables('numberPublicMgmtIpAddresses'), 0), reference('dagTemplate').outputs.inboundSshNatPool.value, '')]"
+            "value": "[if(and(variables('provisionExternalBigIpLoadBalancer'), greater(variables('numberPublicMgmtIpAddresses'), 0)), reference('dagTemplate').outputs.inboundSshNatPool.value, '')]"
           },
           "instanceHealthProbeId": {
-            "value": "[reference('dagTemplate').outputs.externalLoadBalancerProbesId.value[0]]"
+            "value": "[if(variables('provisionExternalBigIpLoadBalancer'), reference('dagTemplate').outputs.externalLoadBalancerProbesId.value[0], if(variables('provisionInternalBigIpLoadBalancer'), reference('dagTemplate').outputs.internalLoadBalancerProbesId.value[0], ''))]"
           },
           "instanceType": {
             "value": "[variables('bigIpInstanceType')]"
           },
           "loadBalancerBackendAddressPoolsArray": {
-            "value": [
-              {
-                "id": "[reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value]"
-              }
-            ]
+            "value": "[if(variables('provisionExternalBigIpLoadBalancer'), if(variables('provisionInternalBigIpLoadBalancer'), createArray(createObject('id', reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value), createObject('id', reference('dagTemplate').outputs.internalBackEndLoadBalancerId.value)), createArray(createObject('id', reference('dagTemplate').outputs.externalBackEndLoadBalancerId.value))), if(variables('provisionInternalBigIpLoadBalancer'), createArray(createObject('id', reference('dagTemplate').outputs.internalBackEndLoadBalancerId.value)), createArray()))]"
           },
           "nsgId": {
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
@@ -880,23 +863,8 @@
           "vmssId": {
             "value": "[reference('bigIpTemplate').outputs.vmssId.value]"
           },
-          "bigIqAddress": {
-            "value": "[parameters('bigIqAddress')]"
-          },
-          "bigIqUsername": {
-            "value": "[parameters('bigIqUsername')]"
-          },
-          "bigIqPassword": {
-            "value": "[parameters('bigIqPassword')]"
-          },
-          "bigIqTenant": {
-            "value": "[parameters('bigIqTenant')]"
-          },
-          "bigIqLicensePool": {
-            "value": "[parameters('bigIqLicensePool')]"
-          },
-          "bigIqUtilitySku": {
-            "value": "[parameters('bigIqUtilitySku')]"
+          "bigIpRuntimeInitConfig": {
+            "value": "[parameters('bigIpRuntimeInitConfig')]"
           },
           "functionAppName": {
             "value": "[variables('functionAppName')]"
@@ -907,8 +875,14 @@
           "functionAppVnetId": {
             "value": "[parameters('bigIqVnetId')]"
           },
+          "secretId": {
+            "value": "[parameters('secretId')]"
+          },
           "tagValues": {
             "value": "[parameters('tagValues')]"
+          },
+          "userAssignManagedIdentity": {
+            "value": "[if(variables('assignManagedIdentity'), reference('accessTemplate').outputs.userAssignedIdentityId.value, '')]"
           }
         }
       }
@@ -957,9 +931,14 @@
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
     "wafPublicIps": {
-      "condition": "[variables('provisionApp')]",
+      "condition": "[and(variables('provisionApp'), variables('provisionExternalBigIpLoadBalancer'))]",
       "type": "array",
       "value": "[reference('dagTemplate').outputs.externalIps.value]"
+    },
+    "wafPrivateIp": {
+      "condition": "[and(variables('provisionApp'), variables('provisionInternalBigIpLoadBalancer'))]",
+      "type": "string",
+      "value": "[reference('dagTemplate').outputs.internalFrontEndLoadBalancerIp.value]"
     }
   }
 }

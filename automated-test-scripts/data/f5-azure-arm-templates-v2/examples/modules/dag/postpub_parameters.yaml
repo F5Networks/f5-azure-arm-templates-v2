@@ -9,9 +9,17 @@ NSG1 PROTOCOL: "Tcp"
 NSG2 PORTS: '["80","443"]'
 NSG2 SOURCE: "*"
 NSG2 PROTOCOL: "Tcp"
+NSG3 PORTS: '["80","443"]'
+NSG3 SOURCE: "6.6.6.6"
+NSG3 PROTOCOL: "Tcp"
+NSG4 PORTS: '["80","443"]'
+NSG4 SOURCE: "7.7.7.7"
+NSG4 PROTOCOL: "Tcp"
 NSG0: '[{"destinationPortRanges": <NSG0 MGMT PORTS>,"sourceAddressPrefix": "<NSG0 SOURCE>","protocol": "<NSG0 PROTOCOL>"},{"destinationPortRanges": <NSG0 EXT PORTS>,"sourceAddressPrefix": "<NSG0 SOURCE>","protocol": "<NSG0 PROTOCOL>"}]'
 NSG1: '[{"destinationPortRanges": <NSG1 PORTS>,"sourceAddressPrefix": "<NSG1 SOURCE>","protocol": "<NSG1 PROTOCOL>"}]'
 NSG2: '[{"destinationPortRanges": <NSG2 PORTS>,"sourceAddressPrefix": "<NSG2 SOURCE>","protocol": "<NSG2 PROTOCOL>"}]'
+NSG3: '[{"destinationPortRanges": <NSG3 PORTS>,"sourceAddressPrefix": "<NSG3 SOURCE>","protocol": "<NSG3 PROTOCOL>"}]'
+NSG4: '[{"destinationPortRanges": <NSG4 PORTS>,"sourceAddressPrefix": "<NSG4 SOURCE>","protocol": "<NSG4 PROTOCOL>"}]'
 NUMBER PUBLIC MGMT IP ADDRESSES: 2
 NUMBER PUBLIC EXT IP ADDRESSES: 2
 NUM SUBNETS: 1
@@ -19,7 +27,6 @@ DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
 LOAD BALANCER RULE PORTS: [80,443,445]
 INTERNAL LOAD BALANCER NAME: None
-INTERNAL LOAD BALANCER PROBE PORT: 3456
 REGION: westus
 RESOURCE GROUP: dd-dag-<DEWPOINT JOB ID>
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/dag/dag.json

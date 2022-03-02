@@ -1,13 +1,37 @@
+../../examples/autoscale/bigiq/azuredeploy-existing-network.json:
+- No Key Diff
+- No Value Diff
+../../examples/autoscale/bigiq/azuredeploy-existing-network.parameters.json:
+- No Key Diff
+- No Value Diff
 ../../examples/autoscale/bigiq/azuredeploy.json:
 - No Key Diff
 - No Value Diff
 ../../examples/autoscale/bigiq/azuredeploy.parameters.json:
 - No Key Diff
 - No Value Diff
+../../examples/autoscale/payg/azuredeploy-existing-network.json:
+- No Key Diff
+- No Value Diff
+../../examples/autoscale/payg/azuredeploy-existing-network.parameters.json:
+- No Key Diff
+- No Value Diff
 ../../examples/autoscale/payg/azuredeploy.json:
 - No Key Diff
 - No Value Diff
 ../../examples/autoscale/payg/azuredeploy.parameters.json:
+- No Key Diff
+- No Value Diff
+../../examples/failover/azuredeploy-existing-network.json:
+- No Key Diff
+- No Value Diff
+../../examples/failover/azuredeploy-existing-network.parameters.json:
+- No Key Diff
+- No Value Diff
+../../examples/failover/azuredeploy.json:
+- No Key Diff
+- No Value Diff
+../../examples/failover/azuredeploy.parameters.json:
 - No Key Diff
 - No Value Diff
 ../../examples/modules/access/access.json:
@@ -89,6 +113,12 @@
 - No Key Diff
 - No Value Diff
 ../../examples/modules/telemetry/telemetry.parameters.json:
+- No Key Diff
+- No Value Diff
+../../examples/quickstart/azuredeploy-existing-network.json:
+- No Key Diff
+- No Value Diff
+../../examples/quickstart/azuredeploy-existing-network.parameters.json:
 - No Key Diff
 - No Value Diff
 ../../examples/quickstart/azuredeploy.json:
