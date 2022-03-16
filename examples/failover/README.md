@@ -130,12 +130,13 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
 | cfeStorageAccountName | Yes | CFE storage account created and used for cloud-failover-extension. |
 | cfeTag | No | Cloud Failover deployment tag value. |
-| bigIpExternalSelfAddress01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalSelfAddress02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfAddress01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalVip01 | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01. |
+| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
 | provisionExampleApp | No | Flag to deploy the demo web application. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
@@ -192,16 +193,16 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpExternalSubnetId | Yes | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
 | bigIpInternalSubnetId | Yes | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
 | bigIpMgmtSubnetId | Yes | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
-| bigIpExternalSelfAddress01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalSelfAddress02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfAddress01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfAddress02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalVip01 | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01. |
+| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
 | provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | provisionServicePublicIp | No | Flag to deploy public IP address resource for application. |
-| servicePrivateIpAddress | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfAddress. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |

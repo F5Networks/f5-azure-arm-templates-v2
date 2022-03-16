@@ -94,42 +94,49 @@
       },
       "type": "string"
     },
-    "bigIpExternalSelfAddress01": {
+    "bigIpExternalSelfIp01": {
       "defaultValue": "10.0.1.11",
       "metadata": {
         "description": "External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpExternalSelfAddress02": {
+    "bigIpExternalSelfIp02": {
       "defaultValue": "10.0.1.12",
       "metadata": {
         "description": "External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpInternalSelfAddress01": {
+    "bigIpExternalVip01": {
+      "defaultValue": "10.0.1.101",
+      "metadata": {
+        "description": "External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01."
+      },
+      "type": "string"
+    },
+    "bigIpInternalSelfIp01": {
       "defaultValue": "10.0.2.11",
       "metadata": {
         "description": "Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpInternalSelfAddress02": {
+    "bigIpInternalSelfIp02": {
       "defaultValue": "10.0.2.12",
       "metadata": {
         "description": "Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpMgmtSelfAddress01": {
+    "bigIpMgmtAddress01": {
       "defaultValue": "10.0.0.11",
       "metadata": {
         "description": "Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpMgmtSelfAddress02": {
+    "bigIpMgmtAddress02": {
       "defaultValue": "10.0.0.12",
       "metadata": {
         "description": "Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x."
@@ -271,7 +278,6 @@
     "appInstanceName": "[variables('uniqueString')]",
     "appInstanceType": "Standard_D2s_v3",
     "cloudInitUrl": "",
-    "nic1ServiceIP1": "10.0.1.101",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm01')]",
     "vmName02": "[concat(variables('uniqueString'), '-bigip-vm02')]"
   },
@@ -538,7 +544,7 @@
             "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
           },
           "mgmtSelfIp": {
-            "value": "[parameters('bigIpMgmtSelfAddress01')]"
+            "value": "[parameters('bigIpMgmtAddress01')]"
           },
           "nic1SubnetId": {
             "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
@@ -550,7 +556,7 @@
             "value": "[reference('dagTemplate').outputs.externalIpIds.value[0]]"
           },
           "nic1SelfIp": {
-            "value": "[parameters('bigIpExternalSelfAddress01')]"
+            "value": "[parameters('bigIpExternalSelfIp01')]"
           },
           "nic1ServiceIPs": {
             "value": []
@@ -565,7 +571,7 @@
             "value": ""
           },
           "nic2SelfIp": {
-            "value": "[parameters('bigIpInternalSelfAddress01')]"
+            "value": "[parameters('bigIpInternalSelfIp01')]"
           },
           "nic2ServiceIPs": {
             "value": []
@@ -644,7 +650,7 @@
             "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[1], '')]"
           },
           "mgmtSelfIp": {
-            "value": "[parameters('bigIpMgmtSelfAddress02')]"
+            "value": "[parameters('bigIpMgmtAddress02')]"
           },
           "nic1SubnetId": {
             "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
@@ -656,13 +662,13 @@
             "value": "[reference('dagTemplate').outputs.externalIpIds.value[1]]"
           },
           "nic1SelfIp": {
-            "value": "[parameters('bigIpExternalSelfAddress02')]"
+            "value": "[parameters('bigIpExternalSelfIp02')]"
           },
           "nic1ServiceIPs": {
             "value": [
               {
                 "publicIpId": "[if(parameters('provisionExampleApp'), reference('dagTemplate').outputs.externalIpIds.value[2], '')]",
-                "privateIpAddress": "[variables('nic1ServiceIP1')]"
+                "privateIpAddress": "[parameters('bigIpExternalVip01')]"
               }
             ]
           },
@@ -676,7 +682,7 @@
             "value": ""
           },
           "nic2SelfIp": {
-            "value": "[parameters('bigIpInternalSelfAddress02')]"
+            "value": "[parameters('bigIpInternalSelfIp02')]"
           },
           "nic2ServiceIPs": {
             "value": []
@@ -742,11 +748,11 @@
     },
     "bigIpInstance01ManagementPrivateIp": {
       "type": "string",
-      "value": "[parameters('bigIpMgmtSelfAddress01')]"
+      "value": "[parameters('bigIpMgmtAddress01')]"
     },
     "bigIpInstance02ManagementPrivateIp": {
       "type": "string",
-      "value": "[parameters('bigIpMgmtSelfAddress02')]"
+      "value": "[parameters('bigIpMgmtAddress02')]"
     },
     "bigIpInstance01ManagementPublicUrl": {
       "condition": "[parameters('provisionPublicIp')]",
@@ -760,11 +766,11 @@
     },
     "bigIpInstance01ManagementPrivateUrl": {
       "type": "string",
-      "value": "[concat('https://', parameters('bigIpMgmtSelfAddress01'), ':443/')]"
+      "value": "[concat('https://', parameters('bigIpMgmtAddress01'), ':443/')]"
     },
     "bigIpInstance02ManagementPrivateUrl": {
       "type": "string",
-      "value": "[concat('https://', parameters('bigIpMgmtSelfAddress02'), ':443/')]"
+      "value": "[concat('https://', parameters('bigIpMgmtAddress02'), ':443/')]"
     },
     "wafPublicIps": {
       "condition": "[parameters('provisionExampleApp')]",
@@ -773,7 +779,7 @@
     },
     "vip1PrivateIp": {
       "type": "string",
-      "value": "[variables('nic1ServiceIP1')]"
+      "value": "[parameters('bigIpExternalVip01')]"
     },
     "vip1PublicIp": {
       "condition": "[parameters('provisionExampleApp')]",
@@ -782,7 +788,7 @@
     },
     "vip1PrivateUrlHttp": {
       "type": "string",
-      "value": "[concat('http://', variables('nic1ServiceIP1'), '/')]"
+      "value": "[concat('http://', parameters('bigIpExternalVip01'), '/')]"
     },
     "vip1PublicUrlHttp": {
       "condition": "[parameters('provisionExampleApp')]",
@@ -791,7 +797,7 @@
     },
     "vip1PrivateUrlHttps": {
       "type": "string",
-      "value": "[concat('https://', variables('nic1ServiceIP1'), '/')]"
+      "value": "[concat('https://', parameters('bigIpExternalVip01'), '/')]"
     },
     "vip1PublicUrlHttps": {
       "condition": "[parameters('provisionExampleApp')]",
