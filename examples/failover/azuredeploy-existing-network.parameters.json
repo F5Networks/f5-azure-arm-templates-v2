@@ -5,14 +5,17 @@
     "artifactLocation": {
       "value": "f5-azure-arm-templates-v2/v2.0.0.0/examples/"
     },
-    "bigIpExternalSelfAddress01": {
+    "bigIpExternalSelfIp01": {
       "value": "10.0.1.11"
     },
-    "bigIpExternalSelfAddress02": {
+    "bigIpExternalSelfIp02": {
       "value": "10.0.1.12"
     },
     "bigIpExternalSubnetId": {
       "value": ""
+    },
+    "bigIpExternalVip01": {
+      "value": "10.0.1.101"
     },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
@@ -20,19 +23,19 @@
     "bigIpInstanceType": {
       "value": "Standard_D8_v3"
     },
-    "bigIpInternalSelfAddress01": {
+    "bigIpInternalSelfIp01": {
       "value": "10.0.2.11"
     },
-    "bigIpInternalSelfAddress02": {
+    "bigIpInternalSelfIp02": {
       "value": "10.0.2.12"
     },
     "bigIpInternalSubnetId": {
       "value": ""
     },
-    "bigIpMgmtSelfAddress01": {
+    "bigIpMgmtAddress01": {
       "value": "10.0.0.11"
     },
-    "bigIpMgmtSelfAddress02": {
+    "bigIpMgmtAddress02": {
       "value": "10.0.0.12"
     },
     "bigIpMgmtSubnetId": {
@@ -69,9 +72,6 @@
       "value": ""
     },
     "restrictedSrcAddressMgmt": {
-      "value": ""
-    },
-    "servicePrivateIpAddress": {
       "value": ""
     },
     "sshKey": {
