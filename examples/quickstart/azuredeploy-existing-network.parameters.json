@@ -38,7 +38,7 @@
     "numNics": {
       "value": 3
     },
-    "provisionPublicIp": {
+    "provisionPublicIpMgmt": {
       "value": false
     },
     "provisionServicePublicIp": {

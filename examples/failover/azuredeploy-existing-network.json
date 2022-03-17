@@ -48,7 +48,7 @@
       },
       "type": "string"
     },
-    "provisionPublicIp": {
+    "provisionPublicIpMgmt": {
       "defaultValue": false,
       "metadata": {
         "description": "Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s)."
@@ -354,7 +354,7 @@
             "value": "[if(parameters('provisionServicePublicIp'), 3, 2)]"
           },
           "numberPublicMgmtIpAddresses": {
-            "value": "[if(parameters('provisionPublicIp'), 2, 1)]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), 2, 1)]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -402,7 +402,7 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "mgmtPublicIpId": {
-            "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
           },
           "mgmtSelfIp": {
             "value": "[parameters('bigIpMgmtAddress01')]"
@@ -507,7 +507,7 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "mgmtPublicIpId": {
-            "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[1], '')]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), reference('dagTemplate').outputs.mgmtIpIds.value[1], '')]"
           },
           "mgmtSelfIp": {
             "value": "[parameters('bigIpMgmtAddress02')]"
@@ -583,12 +583,12 @@
       "value": "[reference('bigIpTemplate02').outputs.vmId.value]"
     },
     "bigIpInstance01ManagementPublicIp": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
     },
     "bigIpInstance02ManagementPublicIp": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.mgmtIps.value[1]]"
     },
@@ -601,12 +601,12 @@
       "value": "[parameters('bigIpMgmtAddress02')]"
     },
     "bigIpInstance01ManagementPublicUrl": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/')]"
     },
     "bigIpInstance02ManagementPublicUrl": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[concat('https://', reference('dagTemplate').outputs.mgmtIps.value[1], ':443/')]"
     },

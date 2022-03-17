@@ -779,7 +779,7 @@ Common deployment failure causes include:
 If all deployments completed "successfully" but maybe the BIG-IP or Service is not reachable, then log in to the BIG-IP instance via SSH to confirm BIG-IP deployment was successful (for example, if startup scripts completed as expected on the BIG-IP). To verify BIG-IP deployment, perform the following steps:
 - Obtain the IP address of the BIG-IP instance. See instructions [above](#accessing-the-bigip-ip)
 - Check startup-script to make sure was installed/interpolated correctly:
- - ```cat /var/lib/waagent/customData  | base64 -d```
+  - ```cat /var/lib/waagent/CustomData  | base64 -d```
 - Check the logs (in order of invocation):
   - cloud-agent logs:
     - */var/log/waagent.log*

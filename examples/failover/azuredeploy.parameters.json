@@ -59,8 +59,8 @@
     "provisionExampleApp": {
       "value": true
     },
-    "provisionPublicIp": {
-      "value": false
+    "provisionPublicIpMgmt": {
+      "value": true
     },
     "restrictedSrcAddressApp": {
       "value": ""

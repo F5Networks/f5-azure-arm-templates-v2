@@ -201,7 +201,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
-| provisionPublicIp | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| provisionPublicIpMgmt | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | provisionServicePublicIp | No | Flag to deploy public IP address resource for application. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
@@ -417,7 +417,7 @@ From Parent Template Outputs:
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME} -o tsv --query properties.outputs.bigIpInstance02ManagementPublicIp.value
     ```
 
-- Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
+- Or if you are going through a bastion host (when **provisionPublicIpMgmt** = **false**):
   - Obtain the public IP address of the bastion host:
     - **Console**: Navigate to **Resource Groups > *RESOURCE_GROUP* > Deployments > *DEPLOYMENT_NAME* > Outputs > *bastionPublicIp***.
     - **Azure CLI**: 
@@ -448,7 +448,7 @@ From Parent Template Outputs:
       at prompt, enter the BIG-IP password from the Azure Key Vault secret you provided in the **bigIpPasswordSecretId** input.
 
 
-    - OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+    - OR if you are going through a bastion host (when **provisionPublicIpMgmt** = **false**):
 
         From your desktop client/shell, create an SSH tunnel:
         ```bash
@@ -472,7 +472,7 @@ From Parent Template Outputs:
     az deployment group show --resource-group ${RESOURCE_GROUP} --name ${DEPLOYMENT_NAME}  -o tsv --query properties.outputs.bigIpInstance02ManagementPublicUrl.value
     ```
 
-  - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+  - OR when you are going through a bastion host (when **provisionPublicIpMgmt** = **false**):
     - From your desktop client/shell, create an SSH tunnel:
 
         ```bash
@@ -614,7 +614,7 @@ Common deployment failure causes include:
 If all deployments completed "successfully" but maybe the BIG-IP or Service is not reachable, then log in to the BIG-IP instance via SSH to confirm BIG-IP deployment was successful (for example, if startup scripts completed as expected on the BIG-IP). To verify BIG-IP deployment, perform the following steps:
 - Obtain the IP address of the BIG-IP instance. See instructions [above](#accessing-the-bigip-ip)
 - Check startup-script to make sure was installed/interpolated correctly:
-  - ```cat /var/lib/waagent/customData  | base64 -d```
+  - ```cat /var/lib/waagent/CustomData  | base64 -d```
 - Check the logs (in order of invocation):
   - waagent logs:
     - */var/log/waagent.log*

@@ -372,7 +372,7 @@
     "deploymentScriptName": "[concat(variables('appInsightsName'), '-metric-stub')]",
     "diagnosticsStorageAccountName": "[concat(uniqueString(parameters('uniqueString'), resourceGroup().id, deployment().name), 'data000')]",
     "extSettingsRef": {
-      "commandToExecute": "[concat('echo -e ', variables('customData'), ' > /var/lib/waagent/customData; bash -c \"base64 -d /var/lib/waagent/customData | bash\"')]"
+      "commandToExecute": "[concat('echo -e ', variables('customData'), ' > /var/lib/waagent/CustomData; bash -c \"base64 -d /var/lib/waagent/CustomData | bash\"')]"
     },
     "healthProbe": {
       "id": "[parameters('instanceHealthProbeId')]"
