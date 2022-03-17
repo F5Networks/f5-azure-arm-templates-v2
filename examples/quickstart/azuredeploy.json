@@ -61,7 +61,7 @@
       },
       "type": "int"
     },
-    "provisionPublicIp": {
+    "provisionPublicIpMgmt": {
       "defaultValue": true,
       "metadata": {
         "description": "Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s)."
@@ -237,7 +237,7 @@
             "value": "[variables('vnetAddressPrefix')]"
           },
           "createNatGateway": {
-            "value": "[not(parameters('provisionPublicIp'))]"
+            "value": "[not(parameters('provisionPublicIpMgmt'))]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -353,7 +353,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "condition": "[not(parameters('provisionPublicIp'))]",
+      "condition": "[not(parameters('provisionPublicIpMgmt'))]",
       "name": "bastionTemplate",
       "dependsOn": [
         "bigIpTemplate"
@@ -426,7 +426,7 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "mgmtPublicIpId": {
-            "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
           },
           "mgmtSelfIp": {
             "value": "[variables('mgmtSelfIp')]"
@@ -503,7 +503,7 @@
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
     "bastionPublicIp": {
-      "condition": "[not(parameters('provisionPublicIp'))]",
+      "condition": "[not(parameters('provisionPublicIpMgmt'))]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
     },
@@ -520,7 +520,7 @@
       "value": "[variables('mgmtSelfIp')]"
     },
     "bigIpManagementPublicUrl": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[if(equals(parameters('numNics'), 1), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':8443/'), concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/'))]"
     },

@@ -62,7 +62,7 @@
     "cfeTag": {
       "value": "bigip_high_availability_solution"
     },
-    "provisionPublicIp": {
+    "provisionPublicIpMgmt": {
       "value": false
     },
     "provisionServicePublicIp": {

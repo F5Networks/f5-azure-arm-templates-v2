@@ -220,7 +220,7 @@
     "diagnosticsStorageAccountName": "[concat(uniqueString(parameters('uniqueString'), resourceGroup().id, deployment().name), 'data000')]",
     "emptyArray": [],
     "extSettingsRef": {
-      "commandToExecute": "[concat('echo -e ', variables('customData'), ' > /var/lib/waagent/customData; bash -c \"base64 -d /var/lib/waagent/customData | bash\"')]"
+      "commandToExecute": "[concat('echo -e ', variables('customData'), ' > /var/lib/waagent/CustomData; bash -c \"base64 -d /var/lib/waagent/CustomData | bash\"')]"
     },
     "identity": "[if(empty(parameters('userAssignManagedIdentity')), variables('identitySys'), variables('identitySysUser'))]",
     "identitySys": {

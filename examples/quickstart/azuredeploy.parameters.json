@@ -23,7 +23,7 @@
     "numNics": {
       "value": 3
     },
-    "provisionPublicIp": {
+    "provisionPublicIpMgmt": {
       "value": true
     },
     "restrictedSrcAddressApp": {
