@@ -15,7 +15,7 @@
       "value": "f5-azure-arm-templates-v2/v2.0.0.0/examples/"
     },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.1.000000"
+      "value": "f5-networks:f5-big-ip-advanced-waf:f5-big-awf-plus-hourly-25mbps:16.1.201000"
     },
     "bigIpInstanceType": {
       "value": "Standard_D2s_v3"

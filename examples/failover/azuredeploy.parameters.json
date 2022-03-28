@@ -18,7 +18,7 @@
       "value": "10.0.1.101"
     },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
+      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000"
     },
     "bigIpInstanceType": {
       "value": "Standard_D8s_v3"

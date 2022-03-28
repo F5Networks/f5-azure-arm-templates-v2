@@ -15,11 +15,7 @@ else
     ACCEPTED_RESPONSE=$(curl -vv http://${APP_ADDRESS})
     echo "ACCEPTED_RESPONSE: ${ACCEPTED_RESPONSE}"
 
-    # try something illegal (enforcement mode should be set to blocking by default)
-    REJECTED_RESPONSE=$(curl -vv -X DELETE http://${APP_ADDRESS})
-    echo "REJECTED_RESPONSE: ${REJECTED_RESPONSE}"
-
-    if echo $ACCEPTED_RESPONSE | grep -q "Demo App" && echo $REJECTED_RESPONSE | grep -q "404"; then
+    if echo $ACCEPTED_RESPONSE | grep -q "Demo App"; then
         echo "Succeeded"
     else
         echo "Failed"

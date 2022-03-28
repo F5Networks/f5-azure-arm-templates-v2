@@ -6,7 +6,7 @@ BUILT IN ROLE TYPE: Owner
 CREATE NAT GATEWAY: false
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: None
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.000000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.201000
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []
