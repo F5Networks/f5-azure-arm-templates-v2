@@ -848,7 +848,7 @@ These templates have been tested and validated with the following versions of BI
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.1.000000 | 16.1.0 Build 0.0.0 |
+| 16.1.201000 | 16.1.2.1 Build 0.010 |
 | 14.1.404001 | 14.1.4.4 Build 0.0.1 |
 
 
