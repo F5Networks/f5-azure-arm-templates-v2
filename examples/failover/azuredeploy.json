@@ -206,11 +206,11 @@
     "numSubnets": "[if(parameters('provisionExampleApp'), 4, 3)]",
     "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
     "vnetAddressPrefix": "10.0",
-    "builtInRoleType": "Contributor",
-    "customRoleAssignableScopes": [],
-    "customRoleDescription": "",
-    "customRoleName": "",
+    "solutionType": "failover",
+    "customAssignableScopes": [],
     "customRolePermissions": [],
+    "roleDescription": "Role created by failover deployment",
+    "roleName": "[concat(variables('uniqueString'), '-custom-role')]",
     "keyVaultPermissionsKeys": [
       "list",
       "get"
@@ -322,17 +322,17 @@
           "contentVersion": "[variables('contentVersion')]"
         },
         "parameters": {
-          "builtInRoleType": {
-            "value": "[variables('builtInRoleType')]"
+          "solutionType": {
+            "value": "[variables('solutionType')]"
           },
-          "customRoleAssignableScopes": {
-            "value": "[variables('customRoleAssignableScopes')]"
+          "customAssignableScopes": {
+            "value": "[variables('customAssignableScopes')]"
           },
-          "customRoleDescription": {
-            "value": "[variables('customRoleDescription')]"
+          "roleDescription": {
+            "value": "[variables('roleDescription')]"
           },
-          "customRoleName": {
-            "value": "[variables('customRoleName')]"
+          "roleName": {
+            "value": "[variables('roleName')]"
           },
           "customRolePermissions": {
             "value": "[variables('customRolePermissions')]"

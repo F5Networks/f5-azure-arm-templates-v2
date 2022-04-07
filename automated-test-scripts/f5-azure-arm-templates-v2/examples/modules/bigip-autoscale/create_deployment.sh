@@ -20,12 +20,14 @@ else
     NSGID=""
 fi
 
-if [[ "<USER ASSIGN MANAGED IDENTITY>" == "Yes" ]]; then
-    ASSIGNMANAGEDIDENTITY="\"userAssignManagedIdentity\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.userAssignedIdentityId.value)\"},"
-elif [[ "<USER ASSIGN MANAGED IDENTITY>" == "No" ]]; then
-    ASSIGNMANAGEDIDENTITY=""
+# identity section
+ASSIGNMANAGEDIDENTITY=""
+ROLEDEFINITIONID=""
+TEMP_VAR="<USER ASSIGNED IDENT NAME>"
+if [[ $TEMP_VAR =~ "USER ASSIGNED IDENT NAME" || -z $TEMP_VAR ]]; then
+   ROLEDEFINITIONID="\"roleDefinitionId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq -r .properties.outputs.roleDefinitionId.value)\"},"
 else
-    ASSIGNMANAGEDIDENTITY="\"userAssignManagedIdentity\":{\"value\":\"<USER ASSIGN MANAGED IDENTITY>\"},"
+   ASSIGNMANAGEDIDENTITY="\"userAssignManagedIdentity\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.userAssignedIdentityId.value)\"},"
 fi
 
 if [ <NUMBER PUBLIC MGMT IP ADDRESSES> = 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" != "none" ]; then
@@ -44,12 +46,6 @@ if [[ "<USE NAT POOLS>" == "Yes" ]]; then
 else
     INBOUNDMGMTNATPOOLID=""
     INBOUNDSSHNATPOOLID=""
-fi
-
-if [[ "<USE ROLE DEFINITION ID>" == "Yes" ]]; then
-    ROLEDEFINITIONID="\"roleDefinitionId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq -r .properties.outputs.builtInRoleId.value)\"},"
-else
-    ROLEDEFINITIONID=""
 fi
 
 if [[ "<USE ROLLING UPGRADE>" == "Yes" ]] && [ "<EXTERNAL LOAD BALANCER NAME>" != "none" ]; then

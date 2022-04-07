@@ -4,11 +4,11 @@ controls:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.27.0
-      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
+      extensionVersion: 1.28.0
+      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
     - extensionType: as3
-      extensionVersion: 3.34.0
-      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
+      extensionVersion: 3.35.0
+      extensionHash: adc015330d71c48898e89c53a52b2b55717733144c1c488c7a86a697172aa848
     - extensionType: cf
       extensionVersion: 1.10.0
       extensionHash: d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace

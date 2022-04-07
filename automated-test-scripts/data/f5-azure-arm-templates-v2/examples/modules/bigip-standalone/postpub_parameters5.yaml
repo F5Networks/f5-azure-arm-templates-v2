@@ -1,7 +1,7 @@
 ---
 ADMIN USERNAME: dewdrop
 AUTOFILL EVAL LICENSE KEY: ''
-BUILT IN ROLE TYPE: Owner
+SOLUTION TYPE: standard
 # must be true when not creating mgmt public IP
 CREATE NAT GATEWAY: false
 DNSLABEL: <RESOURCE GROUP>

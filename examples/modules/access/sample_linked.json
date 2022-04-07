@@ -32,11 +32,11 @@
 					"contentVersion": "2.0.0.0"
 				},
 				"parameters": {
-					"builtInRoleType": { "value": "Reader" },
+					"solutionType": { "value": "standard" },
 					"customRolePermissions": { "value": [ "Microsoft.Resources/subscriptions/resourceGroups/read", "Microsoft.Resources/subscriptions/resourceGroups/list"]	},
-					"customRoleAssignableScopes": { "value": [ "[subscription().subscriptionId]"] },
-					"customRoleDescription": { "value": "this is a custom role defition for reader" },
-					"customRoleName": {	"value": "custom-reader" },
+					"customAssignableScopes": { "value": [ "[subscription().subscriptionId]"] },
+					"roleDescription": { "value": "this is a custom role defition for reader" },
+					"roleName": {	"value": "custom-reader" },
 					"keyVaultPermissionsKeys": { "value": [ "get", "list" ]	},
 					"keyVaultPermissionsSecrets": { "value": [ "get", "list" ] },
 					"secretId": { "value": "https://mySecretVault.vault.azure.net/secrets/secretName" },
@@ -47,13 +47,9 @@
 		}
 	],
 	"outputs": {
-		"builtInRoleType": {
+		"roleDefinitionId": {
 			"type": "string",
-			"value": "[reference('accessTemplate').outputs.builtInRoleType.value]"
-		},
-		"customRoleDefinitionId": {
-			"type": "string",
-			"value": "[reference('accessTemplate').outputs.customRoleDefinitionId.value]"
+			"value": "[reference('accessTemplate').outputs.roleDefinitionId.value]"
 		},
 		"userAssignedIdentityId": {
 			"type": "string",
