@@ -7,15 +7,11 @@
 
 deploymentOutputs=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq '.properties.outputs')
 
-if [[ -z $(echo $deploymentOutputs | jq .builtInRoleId) ]]; then
-    echo "OUTPUTS ERROR - BUILTIN ROLE ID";
-fi
-
-TEMP_VAR="<CUSTOM ROLE NAME>"
-if [[ $TEMP_VAR =~ "CUSTOM ROLE NAME" || -z $TEMP_VAR ]]; then
+TEMP_VAR="<ROLE NAME>"
+if [[ $TEMP_VAR =~ "ROLE NAME" || -z $TEMP_VAR ]]; then
     echo "Custom Role Definition creation was not requested"
 else
-    if [[ -z $(echo $deploymentOutputs | jq .customRoleDefinitionId) ]]; then
+    if [[ -z $(echo $deploymentOutputs | jq .roleDefinitionId) ]]; then
         echo "OUTPUTS ERROR - CUSTOM DEF ROLE";
     fi
 fi

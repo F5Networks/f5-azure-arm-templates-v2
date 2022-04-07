@@ -32,17 +32,17 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.27.0
-      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
+      extensionVersion: 1.28.0
+      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
     - extensionType: as3
-      extensionVersion: 3.34.0
-      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
+      extensionVersion: 3.35.0
+      extensionHash: adc015330d71c48898e89c53a52b2b55717733144c1c488c7a86a697172aa848
     - extensionType: ts
-      extensionVersion: 1.26.0
-      extensionHash: 128ec4fb6fd93e4dd7f43520a58f4810a9e20d45b60e7098a3c65ee960964bfa
+      extensionVersion: 1.27.0
+      extensionHash: 0c81c6d7723ea08a79131e16abcbb9c72a7c1a1f926adbc3118c0184d911633a
     - extensionType: fast
-      extensionVersion: 1.15.0
-      extensionHash: 4980984355ef03cfe61442e8c0563518e292961aaca0da024d2a038d1c8601ca
+      extensionVersion: 1.16.0
+      extensionHash: c615a641277a5a9f0cd9edce80137ac47435b0fee72351eca2cbcb279f279ba2
 extension_services:
   service_operations:
     - extensionType: do

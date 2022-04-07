@@ -2,16 +2,28 @@
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
 	"contentVersion": "2.0.0.0",
 	"parameters": {
-		"builtInRoleType": {
+		"solutionType": {
 			"allowedValues": [
-				"Reader",
-				"Contributor",
-				"Owner",
-				"UserAccessAdministrator"
+				"standard",
+				"failover",
+				"logging"
 			],
-			"defaultValue": "Reader",
+			"defaultValue": "standard",
 			"metadata": {
-				"description": "Built-in role name used for role assignment."
+				"description": "Defines solution type to provision correct IAM role."
+			},
+			"type": "string"
+		},
+		"roleDescription": {
+			"defaultValue": "Role created by the Access template.",
+			"metadata": {
+				"description": "Detailed description of the role definition."
+			},
+			"type": "string"
+		},
+		"roleName": {
+			"metadata": {
+				"description": "REQUIRED - Friendly name of the role definition."
 			},
 			"type": "string"
 		},
@@ -22,26 +34,12 @@
 			},
 			"type": "array"
 		},
-		"customRoleAssignableScopes": {
+		"customAssignableScopes": {
 			"defaultValue": [],
 			"metadata": {
-				"description": "Array of scopes assigned for the custom roleDefinition."
+				"description": "Array of scopes assigned for the roleDefinition."
 			},
 			"type": "array"
-		},
-		"customRoleDescription": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "Detailed description of the role definition."
-			},
-			"type": "string"
-		},
-		"customRoleName": {
-			"defaultValue": "",
-			"metadata": {
-				"description": "Friendly name of the role definition."
-			},
-			"type": "string"
 		},
 		"keyVaultPermissionsKeys": {
 			"defaultValue": [
@@ -92,69 +90,107 @@
 		}
 	},
 	"variables": {
-		"customRoleAssignScopes": "[if(empty(parameters('customRoleAssignableScopes')), createArray(resourceGroup().id), parameters('customRoleAssignableScopes'))]",
+		"createCustomRolePermissions": "[not(empty(parameters('customRolePermissions')))]",
+		"createFailover": "[equals(parameters('solutionType'), 'failover')]",
+		"createSecret": "[not(empty(parameters('secretId')))]",
+		"createUserAssignedIdentity": "[not(empty(parameters('userAssignedIdentityName')))]",
+		"actions": {
+			"standard": "[union(variables('standardActions'), variables('telemetryActions'))]",
+			"failover": "[union(variables('failoverActions'), variables('standardActions'), variables('telemetryActions'))]",
+			"logging": "[variables('telemetryActions')]"
+		},
+		"dataActions": {
+			"standard": "[union(variables('standardDataActions'), variables('telemetryDataActions'))]",
+			"failover": "[union(variables('failoverDataActions'), variables('standardDataActions'), variables('telemetryDataActions'))]",
+			"logging": "[variables('telemetryDataActions')]"
+		},
+		"standardActions": [
+			"Microsoft.Authorization/*/read",
+			"Microsoft.Compute/locations/*/read",
+			"Microsoft.Compute/virtualMachines/*/read",
+			"Microsoft.Compute/virtualMachineScaleSets/*/read",
+			"Microsoft.Network/networkInterfaces/read",
+			"Microsoft.Network/publicIPAddresses/read",
+			"Microsoft.Resources/subscriptions/resourceGroups/read"		
+		],
+		"standardDataActions": [],
+		"telemetryActions": [
+			"*/read",
+			"Microsoft.Compute/virtualMachines/extensions/*",
+			"Microsoft.HybridCompute/machines/extensions/write",
+			"Microsoft.Insights/alertRules/*",
+			"Microsoft.Insights/diagnosticSettings/*",
+			"Microsoft.Insights/Register/Action",
+			"Microsoft.OperationalInsights/*",
+			"Microsoft.OperationsManagement/*",
+			"Microsoft.Resources/deployments/*",
+			"Microsoft.Resources/subscriptions/read",
+			"Microsoft.Resources/subscriptions/resourceGroups/deployments/*",
+			"Microsoft.Storage/storageAccounts/listKeys/action",
+			"Microsoft.Support/*"
+		],
+		"telemetryDataActions": [
+			"Microsoft.Insights/Metrics/Write",
+			"Microsoft.Insights/Telemetry/Write"
+		],
+		"failoverActions": [
+			"Microsoft.Network/*/join/action",
+			"Microsoft.Network/networkInterfaces/write",
+			"Microsoft.Network/publicIPAddresses/write",
+			"Microsoft.Network/routeTables/*/read",
+			"Microsoft.Network/routeTables/*/write",
+			"Microsoft.Storage/storageAccounts/listKeys/action",
+			"Microsoft.Storage/storageAccounts/read"
+		],
+		"failoverDataActions": [],
+		"solutionPermissions": [
+			{
+				"actions": "[variables('actions')[parameters('solutionType')]]",
+				"notActions": [],
+				"dataActions": "[variables('dataActions')[parameters('solutionType')]]",
+				"notDataActions": []
+			}
+		],
+		"keyVaultName": "[if(not(empty(parameters('secretId'))), variables('secretIdSplitArray')[1], 'null')]",
+		"assignableScopes": "[if(empty(parameters('customAssignableScopes')), createArray(resourceGroup().id), parameters('customAssignableScopes'))]",
+		"roleDefinitionName": "[guid(resourceGroup().id, string(parameters('customRolePermissions')), string(parameters('roleName')))]",
 		"secretIdSplitDelimiters": [ "https://", "[environment().suffixes.keyvaultDns]" ],
 		"secretIdSplitArray": "[split(parameters('secretId'),variables('secretIdSplitDelimiters'))]",
-		"keyVaultNameVariable": "[if(not(empty(parameters('secretId'))), variables('secretIdSplitArray')[1], 'null')]",
-		"roleDefName": "[guid(resourceGroup().id, string(parameters('customRolePermissions')), string(parameters('customRoleName')))]",
-		"roleTypeArray": {
-			"Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-			"Owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
-			"Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-			"UserAccessAdministrator": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9')]"
-		},
 		"tenantId": "[subscription().tenantId]",
-		"userAssignedIdentityNameVariable": "[if(empty(parameters('userAssignedIdentityName')), concat(resourceGroup().name, '-identity'), parameters('userAssignedIdentityName'))]"
+		"userAssignedIdentityName": "[if(variables('createUserAssignedIdentity'), parameters('userAssignedIdentityName'), concat(resourceGroup().name, '-identity'))]"
 	},
 	"resources": [
 		{
 			"apiVersion": "2018-07-01",
-			"condition": "[and(not(empty(parameters('customRoleName'))), not(empty(parameters('customRoleDescription'))))]",
-			"name": "[variables('roleDefName')]",
+			"name": "[variables('roleDefinitionName')]",
 			"properties": {
-				"assignableScopes": "[variables('customRoleAssignScopes')]",
-				"description": "[parameters('customRoleDescription')]",
+				"assignableScopes": "[variables('assignableScopes')]",
+				"description": "[parameters('roleDescription')]",
 				"isCustom": true,
-				"permissions": "[parameters('customRolePermissions')]",
-				"roleName": "[parameters('customRoleName')]",
+				"permissions": "[if(variables('createCustomRolePermissions'), parameters('customRolePermissions'), variables('solutionPermissions'))]",
+				"roleName": "[parameters('roleName')]",
 				"type": "customRole"
 			},
 			"type": "Microsoft.Authorization/roleDefinitions"
 		},
 		{
 			"apiVersion": "2018-11-30",
-			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",
 			"location": "[resourceGroup().location]",
-			"name": "[variables('userAssignedIdentityNameVariable')]",
+			"name": "[variables('userAssignedIdentityName')]",
 			"tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
 			"type": "Microsoft.ManagedIdentity/userAssignedIdentities"
 		},
 		{
 			"apiVersion": "2021-04-01-preview",
-			"condition": "[and(not(empty(parameters('customRoleName'))), and(not(empty(parameters('customRoleDescription'))), not(empty(parameters('userAssignedIdentityName')))))]",
+			"condition": "[variables('createUserAssignedIdentity')]",
 			"dependsOn": [
-				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]",
-				"[resourceId('Microsoft.Authorization/roleDefinitions', variables('roleDefName'))]"
+				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName'))]",
+				"[resourceId('Microsoft.Authorization/roleDefinitions', variables('roleDefinitionName'))]"
 			],
 			"name": "[guid(resourceGroup().id, 'roleId')]",
 			"properties": {
-				"principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable')), '2018-11-30').principalId]",
-				"roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions/', variables('roleDefName'))]",
-				"scope": "[resourceGroup().id]",
-				"principalType": "ServicePrincipal"
-			},
-			"type": "Microsoft.Authorization/roleAssignments"
-		},
-		{
-			"apiVersion": "2021-04-01-preview",
-			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",
-			"dependsOn": [
-				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]"
-			],
-			"name": "[guid(resourceGroup().id, 'builtInId')]",
-			"properties": {
-				"principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable')), '2018-11-30').principalId]",
-				"roleDefinitionId": "[variables('roleTypeArray')[parameters('builtInRoleType')]]",
+				"principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName')), '2018-11-30').principalId]",
+				"roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions/', variables('roleDefinitionName'))]",
 				"scope": "[resourceGroup().id]",
 				"principalType": "ServicePrincipal"
 			},
@@ -162,15 +198,12 @@
 		},
 		{
 			"apiVersion": "2019-09-01",
-			"condition": "[and(not(empty(parameters('secretId'))), not(empty(parameters('userAssignedIdentityName'))))]",
-			"dependsOn": [
-				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable'))]"
-			],
-			"name": "[concat(variables('keyVaultNameVariable'), '/add')]",
+			"condition": "[and(variables('createSecret'), variables('createUserAssignedIdentity'))]",
+			"name": "[concat(variables('keyVaultName'), '/add')]",
 			"properties": {
 				"accessPolicies": [
 					{
-						"objectId": "[if(empty(parameters('userAssignedIdentityName')), resourceGroup().id, reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityNameVariable')), '2018-11-30').principalId)]",
+						"objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName')), '2018-11-30').principalId]",
 						"permissions": {
 							"keys": "[parameters('keyVaultPermissionsKeys')]",
 							"secrets": "[parameters('keyVaultPermissionsSecrets')]"
@@ -192,29 +225,24 @@
 		}
 	],
 	"outputs": {
-		"builtInRoleId": {
+		"roleDefinitionId": {
 			"type": "string",
-			"value": "[variables('roleTypeArray')[parameters('builtInRoleType')]]"
-		},
-		"customRoleDefinitionId": {
-			"condition": "[and(not(empty(parameters('customRoleName'))), not(empty(parameters('customRoleDescription'))))]",
-			"type": "string",
-			"value": "[resourceId('Microsoft.Authorization/roleDefinitions/', variables('roleDefName'))]"
+			"value": "[resourceId('Microsoft.Authorization/roleDefinitions/', variables('roleDefinitionName'))]"
 		},
 		"keyVaultName": {
-			"condition": "[not(empty(parameters('secretId')))]",
+			"condition": "[variables('createSecret')]",
 			"type": "string",
-			"value": "[variables('keyVaultNameVariable')]"
+			"value": "[variables('keyVaultName')]"
 		},
 		"secretId": {
-			"condition": "[not(empty(parameters('secretId')))]",
+			"condition": "[variables('createSecret')]",
 			"type": "string",
 			"value": "[parameters('secretId')]"
 		},
 		"userAssignedIdentityId": {
-			"condition": "[not(empty(parameters('userAssignedIdentityName')))]",
+			"condition": "[variables('createUserAssignedIdentity')]",
 			"type": "string",
-			"value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]"
+			"value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('userAssignedIdentityName'))]"
 		}
 	}
 }

@@ -257,12 +257,12 @@
     "contentVersion": "[deployment().properties.template.contentVersion]",
     "uniqueString": "[toLower(parameters('uniqueString'))]",
     "adminUsername": "[string('azureuser')]",
-    "assignManagedIdentity": "[not(empty(variables('customAutoscaleRules')))]",
-    "builtInRoleType": "Contributor",
-    "customRoleAssignableScopes": [],
-    "customRoleDescription": "",
-    "customRoleName": "",
+    "assignManagedIdentity": true,
+    "solutionType": "standard",
+    "customAssignableScopes": [],
     "customRolePermissions": [],
+    "roleDescription": "Role created by autoscale deployment",
+    "roleName": "[concat(variables('uniqueString'), '-custom-role')]",
     "keyVaultPermissionsKeys": [],
     "keyVaultPermissionsSecrets": [],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-userIdentity')]",
@@ -481,17 +481,17 @@
           "contentVersion": "[variables('contentVersion')]"
         },
         "parameters": {
-          "builtInRoleType": {
-            "value": "[variables('builtInRoleType')]"
+          "solutionType": {
+            "value": "[variables('solutionType')]"
           },
-          "customRoleAssignableScopes": {
-            "value": "[variables('customRoleAssignableScopes')]"
+          "customAssignableScopes": {
+            "value": "[variables('customAssignableScopes')]"
           },
-          "customRoleDescription": {
-            "value": "[variables('customRoleDescription')]"
+          "roleDescription": {
+            "value": "[variables('roleDescription')]"
           },
-          "customRoleName": {
-            "value": "[variables('customRoleName')]"
+          "roleName": {
+            "value": "[variables('roleName')]"
           },
           "customRolePermissions": {
             "value": "[variables('customRolePermissions')]"

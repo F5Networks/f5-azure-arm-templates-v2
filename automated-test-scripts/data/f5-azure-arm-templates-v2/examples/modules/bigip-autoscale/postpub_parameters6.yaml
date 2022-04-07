@@ -3,18 +3,18 @@
 ADMIN USERNAME: dewdrop
 APP INSIGHTS: dd-app-<DEWPOINT JOB ID>
 APP INSIGHTS CUST: /subscriptions/d18b486a-112d-4402-add2-7fb1006f943a/resourceGroups/<RESOURCE GROUP>/providers/microsoft.insights/components/<APP INSIGHTS>
-BUILT IN ROLE TYPE: Owner
+SOLUTION TYPE: standard
 CPU METRIC NAME: Percentage CPU
 CUSTOM AUTOSCALE RULES: >-
   [{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"GreaterThan","statistic":"Average","threshold":"80","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_system_cpu","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"LessThan","statistic":"Average","threshold":"20","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}},{"scaleAction":{"direction":"Increase","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"GreaterThan","statistic":"Average","threshold":"20000000","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}},{"scaleAction":{"direction":"Decrease","type":"ChangeCount","value":"1","cooldown":"PT1M"},"metricTrigger":{"metricName":"F5_throughputIn_sys/performance/throughput/In_Current","metricNamespace":"azure.applicationinsights","metricResourceUri":"<APP INSIGHTS CUST>","operator":"LessThan","statistic":"Average","threshold":"10000000","timeAggregation":"Average","timeGrain":"PT1M","timeWindow":"PT10M","Dimensions":[],"dividePerInstance":False}}]
 CUSTOM EMAIL: '["dewpoint@f5.com"]'
-CUSTOM ROLE PERMISSIONS: >-
+ROLE PERMISSIONS: >-
   [{"actions":["Microsoft.Storage/storageAccounts/blobServices/containers/delete","Microsoft.Storage/storageAccounts/blobServices/containers/read","Microsoft.Storage/storageAccounts/blobServices/containers/write",
   "Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action"],"notActions":[],"dataActions": ["Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete",
   "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read","Microsoft.Storage/storageAccounts/blobServices/containers/blobs/move/action","Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write"],
   "notDataActions": []}]
-CUSTOM ROLE DESCRIPTION: 'Allows for read, write and delete access to Azure Storage blob containers and data'
-CUSTOM ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
+ROLE DESCRIPTION: 'Allows for read, write and delete access to Azure Storage blob containers and data'
+ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
 CREATE WORKSPACE: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>

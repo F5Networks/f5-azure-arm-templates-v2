@@ -1,6 +1,6 @@
 ---
 ADMIN USERNAME: dewdrop
-BUILT IN ROLE TYPE: Owner
+SOLUTION TYPE: standard
 DNSLABEL: <RESOURCE GROUP>
 # must be true when not creating mgmt public IP
 CREATE NAT GATEWAY: false
@@ -33,6 +33,6 @@ SERVICE IPS NIC2: '[{"privateIpAddress":"10.0.0.13"},{"privateIpAddress":"10.0.0
 TEMPLATE URL: file://$PWD/examples/modules/bigip-standalone/bigip.json
 USE AVAILABILITY ZONES: true
 USE ROLE DEFINITION ID: 'Yes'
-USER ASSIGN MANAGED IDENTITY: 'Yes'
-USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
+USER ASSIGN MANAGED IDENTITY: 'No'
+USER ASSIGNED IDENT NAME: ''
 VM NAME: dd-vm-<DEWPOINT JOB ID>

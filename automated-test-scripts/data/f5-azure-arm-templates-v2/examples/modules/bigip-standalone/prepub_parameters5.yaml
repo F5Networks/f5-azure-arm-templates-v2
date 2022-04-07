@@ -1,7 +1,7 @@
 ---
 ADMIN USERNAME: dewdrop
 AUTOFILL EVAL LICENSE KEY: ''
-BUILT IN ROLE TYPE: Owner
+SOLUTION TYPE: standard
 # must be true when not creating mgmt public IP
 CREATE NAT GATEWAY: false
 DNSLABEL: <RESOURCE GROUP>
@@ -33,7 +33,7 @@ SERVICE IPS NIC1: '[{"publicIpId":"PIP0","privateIpAddress":"10.0.0.10"},{"publi
 SERVICE IPS NIC2: '[{"privateIpAddress":"10.0.0.13"},{"privateIpAddress":"10.0.0.14"},{"privateIpAddress":"10.0.0.15"}]'
 TEMPLATE URL: file://$PWD/examples/modules/bigip-standalone/bigip.json
 USE AVAILABILITY ZONES: true
-USE ROLE DEFINITION ID: 'Yes'
+USE ROLE DEFINITION ID: 'No'
 USER ASSIGN MANAGED IDENTITY: 'Yes'
 USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
 VM NAME: dd-vm-<DEWPOINT JOB ID>
