@@ -1,45 +1,48 @@
-azure-autoscale-example-payg-test:
+# parent tests
+# Autoscale
+azure-autoscale-bigiq-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_full.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters3.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters5.yaml"
-    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters6_v14.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/full/prepub_parameters2_v14.yaml"
 
-azure-autoscale-example-bigiq-test:
+azure-autoscale-bigiq-existing-test:
+  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/existing/prepub_parameters2.yaml"
+
+azure-autoscale-payg-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_full.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters4.yaml"
-    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/prepub_parameters7_v14.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters4_v14.yaml"
 
-azure-autoscale-existing-payg-test:
+azure-autoscale-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/existing/prepub_parameters2.yaml"
 
-azure-autoscale-existing-bigiq-test:
-  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_existing.yaml"
-  run: "random"
-  random-num-of-tests: 1
-  parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters3.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters4.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/prepub_parameters5.yaml"
-
+# failover
 azure-failover-byol-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/full/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/full/prepub_parameters1.yaml"
@@ -48,7 +51,7 @@ azure-failover-byol-example-test:
 azure-failover-byol-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/prepub_parameters1.yaml"
@@ -72,10 +75,11 @@ azure-failover-payg-existing-test:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/existing/prepub_parameters1.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/existing/prepub_parameters2.yaml"
 
+# quickstart
 azure-quickstart-byol-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters1.yaml"
@@ -87,7 +91,7 @@ azure-quickstart-byol-example-test:
 azure-quickstart-byol-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prepub_parameters1.yaml"
@@ -124,10 +128,11 @@ azure-quickstart-payg-existing-test:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters6_v14.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prepub_parameters7_v14.yaml"
 
+# module tests
 azure-access-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 4
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters1.yaml"
@@ -142,18 +147,10 @@ azure-application-module-test:
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/application/prepub_parameters.yaml"
 
-azure-bastion-module-test:
-  test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bastion/daily_test.yaml"
-  run: "random"
-  random-num-of-tests: 0
-  parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bastion/prepub_parameters1.yaml"
-
 azure-bigip-autoscale-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-autoscale/prepub_parameters1.yaml"
@@ -166,7 +163,7 @@ azure-bigip-autoscale-module-test:
 azure-bigip-standalone-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/bigip-standalone/prepub_parameters1.yaml"
