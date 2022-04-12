@@ -456,7 +456,7 @@ azure_bigip_standalone_module_test_job:
       - stuck_or_timeout_failure
 
 # Module: Autoscale Template
-azure_autoscale_example_test_job:
+azure_autoscale_bigiq_example_test_job:
   stage: sprinkle-tests
   tags:
     - docker-executor
@@ -484,7 +484,7 @@ azure_autoscale_example_test_job:
     variables:
       - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/test_policy_full.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/test_policy_full.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -495,7 +495,7 @@ azure_autoscale_example_test_job:
       - runner_system_failure
       - stuck_or_timeout_failure
 
-azure_autoscale_existing_test_job:
+azure_autoscale_bigiq_existing_test_job:
   stage: sprinkle-tests
   tags:
     - docker-executor
@@ -503,46 +503,18 @@ azure_autoscale_existing_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/existing/**/*
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/**/*
       - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
-      - examples/autoscale/bigiq/azuredeploy-existing-network.json
-      - examples/autoscale/payg/azuredeploy-existing-network.json
-  except:
-    refs:
-      - schedules
-      - triggers
-      - pipelines
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /smart:init/
-  variables:
-    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/test_policy_existing.yaml
-    STACK_TYPE: dewdrop-preproduction
-  script:
-    - pip install -r cloud-tools/master-job/requirements.txt
-    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
-  retry:
-    max: 2
-    when:
-      - runner_system_failure
-      - stuck_or_timeout_failure
-
-# Module: Quickstart Template
-azure_quickstart_example_test_job:
-  stage: sprinkle-tests
-  tags:
-    - docker-executor
-  only:
-    refs:
-      - branches
-    changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
-      - examples/quickstart/azuredeploy.json
-      - examples/modules/bigip-standalone/bigip.json
+      - examples/autoscale/bigiq/azuredeploy.json
+      - examples/autoscale/payg/azuredeploy.json
+      - examples/modules/bigip-autoscale/bigip.json
+      - examples/modules/access/access.json
       - examples/modules/application/application.json
       - examples/modules/bastion/bastion.json
       - examples/modules/dag/dag.json
+      - examples/modules/function/function.json
       - examples/modules/network/network.json
+      - examples/modules/telemetry/telemetry.json
   except:
     refs:
       - schedules
@@ -551,7 +523,7 @@ azure_quickstart_example_test_job:
     variables:
       - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy_full.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/bigiq/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -562,7 +534,7 @@ azure_quickstart_example_test_job:
       - runner_system_failure
       - stuck_or_timeout_failure
 
-azure_quickstart_existing_test_job:
+azure_autoscale_payg_example_test_job:
   stage: sprinkle-tests
   tags:
     - docker-executor
@@ -570,9 +542,18 @@ azure_quickstart_existing_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
-      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
-      - examples/quickstart/azuredeploy-existing-network.json
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
+      - examples/autoscale/bigiq/azuredeploy.json
+      - examples/autoscale/payg/azuredeploy.json
+      - examples/modules/bigip-autoscale/bigip.json
+      - examples/modules/access/access.json
+      - examples/modules/application/application.json
+      - examples/modules/bastion/bastion.json
+      - examples/modules/dag/dag.json
+      - examples/modules/function/function.json
+      - examples/modules/network/network.json
+      - examples/modules/telemetry/telemetry.json
   except:
     refs:
       - schedules
@@ -581,7 +562,46 @@ azure_quickstart_existing_test_job:
     variables:
       - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy_existing.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/test_policy_full.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+azure_autoscale_payg_existing_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/full/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/**/*
+      - examples/autoscale/bigiq/azuredeploy.json
+      - examples/autoscale/payg/azuredeploy.json
+      - examples/modules/bigip-autoscale/bigip.json
+      - examples/modules/access/access.json
+      - examples/modules/application/application.json
+      - examples/modules/bastion/bastion.json
+      - examples/modules/dag/dag.json
+      - examples/modules/function/function.json
+      - examples/modules/network/network.json
+      - examples/modules/telemetry/telemetry.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -648,6 +668,72 @@ azure_failover_existing_test_job:
       - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/test_policy_existing.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+# Module: Quickstart Template
+azure_quickstart_example_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - examples/quickstart/azuredeploy.json
+      - examples/modules/bigip-standalone/bigip.json
+      - examples/modules/application/application.json
+      - examples/modules/bastion/bastion.json
+      - examples/modules/dag/dag.json
+      - examples/modules/network/network.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy_full.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+azure_quickstart_existing_test_job:
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/**/*
+      - examples/quickstart/azuredeploy-existing-network.json
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
