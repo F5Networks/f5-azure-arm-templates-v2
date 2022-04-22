@@ -35,14 +35,14 @@ extension_packages:
       extensionVersion: 1.28.0
       extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
     - extensionType: as3
-      extensionVersion: 3.35.0
-      extensionHash: adc015330d71c48898e89c53a52b2b55717733144c1c488c7a86a697172aa848
+      extensionVersion: 3.36.0
+      extensionHash: f7d88910535b97e024b7208b521c9f1a802d39176dc0f81da0ed166abc1617e0
     - extensionType: ts
-      extensionVersion: 1.27.0
-      extensionHash: 0c81c6d7723ea08a79131e16abcbb9c72a7c1a1f926adbc3118c0184d911633a
+      extensionVersion: 1.28.0
+      extensionHash: c3dc9cd67ef89815c58da4a148080744ef7b4337e53d67f00a46c8b591fb8187
     - extensionType: fast
-      extensionVersion: 1.16.0
-      extensionHash: c615a641277a5a9f0cd9edce80137ac47435b0fee72351eca2cbcb279f279ba2
+      extensionVersion: 1.17.0
+      extensionHash: 94109f1c3e1180080779de91a5a91ff7baf6dfb9b373396d2b785f886c92550a
 extension_services:
   service_operations:
     - extensionType: do

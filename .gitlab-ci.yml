@@ -927,6 +927,7 @@ run_link_checker_release:
     - make link_check_release
 
 # verifies all examples use the latest AT Components versions
+# temporarily allowing failure due to bug with DO 1.29.0
 check_at_components_metadata:
   stage: smoke-tests
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3
@@ -946,3 +947,4 @@ check_at_components_metadata:
     - if git diff | grep 'diff --git'; then exit 1; else exit 0; fi
   tags:
     - cm-official-docker-executor
+  allow_failure: true
