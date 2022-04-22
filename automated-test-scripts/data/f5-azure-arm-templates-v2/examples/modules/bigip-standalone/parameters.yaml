@@ -9,9 +9,9 @@ IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5
 INSTANCE TYPE: Standard_DS3_v2
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []
-NSG0: '[{"destinationPortRanges": ["22","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
-NSG1: '[{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'
-NSG2: '[{"destinationPortRanges": ["22","443","4353"],"sourceAddressPrefix": "*", "protocol": "Tcp"},{"destinationPortRanges": ["1026"],"sourceAddressPrefix": "*", "protocol": "Udp"}]'
+NSG0: '[{"destinationPortRanges": ["22","443"],"sourceAddressPrefix": "208.85.208.0/22", "protocol": "Tcp"}]'
+NSG1: '[{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "208.85.208.0/22", "protocol": "Tcp"}]'
+NSG2: '[{"destinationPortRanges": ["22","443","4353"],"sourceAddressPrefix": "208.85.208.0/22", "protocol": "Tcp"},{"destinationPortRanges": ["1026"],"sourceAddressPrefix": "208.85.208.0/22", "protocol": "Udp"}]'
 # make sure to provision enough public IPs to meet requirements
 NUMBER PUBLIC EXT IP ADDRESSES: 8
 NUMBER PUBLIC MGMT IP ADDRESSES: 1

@@ -74,6 +74,7 @@ These are the RBAC permissions produced by each type of solution supported by th
 | Microsoft.Compute/virtualMachines/*/read | standard | 
 | Microsoft.Compute/virtualMachines/extensions/* | logging | 
 | Microsoft.Compute/virtualMachineScaleSets/*/read | standard | 
+| Microsoft.Compute/virtualMachineScaleSets/networkInterfaces/read| standard | 
 | Microsoft.HybridCompute/machines/extensions/write | logging | 
 | Microsoft.Insights/alertRules/* | logging | 
 | Microsoft.Insights/diagnosticSettings/* | logging | 

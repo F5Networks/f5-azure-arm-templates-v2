@@ -28,7 +28,7 @@
 				"mode": "Incremental",
 				"parameters": {
 					"adminUsername": {
-						"value": "my-admin"
+						"value": "azureuser"
 					},
 					"bigIpPeerAddr": {
 						"value": ""
