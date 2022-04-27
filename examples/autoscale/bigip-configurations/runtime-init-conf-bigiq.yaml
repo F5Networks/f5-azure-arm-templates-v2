@@ -10,19 +10,15 @@ runtime_parameters:
       environment: azure
       field: name
   - name: UNIQUE_STRING
-    type: url
-    value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
-    query: "[?name=='uniqueString'].value|[0]"
-    headers:
-      - name: Metadata
-        value: true
+    type: tag
+    tagProvider:
+      environment: azure
+      key: uniqueString
   - name: WORKSPACE_ID
-    type: url
-    value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
-    query: "[?name=='workspaceId'].value|[0]"
-    headers:
-      - name: Metadata
-        value: true
+    type: tag
+    tagProvider:
+      environment: azure
+      key: workspaceId
   - name: BIGIQ_PASSWORD
     type: secret
     secretProvider:
