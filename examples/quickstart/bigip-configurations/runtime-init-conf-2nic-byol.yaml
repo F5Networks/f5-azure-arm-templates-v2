@@ -28,6 +28,22 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 1
+  - name: DEFAULT_GW
+    type: metadata
+    metadataProvider:
+      environment: azure
+      type: network
+      field: ipv4
+      index: 1
+      ipcalc: first
+  - name: MGMT_GW
+    type: metadata
+    metadataProvider:
+      environment: azure
+      type: network
+      field: ipv4
+      index: 0
+      ipcalc: first
 bigip_ready_enabled: []
 extension_packages:
   install_operations:
@@ -96,19 +112,19 @@ extension_services:
             shell: bash
           default:
             class: ManagementRoute
-            gw: 10.0.0.1
+            gw: '{{{MGMT_GW}}}'
             network: default
           dhclient_route1:
             class: ManagementRoute
-            gw: 10.0.0.1
+            gw: '{{{MGMT_GW}}}'
             network: 168.63.129.16/32
           azureMetadata:
             class: ManagementRoute
-            gw: 10.0.0.1
+            gw: '{{{MGMT_GW}}}'
             network: 169.254.169.254/32
           defaultRoute:
             class: Route
-            gw: 10.0.1.1
+            gw: '{{{DEFAULT_GW}}}'
             network: default
           external:
             class: VLAN
