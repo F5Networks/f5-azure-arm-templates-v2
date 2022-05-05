@@ -172,6 +172,7 @@ verify_outputs_match_style_guide:
 #   CI_COMMIT_REF_NAME: branch name
 azure_access_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -204,6 +205,7 @@ azure_access_module_test_job:
 # Module: Network Template
 azure_network_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -236,6 +238,7 @@ azure_network_module_test_job:
 # Module: Application Template
 azure_application_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -268,6 +271,7 @@ azure_application_module_test_job:
 # Module: Bastion Template
 azure_bastion_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -300,6 +304,7 @@ azure_bastion_module_test_job:
 # Module: DAG Template
 azure_dag_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -332,6 +337,7 @@ azure_dag_module_test_job:
 # Module: Function Template
 azure_function_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -364,6 +370,7 @@ azure_function_module_test_job:
 # Module: Telemetry Template
 azure_telemetry_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -396,6 +403,7 @@ azure_telemetry_module_test_job:
 # Module: bigip autoscale Template
 azure_bigip_autoscale_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -427,6 +435,7 @@ azure_bigip_autoscale_module_test_job:
 # Module: bigip standalone Template
 azure_bigip_standalone_module_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -458,6 +467,7 @@ azure_bigip_standalone_module_test_job:
 # Module: Autoscale Template
 azure_autoscale_bigiq_example_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -497,6 +507,7 @@ azure_autoscale_bigiq_example_test_job:
 
 azure_autoscale_bigiq_existing_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -536,6 +547,7 @@ azure_autoscale_bigiq_existing_test_job:
 
 azure_autoscale_payg_example_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -575,6 +587,7 @@ azure_autoscale_payg_example_test_job:
 
 azure_autoscale_payg_existing_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -615,6 +628,7 @@ azure_autoscale_payg_existing_test_job:
 # Module: Failover Template
 azure_failover_example_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -650,6 +664,7 @@ azure_failover_example_test_job:
 
 azure_failover_existing_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -681,6 +696,7 @@ azure_failover_existing_test_job:
 # Module: Quickstart Template
 azure_quickstart_example_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -716,6 +732,7 @@ azure_quickstart_example_test_job:
 
 azure_quickstart_existing_test_job:
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:

@@ -86,7 +86,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 
 ## Important Configuration Notes
 
-- By default, this solution creates a username **quickstart** with a **temporary** password set to value of the Azure virtual machine ID which is provided in the output **bigIpVmId** of the parent template. **IMPORTANT**: You should change this temporary password immediately following deployment. Alternately, you may remove the quickstart user class from the runtime-init configuration prior to deployment to prevent this user account from being created. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+- By default, this solution creates a username **admin** with a **temporary** password set to value of the Azure virtual machine ID which is provided in the output **bigIpVmId** of the parent template. **IMPORTANT**: You should change this temporary password immediately following deployment.
 
 - This solution requires Internet access for: 
   1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self-IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package url and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
@@ -418,7 +418,7 @@ From Parent Template Outputs:
       ```
   - **Password authentication**: 
       ```bash 
-      ssh quickstart@${IP_ADDRESS_FROM_OUTPUT}
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT}
       ``` 
       at prompt, enter your **bigIpVmId** (see above to obtain from template "Outputs")
 
@@ -468,7 +468,7 @@ From Parent Template Outputs:
 2. Open a browser to the Management URL.
   - *NOTE: By default, the BIG-IP system's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").*
   - To Login: 
-    - username: quickstart
+    - username: admin
     - password: **bigIpVmId** (see above to obtain from template "Outputs")
 
 
