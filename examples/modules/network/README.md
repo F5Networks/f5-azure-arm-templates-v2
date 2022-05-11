@@ -30,22 +30,24 @@ This ARM template creates a virtual network, subnets, and route tables required 
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| createNatGateway | No | You must select Yes to create a NAT gateway to allow outbound access when deploying a standalone BIG-IP VE without a public management IP address. Note: The NAT gateway is applied to subnet0. |
-| numSubnets| No | Number of subnets to create. A route table resource will be created and associated with each subnet resource. |
-| tagValues| No | List of tags to add to created resources. |
-| vnetAddressPrefix | No | Enter the start of the CIDR block used when creating the Vnet and subnets. You MUST type just the first two octets of the /16 virtual network that will be created, for example '10.0', '10.100', 192.168'." |
-| vnetName| No | Name used to create virtual network. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| createNatGateway | No | false | boolean | You must select Yes to create a NAT gateway to allow outbound access when deploying a standalone BIG-IP VE without a public management IP address. Note: The NAT gateway is applied to subnet0. |
+| numSubnets| No | 1 | integer | Number of subnets to create. A route table resource will be created and associated with each subnet resource. |
+| tagValues| No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | List of tags to add to created resources. |
+| vnetAddressPrefix | No | 10.0 | string | Enter the start of the CIDR block used when creating the Vnet and subnets. You MUST type just the first two octets of the /16 virtual network that will be created, for example '10.0', '10.100', 192.168'." |
+| vnetName| No | "virtualNetwork" | string | Name used to create virtual network. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| natGateway | NAT Gateway resource ID | NAT Gateway | string |
-| routeTables | Route tables resource IDs | Route Tables | array |
-| subnets | Subnets resource IDs | Subnets | array |
-| virtualNetwork | Virtual Network resource ID | Virtual Network | string |
+| natGateway | NAT Gateway | string | NAT Gateway resource ID. |
+| routeTables | Route Tables | array | Route tables resource IDs. |
+| subnets | Subnets | array | Subnets resource IDs. |
+| virtualNetwork | Virtual Network | string | Virtual Network resource ID. |
 
 
 ## Resource Creation Flow Chart

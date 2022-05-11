@@ -4,6 +4,9 @@
 [![Releases](https://img.shields.io/github/release/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/issues)
 
+| :warning: | ***Warning***: Due to vulnerabilities related to [CVE-2022-1388](https://support.f5.com/csp/article/K23605346), do not use templates unless using a custom image (template parameter = bigIpImage). Updated images are pending publication to Marketplace. For existing deployments, F5 recommends [upgrading to a patched software version](https://support.f5.com/csp/article/K84205182). Please see [K23605346: BIG-IP iControl REST vulnerability CVE-2022-1388](https://support.f5.com/csp/article/K23605346) for more information and latest updates.|
+|---------------|:------------------------|
+
 ## Contents
 
 - [Deploying BIG-IP Template](#deploying-big-ip-template)
@@ -18,7 +21,7 @@
 
 ## Introduction
 
-This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures Autoscale settings, creates an optional application insight component, and optionally associates specified role definition with system assigned managed identity. Link this template to create BIG-IP VMSS required for F5 deployments.
+This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autoscale settings, creates an optional application insight component, and optionally associates specified role definition with system assigned managed identity. Link this template to create BIG-IP Virtual Machine Scale Set (VMSS) required for F5 deployments.
 
 ## Prerequisites
 
@@ -30,8 +33,8 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 ## Important Configuration Notes
 
  - A sample template, 'sample_linked.json', has been included in this project. Use this example to see how to add bigip.json as a linked template into your templated solution.
- - Rolling upgrades: This template configures a rolling upgrade policy to upgrade the VMSS instances in batches when the Autoscale model changes.  By default, when the deployment is healthy, twenty percent of the instances are upgraded in each batch, with a pause of zero seconds (Azure default) between batches. F5 recommends modifying this policy to suit your environment. Any change to the value of the runtimeConfig input parameter will trigger a rolling upgrade of instances.
-- Reimaging not recommended: When using BIG-IQ to license BIG-IP images, F5 recommends against using the Reimage feature of the Azure VM Scale Set. In this situation, you should redeploy the template while specifying an updated runtimeConfig parameter value. If you are not using an upgrade policy, to upgrade VMSS instances, you should delete each instance in the scale set so that each are recreated using the updated Autoscale model.
+ - Rolling upgrades: This template configures a rolling upgrade policy to upgrade the Virtual Machine Scale Set instances in batches when the Autoscale model changes.  By default, when the deployment is healthy, twenty percent of the instances are upgraded in each batch, with a pause of zero seconds (Azure default) between batches. F5 recommends modifying this policy to suit your environment. Any change to the value of the runtimeConfig input parameter will trigger a rolling upgrade of instances.
+- Reimaging not recommended: When using BIG-IQ to license BIG-IP images, F5 recommends against using the Reimage feature of the Azure Virtual Machine Scale Set. In this situation, you should redeploy the template while specifying an updated runtimeConfig parameter value. If you are not using an upgrade policy, to upgrade Virtual Machine Scale Set instances, you should delete each instance in the scale set so that each are recreated using the updated Autoscale model.
 - New vs existing Azure App Insights: When specifying a value for the appInsights input parameter, a new Azure App Insights resource is created. If you are also specifying Autoscale rules that use custom F5 metrics in the customAutoscaleRules input parameter **and** reference the new Azure App Insights resource name specified in appInsights, the template will create an Azure deploymentScript resource to pre-populate common custom metrics. This resource is only available in regions that support the Azure Container Service; therefore, the App Insights and deploymentScript resources will be created in the West US 2 region.
 - Troubleshooting: The log location for f5-bigip-runtime-init onboarding is ``/var/log/cloud/bigIpRuntimeInit.log``. By default, the log level is set to info; however, you can set a custom log level by exporting the F5_BIGIP_RUNTIME_INIT_LOG_LEVEL environment variable before invoking f5-bigip-runtime-init in commandToExecute: 
 ```export F5_BIGIP_RUNTIME_INIT_LOG_LEVEL=silly && bash ', variables('runtimeConfigPackage'), ' azure 2>&1```
@@ -40,49 +43,51 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set (VMSS), configures 
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| adminUsername | Yes | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
-| appInsights | No | Valid values: empty value, an acceptable application insight component name. Creates application insight component with specified name. |
-| cpuMetricName | Sometimes | Valid values include valid metric name. See [this documentation](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported) for supported values. A value of 'Default' creates metric using Azure instance metrics. This is required when customAutoscaleRules parameter is not used. |
-| customAutoscaleRules | No | Leave default to create Azure native CPU and throughput metric triggers. Enter an array of appropriate json to use custom triggers. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/autoscalesettings) for valid json. **Note: when using custom triggers, parameters used to collect metric thresholds are not used.** |
-| customEmail | No | Enter an array of email addresses to be notified when scale up or scale down occurs. For example: ['myemail@email.com','myemail2@email.com']. |
-| uniqueString | Yes | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
-| image | Yes |  There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
-| inboundMgmtNatPoolId | No | NAT pool ID used for the BIG-IP management GUI connections. Leave as default if you do not want to use natpools or are using public IP. |
-| inboundSshNatPoolId | No | NAT pool ID used for SSH connections to BIG-IP. Leave as default if you do not want to use natpools or are using public IP. |
-| instanceHealthProbeId | Yes | Enter the resource ID of the probe that you wish to use to determine instance health when performing a rolling upgrade of scale set instances. Use the default value if you are using a manual upgrade policy. Note: The probe must be associated with a load balancing rule. |
-| instanceType | Yes | Enter a valid instance type. |
-| loadBalancerBackendAddressPoolsArray | Yes | Enter an array of pools where BIG-IP instances are to be added. |
-| nsgID | No | Enter security group ID to use. Use default if you do not wish to apply an NSG policy. |
-| provisionPublicIp | No | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
-| roleDefinitionId | No | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
-| runtimeConfig | Yes | Url to bigip-runtime-init configuration file or json string to use for configuration file. |
-| scaleInCpuThreshold | Sometimes | The percentage of CPU utilization that should trigger a scale in event. Required when customAutoscaleRules parameter not used. |
-| scaleInThroughputThreshold | Sometimes | The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB. This is required when the customAutoscaleRules parameter is not used. |
-| scaleInTimeWindow | Sometimes | The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). This is required when the customAutoscaleRules parameter is not used. |
-| scaleOutCpuThreshold | Sometimes | The percentage of CPU utilization that should trigger a scale out event. This is required when the customAutoscaleRules parameter is not used. |
-| scaleOutThroughputThreshold | Sometimes | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. This is required when the customAutoscaleRules parameter is not used. |
-| scaleOutTimeWindow | Sometimes | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). This is required when customAutoscaleRules parameter not used. |
-| sshKey | Yes | Supply the SSH public key you want to use to connect to the BIG-IP. |
-| subnetId | Yes | Enter subnet ID to use. |
-| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
-| throughputMetricName | Sometimes | Valid classic compute metric, default is for aggregate interface traffic. [this documentation(https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported) for supported values. This is required when the customAutoscaleRules parameter is not used. |
-| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set false. If the region does not support availability zones, the input should be set to false.  |
-| userAssignManagedIdentity | No | Enter user assigned management identity Id to be associated to vmss. Leave default if not used. |
-| vmScaleSetMaxCount | Yes | The maximum number of BIG-IP VEs that can be deployed into the VM Scale Set. |
-| vmScaleSetMinCount | Yes | The minimum (and default) number of BIG-IP VEs that will be deployed into the VM Scale Set. |
-| vmssName| Yes | Name to use for Virtual Machine Scale Set. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| adminUsername | Yes | --- | --- | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
+| appInsights | No | --- | --- | Valid values: empty value, an acceptable application insight component name. Creates application insight component with specified name. |
+| cpuMetricName | Sometimes | --- | --- | Valid values include valid metric name. See [this documentation](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported) for supported values. A value of 'Default' creates metric using Azure instance metrics. This is required when customAutoscaleRules parameter is not used. |
+| customAutoscaleRules | No | --- | --- | Leave default to create Azure native CPU and throughput metric triggers. Enter an array of appropriate json to use custom triggers. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/autoscalesettings) for valid json. **Note: when using custom triggers, parameters used to collect metric thresholds are not used.** |
+| customEmail | No | --- | --- | Enter an array of email addresses to be notified when scale up or scale down occurs. For example: ['myemail@email.com','myemail2@email.com']. |
+| uniqueString | Yes | --- | --- | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
+| image | Yes | --- | --- | There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
+| inboundMgmtNatPoolId | No | --- | --- | NAT pool ID used for the BIG-IP management GUI connections. Leave as default if you do not want to use natpools or are using public IP. |
+| inboundSshNatPoolId | No | --- | --- | NAT pool ID used for SSH connections to BIG-IP. Leave as default if you do not want to use natpools or are using public IP. |
+| instanceHealthProbeId | Yes | --- | --- | Enter the resource ID of the probe that you wish to use to determine instance health when performing a rolling upgrade of scale set instances. Use the default value if you are using a manual upgrade policy. Note: The probe must be associated with a load balancing rule. |
+| instanceType | Yes | --- | --- | Enter a valid instance type. |
+| loadBalancerBackendAddressPoolsArray | Yes | --- | --- | Enter an array of pools where BIG-IP instances are to be added. |
+| nsgID | No | --- | --- | Enter security group ID to use. Use default if you do not wish to apply an NSG policy. |
+| provisionPublicIp | No | --- | --- | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
+| roleDefinitionId | No | --- | --- | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
+| runtimeConfig | Yes | --- | --- | Url to bigip-runtime-init configuration file or json string to use for configuration file. |
+| scaleInCpuThreshold | Sometimes | --- | --- | The percentage of CPU utilization that should trigger a scale in event. Required when customAutoscaleRules parameter not used. |
+| scaleInThroughputThreshold | Sometimes | --- | --- | The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB. This is required when the customAutoscaleRules parameter is not used. |
+| scaleInTimeWindow | Sometimes | --- | --- | The time window required to trigger a scale in event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). This is required when the customAutoscaleRules parameter is not used. |
+| scaleOutCpuThreshold | Sometimes | --- | --- | The percentage of CPU utilization that should trigger a scale out event. This is required when the customAutoscaleRules parameter is not used. |
+| scaleOutThroughputThreshold | Sometimes | --- | --- | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. This is required when the customAutoscaleRules parameter is not used. |
+| scaleOutTimeWindow | Sometimes | --- | --- | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). This is required when customAutoscaleRules parameter not used. |
+| sshKey | Yes | --- | --- | Supply the SSH public key you want to use to connect to the BIG-IP. |
+| subnetId | Yes | --- | --- | Enter subnet ID to use. |
+| tagValues | No | --- | --- | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
+| throughputMetricName | Sometimes | --- | --- | Valid classic compute metric, default is for aggregate interface traffic. [this documentation(https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported) for supported values. This is required when the customAutoscaleRules parameter is not used. |
+| useAvailabilityZones | No | --- | --- | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set false. If the region does not support availability zones, the input should be set to false.  |
+| userAssignManagedIdentity | No | --- | --- | Enter user-assigned management identity Id to be associated to Virtual Machine Scale Set. Leave default if not used. |
+| vmScaleSetMaxCount | Yes | --- | --- | The maximum number of BIG-IP VEs that can be deployed into the Virtual Machine Scale Set. |
+| vmScaleSetMinCount | Yes | --- | --- | The minimum (and default) number of BIG-IP VEs that will be deployed into the Virtual Machine Scale Set. |
+| vmssName| Yes | --- | --- | Name to use for Virtual Machine Scale Set. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| appInsightsComponentId | Application Insights resource ID | Application Insights | string |
-| appInsightsInstrumentationKey | Application Insights Instrumentation Key | Application Insights | string |
-| roleAssignmentId | Role Assignment resource ID | Role Definition | string |
-| autoscaleSettingsId | Autoscale Settings resource ID | Virtual Machine Scale Set | string |
-| vmssId | Virtual Machine Scale Set resource ID | Virtual Machine Scale Set | string |
+| appInsightsComponentId | Application Insights | string | Application Insights resource ID |
+| appInsightsInstrumentationKey | Application Insights | string | Application Insights Instrumentation Key |
+| roleAssignmentId | Role Definition | string | Role Assignment resource ID |
+| autoscaleSettingsId | Virtual Machine Scale Set | string | Autoscale Settings resource ID |
+| vmssId | Virtual Machine Scale Set | string | Virtual Machine Scale Set resource ID |
 
 
 ## Example Configurations
