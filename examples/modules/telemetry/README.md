@@ -29,22 +29,24 @@ This ARM template creates Telemetry module intended to setup infrastructure (i.e
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| uniqueString | Yes | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
-| sku | No | Specifies the service tier of the workspace: Standalone, PerNode, Per-GB |
-| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
-| workbookDisplayName | No | The friendly name for the workbook that is used in the Gallery or Saved List.  This name must be unique within a resource group. |
-| workbookType | No | The gallery that the workbook will been shown under. Supported values include workbook, tsg, etc. Usually, this is 'workbook' | 
-| workspaceName | No | Specifies the name of the workspace. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| uniqueString | Yes |  | string | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
+| sku | No | PerGB2018 | string | Specifies the service tier of the workspace: Standalone, PerNode, and Per-GB. |
+| tagValues | No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
+| workbookDisplayName | No | "F5 BIG-IP WAF View" | string | The friendly name for the workbook that is used in the Gallery or Saved List.  This name must be unique within a resource group. |
+| workspaceName | No | "f5telemetry" | string | Specifies the name of the workspace. |
+
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| workspaceName | Workspace Name | None | string |
-| workspaceResourceId | Workspace Resource ID | None  | string |
-| workspaceId | Workspace ID | None | string |
-| workbookName | Workbook name | None | string |
-| workbookId | Workbook ID | None | string |
+| workspaceName | None | string | Workspace Name. |
+| workspaceResourceId | None  | string | Workspace Resource ID. |
+| workspaceId | None | string | Workspace ID. |
+| workbookName | None | string | Workbook name. |
+| workbookId | None | string | Workbook ID. |
 
 

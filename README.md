@@ -3,6 +3,8 @@
 [![Releases](https://img.shields.io/github/release/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-azure-arm-templates-v2.svg)](https://github.com/f5networks/f5-azure-arm-templates-v2/issues)
   
+| :warning: | ***Warning***: Due to vulnerabilities related to [CVE-2022-1388](https://support.f5.com/csp/article/K23605346), do not use templates unless using a custom image (template parameter = bigIpImage). Updated images are pending publication to Marketplace. For existing deployments, F5 recommends [upgrading to a patched software version](https://support.f5.com/csp/article/K84205182). Please see [K23605346: BIG-IP iControl REST vulnerability CVE-2022-1388](https://support.f5.com/csp/article/K23605346) for more information and latest updates.|
+|---------------|:------------------------|
 
 ## F5 Azure ARM Templates 2.0
 

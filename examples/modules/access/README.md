@@ -100,27 +100,29 @@ These are the RBAC permissions produced by each type of solution supported by th
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| customAssignableScopes | No | List of scopes applied to Role. If not specified, the deployment resource group is added to the list of assignable scopes. |
-| customRolePermissions| No | Array of custom permissions for the roleDefinition. If specified, the solutionType selection has no effect and you must provide the complete set of required permissions. |
-| keyVaultPermissionsKeys | No | Array of permissions allowed on KeyVault Secrets for role. If not specified, **get** and **list** permissions are assigned. |
-| keyVaultPermissionsSecrets | No | Array of permissions allowed on KeyVault Secrets for role. If not specified, **get** and **list** permissions are assigned. |
-| roleDescription | No | Description for role. |
-| roleName| No | Provides value for role definition which will be created by the template. |
-| secretId | No | Enter full URI of existing secret. |
-| solutionType | No | Specifies solution type. Allowed values are 'standard', 'failover', and 'logging'. |
-| tagValues | No | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique, adjust them as needed for each key. |
-| userAssignedIdentityName | No | User Assigned Identity name. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| customAssignableScopes | No |  | array | List of scopes applied to Role. If not specified, the deployment resource group is added to the list of assignable scopes. |
+| customRolePermissions| No |  | array | Array of custom permissions for the roleDefinition. If specified, the solutionType selection has no effect and you must provide the complete set of required permissions. |
+| keyVaultPermissionsKeys | No | "get",	"list" | array | Array of permissions allowed on KeyVault Secrets for role. If not specified, **get** and **list** permissions are assigned. |
+| keyVaultPermissionsSecrets | No | "get",	"list" | array | Array of permissions allowed on KeyVault Secrets for role. If not specified, **get** and **list** permissions are assigned. |
+| roleDescription | No | Role created by the Access template. | string | Description for role. |
+| roleName| Yes |  | string | Provides value for role definition which will be created by the template. |
+| secretId | No |  | string | Enter full URI of existing secret. |
+| solutionType | No | standard | string | Specifies solution type. Allowed values are 'standard', 'failover', and 'logging'. |
+| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique, adjust them as needed for each key. |
+| userAssignedIdentityName | No |  | string | User-Assigned Identity name. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| keyVaultName | Key Vault name | Key Vault | String |
-| roleDefinitionId | Role definition resource ID | Role Definition | String |
-| secretId | Secret ID | Secret | String |
-| userAssignedIdentityId | User assigned identity name | User Assigned Identity | String |
+| keyVaultName | Key Vault | string | Key Vault name |
+| roleDefinitionId | Role Definition | string | Role definition resource ID |
+| secretId | Secret | string | Secret ID |
+| userAssignedIdentityId | User-Assigned Identity | string | User-assigned identity name |
 
 ## Resource Creation Flow Chart
 

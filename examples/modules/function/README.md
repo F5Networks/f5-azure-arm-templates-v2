@@ -44,27 +44,29 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| functionAppName | No | Supply a name for the new function app. |
-| functionAppSku | No | Supply a configuration for the function app server farm plan SKU (premium or appservice) in JSON format. Information about server farm plans is available [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2018-02-01/serverfarms). |
-| functionAppVnetId | No | The fully-qualified resource ID of the Azure Virtual Network where BIG-IQ is deployed. This is required when connecting to BIG-IQ via a private IP address; the Azure function app will be granted ingress permission to the virtual network. When specifying an Azure public IP address for bigIqAddress, leave the default of **Default**. |
-| secretId | No | Enter full URI of existing secret. |
-| userAssignManagedIdentity | No | Enter user assigned management identity ID to be associated to vmss. Leave default if not used. |
-| tagValues| No | List of tags to add to created resources. |
-| vmssId | No | Supply the fully-qualified resource ID of the Azure Virtual Machine Scale Set to be monitored. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| bigIpRuntimeInitConfig | No |  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| functionAppName | No | "functionApp" | string | Supply a name for the new function app. |
+| functionAppSku | No | {"Tier": "ElasticPremium","Name": "EP1"}, | object | Supply a configuration for the function app server farm plan SKU (premium or appservice) in JSON format. Information about server farm plans is available [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2018-02-01/serverfarms). |
+| functionAppVnetId | No |  | string | The fully-qualified resource ID of the Azure Virtual Network where BIG-IQ is deployed. This is required when connecting to BIG-IQ via a private IP address; the Azure function app will be granted ingress permission to the virtual network. When specifying an Azure public IP address for bigIqAddress, leave the default of **Default**. |
+| secretId | No |  | string | Enter full URI of existing secret. |
+| userAssignManagedIdentity | No |  | string | Enter user-assigned management identity ID to be associated to Virtual Machine Scale Set. Leave default if not used. |
+| tagValues| No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | List of tags to add to created resources. |
+| vmssId | No |  | string | Supply the fully-qualified resource ID of the Azure Virtual Machine Scale Set to be monitored. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type | 
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| applicationInsightsId | Application Insights resource ID | Application Insights | string |
-| functionAppId | Function App resource ID | Function App | string |
-| hostingPlanId | Hosting Plan resource ID | Server Farm | string |
-| keyVaultId | KeyVault resource ID | KeyVault | string |
-| roleAssignmentId | Role Assignment resource ID | Role Assignment | string |
-| storageAccountId | Storage Account resource ID | Storage Account | string |
+| applicationInsightsId | Application Insights | string | Application Insights resource ID. |
+| functionAppId | Function App | string | Function App resource ID. |
+| hostingPlanId | Server Farm | string | Hosting Plan resource ID. |
+| keyVaultId | KeyVault | string | KeyVault resource ID. |
+| roleAssignmentId | Role Assignment | string | Role Assignment resource ID. |
+| storageAccountId | Storage Account | string | Storage Account resource ID. |
 
 ## Resource Creation Flow Chart
 
@@ -76,4 +78,4 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 Individuals or business entities who contribute to this project must have
 completed and submitted the F5 Contributor License Agreement.
  system-assigned Managed Identity and assigns the role of Contributor to it on the scope of the resource group where the template is deployed. You must have sufficient permissions to create the identity and role assignment.
-- Your BIG-IP instance license assignments must contain the tenant attribute. The value of this attribute is used to limit revocation to instances from a specific Azure VMSS deployment. If no value is specified for bigIqTenant when deploying this template, the tenant value defaults to the name of the Azure VMSS.
+- Your BIG-IP instance license assignments must contain the tenant attribute. The value of this attribute is used to limit revocation to instances from a specific Azure Virtual Machine Scale Set deployment. If no value is specified for bigIqTenant when deploying this template, the tenant value defaults to the name of the Azure Virtual Machine Scale Set.

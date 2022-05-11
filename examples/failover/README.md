@@ -77,16 +77,30 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 ## Prerequisites
 
-  - This solution requires an SSH public key for access to the BIG-IP instances.
-  - This solution requires an Azure Key Vault and secret containing the intended password for the BIG-IP instances, provided in the format "https://myVaultName.vault.azure.net/secrets/mySecretName".
-  - This solution requires an Azure account that can provision objects described in the solution.
-  - This solution requires you to accept any Azure Marketplace "License/Terms and Conditions" for the images used in this solution.
-    - By default, this solution uses [F5 BIG-IP Virtual Edition - BEST (PAYG 25Mbps)](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/f5-networks.f5-big-ip-best?tab=PlansAndPrice)
+  - This solution requires an Azure account that can provision objects described in the solution and [resource group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups).
+    - Azure Portal: [Create a Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups)
     - Azure CLI: 
-        ```bash
-        az vm image terms accept --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000
-        ```
-    - For more marketplace terms information, see Azure [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms).
+      ```bash
+      az group create -n ${RESOURCE_GROUP} -l ${REGION}
+      ```
+  - A location to host your custom BIG-IP config (runtime-init.conf) with your own Key Vault information. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
+  - This solution requires an Azure Key Vault and secret containing the intended password the password used to access and cluster the HA Pair, provided in the format "https://myVaultName.vault.azure.net/secrets/mySecretId". 
+
+    For example, to create the secret using the Azure CLI:
+      ```bash
+      az keyvault create --name [YOUR_VAULT_NAME] --resource-group [YOUR_RESOURCE_GROUP] --location [YOUR_REGION]
+      az keyvault secret set --vault-name [YOUR_VAULT_NAME] --name [YOUR_SECRET_ID] --value "[YOUR_BIGIP_PASSWORD]"
+      ```
+      - *NOTE:*
+        - By default, the example vault name used is `myVaultName` and secret name used is `mySecretId`. However, vault names are global in Azure and you will always need to customize this value by updating the Runtime-Init Configs and `bigSecretIdIpPassword` template input parameter to match your secret. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+  - This solution requires an [SSH key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) for access to the BIG-IP instances. For more information about creating a key pair for use in Azure, see Azure SSH key [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys).
+- This solution requires you to accept any Azure Marketplace "License/Terms and Conditions" for the images used in this solution.
+  - By default, this solution uses [F5 BIG-IP Virtual Edition - BEST (PAYG 25Mbps)](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/f5-networks.f5-big-ip-best?tab=PlansAndPrice)
+  - Azure CLI: 
+      ```bash
+      az vm image terms accept --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000
+      ```
+  - For more marketplace terms information, see Azure [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms).
 
 
 ## Important Configuration Notes
@@ -94,7 +108,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 - By default, this solution modifies the username **admin** with a password set to value of the Azure Key Vault secret which is provided in the input **bigIpPasswordSecretId** of the parent template.
 
 - This solution requires Internet access for: 
-  1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self-IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package url and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
+  1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self-IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package URL and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
   2. Contacting native cloud services for various cloud integrations: 
     - *Onboarding*:
         - [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) - to fetch secrets from native vault services
@@ -118,124 +132,127 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| appContainerName | No | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
-| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
-| bigIpInstanceType | No | Enter a valid instance type. |
-| bigIpPasswordSecretId | Yes | REQUIRED: The URL of the Azure Key Vault, including secret ID, where the BIG-IP password is stored. |
-| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
-| cfeStorageAccountName | Yes | CFE storage account created and used for cloud-failover-extension. |
-| cfeTag | No | Cloud Failover deployment tag value. |
-| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalVip01 | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01. |
-| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
-| provisionExampleApp | No | Flag to deploy the demo web application. |
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
-| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
-| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
-| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| appContainerName | No | "f5devcentral/f5-demo-app:latest" | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
+| artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpInstanceType | No | "Standard_D8s_v3" | string | Enter a valid instance type. |
+| bigIpPasswordSecretId | Yes | | string | REQUIRED: The URL of the Azure Key Vault, including secret ID, where the BIG-IP password is stored. |
+| bigIpRuntimeInitConfig01 | No | "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml" | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitConfig02 | No | "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml" | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run" | string | Supply a URL to the bigip-runtime-init package. |
+| cfeStorageAccountName | Yes |  | string | CFE storage account created and used for cloud-failover-extension. |
+| cfeTag | No | "bigip_high_availability_solution" | string | Cloud Failover deployment tag value. |
+| bigIpExternalSelfIp01 | No | "10.0.1.11" | string | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfIp02 | No | "10.0.1.12" | string | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalVip01 | No | "10.0.1.101" | string | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01. |
+| bigIpInternalSelfIp01 | No | "10.0.2.11" | string | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp02 | No | 10.0.2.12 | string | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | 10.0.0.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | 10.0.0.12 | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpPeerAddr | No | "10.0.1.11" | string | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
+| provisionExampleApp | No | true | boolean | Flag to deploy the demo web application. |
+| provisionPublicIpMgmt | No | true | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| restrictedSrcAddressApp | Yes |  | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| restrictedSrcAddressMgmt | Yes |  | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **Important**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
+| sshKey | Yes | | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
+| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
+| templateBaseUrl | No | "https://cdn.f5.com/product/cloudsolutions/" | string | The publicly accessible URL where the linked ARM templates are located. |
+| uniqueString | Yes |  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| appPrivateIp | Application Private IP Address | Application Template | string |
-| appUsername | Application user name | Application Template | string |
-| appVmName | Application Virtual Machine name | Application Template | string |
-| bastionPublicIp | Bastion Public IP Address | Bastion Template | string |
-| bigIpInstance01ManagementPublicIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance01ManagementPrivateIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance01ManagementPublicUrl | Management Public IP Address | Dag Template | string |
-| bigIpInstance01ManagementPrivateUrl | Management Public IP Address | Dag Template | string |
-| bigIpInstance02ManagementPublicIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance02ManagementPrivateIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance02ManagementPublicUrl | Management Public IP Address | Dag Template | string |
-| bigIpInstance02ManagementPrivateUrl | Management Public IP Address | Dag Template | string |
-| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
-| bigIpInstance01VmId | Virtual Machine resource ID | BIG-IP Template | string |
-| bigIpInstance02VmId | Virtual Machine resource ID | BIG-IP Template | string |
-| vip1PrivateIp | Service (VIP) Private IP Address | Application Template | string |
-| vip1PrivateUrlHttp | Service (VIP) Private HTTP URL | Application Template | string |
-| vip1PrivateUrlHttps | Service (VIP) Private HTTPS URL | Application Template | string |
-| vip1PublicIp | Service (VIP) Public IP Address | Dag Template | string |
-| vip1PublicIpDns | Service (VIP) Public DNS | Dag Template | string |
-| vip1PublicUrlHttp | Service (VIP) Public HTTP URL | Dag Template | string |
-| vip1PublicUrlHttps | Service (VIP) Public HTTPS URL | Dag Template | string |
-| virtualNetworkId | Virtual Network resource ID | Network Template | string |
-| wafPublicIps | External Public IP Addresses | Dag Template | array |
+| appPrivateIp | Application Template | string | Application Private IP Address |
+| appUsername | Application Template | string | Application user name |
+| appVmName | Application Template | string | Application Virtual Machine name |
+| bastionPublicIp | Bastion Template | string | Bastion Public IP Address |
+| bigIpInstance01ManagementPublicIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance01ManagementPrivateIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance01ManagementPublicUrl | Dag Template | string | Management Public IP Address |
+| bigIpInstance01ManagementPrivateUrl | Dag Template | string | Management Public IP Address |
+| bigIpInstance02ManagementPublicIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance02ManagementPrivateIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance02ManagementPublicUrl | Dag Template | string | Management Public IP Address |
+| bigIpInstance02ManagementPrivateUrl | Dag Template | string | Management Public IP Address |
+| bigIpUsername | BIG-IP Template | string | BIG-IP user name |
+| bigIpInstance01VmId | BIG-IP Template | string | Virtual Machine resource ID |
+| bigIpInstance02VmId | BIG-IP Template | string | Virtual Machine resource ID |
+| vip1PrivateIp | Application Template | string | Service (VIP) Private IP Address |
+| vip1PrivateUrlHttp | Application Template | string | Service (VIP) Private HTTP URL |
+| vip1PrivateUrlHttps | Application Template | string | Service (VIP) Private HTTPS URL |
+| vip1PublicIp | Dag Template | string | Service (VIP) Public IP Address |
+| vip1PublicIpDns | Dag Template | string | Service (VIP) Public DNS |
+| vip1PublicUrlHttp | Dag Template | string | Service (VIP) Public HTTP URL | 
+| vip1PublicUrlHttps | Dag Template | string | Service (VIP) Public HTTPS URL |
+| virtualNetworkId | Network Template | string | Virtual Network resource ID |
+| wafPublicIps | Dag Template | array | External Public IP Addresses |
 
 
 ### Existing Network Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpImage | No | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
-| bigIpInstanceType | No | Enter a valid instance type. |
-| bigIpPasswordSecretId | Yes | REQUIRED: The URL of the Azure Key Vault, including secret ID, where the BIG-IP password is stored. |
-| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
-| cfeStorageAccountName | Yes | CFE storage account created and used for cloud-failover-extension. |
-| cfeTag | No | Cloud Failover deployment tag value. |
-| bigIpExternalSubnetId | Yes | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
-| bigIpInternalSubnetId | Yes | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
-| bigIpMgmtSubnetId | Yes | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
-| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalVip01 | No | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01. |
-| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
-| provisionPublicIpMgmt | No | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
-| provisionServicePublicIp | No | Flag to deploy public IP address resource for application. |
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
-| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
-| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
-| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
-| userAssignManagedIdentity | No | Enter user assigned pre-existing management identity ID to be associated to vmss. If not specified, a new identity will be created. |
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpInstanceType | No | "Standard_D8_v3" | string | Enter a valid instance type. |
+| bigIpPasswordSecretId | Yes |  | string | REQUIRED: The URL of the Azure Key Vault, including secret ID, where the BIG-IP password is stored. |
+| bigIpRuntimeInitConfig01 | No | "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml" | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitConfig02 | No | "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml" | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run" | string | Supply a URL to the bigip-runtime-init package. |
+| cfeStorageAccountName | Yes |  | string | CFE storage account created and used for cloud-failover-extension. |
+| cfeTag | No | "bigip_high_availability_solution" | string | Cloud Failover deployment tag value. |
+| bigIpExternalSubnetId | Yes |  | string | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
+| bigIpInternalSubnetId | Yes |  | string | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
+| bigIpMgmtSubnetId | Yes |  | string | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
+| bigIpExternalSelfIp01 | No | "10.0.1.11" | string | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfIp02 | No | "10.0.1.12" | string | External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalVip01 | No | "10.0.1.101" | string | External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01. |
+| bigIpInternalSelfIp01 | No | "10.0.2.11" | string | Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp02 | No | "10.0.2.12" | string | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | "10.0.0.11" | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | "10.0.0.12" | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpPeerAddr | No | "10.0.1.11" | string | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
+| provisionPublicIpMgmt | No | false | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
+| provisionServicePublicIp | No | false | boolean | Flag to deploy public IP address resource for application. |
+| restrictedSrcAddressApp | Yes |  | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| restrictedSrcAddressMgmt | Yes |  | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **Important**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
+| sshKey | Yes |  | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
+| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
+| templateBaseUrl | No | "https://cdn.f5.com/product/cloudsolutions/" | string | The publicly accessible URL where the linked ARM templates are located. |
+| uniqueString | Yes |  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+| userAssignManagedIdentity | No |  | string | Enter user-assigned pre-existing management identity ID to be associated to Virtual Machine Scale Set. If not specified, a new identity will be created. |
 
 
 ### Existing Network Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| bigIpInstance01ManagementPublicIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance01ManagementPrivateIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance01ManagementPublicUrl | Management Public IP Address | Dag Template | string |
-| bigIpInstance01ManagementPrivateUrl | Management Public IP Address | Dag Template | string |
-| bigIpInstance02ManagementPublicIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance02ManagementPrivateIp | Management Private IP Address | BIG-IP Template | string |
-| bigIpInstance02ManagementPublicUrl | Management Public IP Address | Dag Template | string |
-| bigIpInstance02ManagementPrivateUrl | Management Public IP Address | Dag Template | string |
-| bigIpUsername | BIG-IP user name | BIG-IP Template | string |
-| bigIpInstance01VmId | Virtual Machine resource ID | BIG-IP Template | string |
-| bigIpInstance02VmId | Virtual Machine resource ID | BIG-IP Template | string |
-| vip1PrivateIp | Service (VIP) Private IP Address | Service Private IP Address | string |
-| vip1PrivateUrlHttp | Service (VIP) Private HTTP URL | Service Private IP Address| string |
-| vip1PrivateUrlHttps | Service (VIP) Private HTTPS URL | Service Private IP Address| string |
-| vip1PublicIp | Service (VIP) Public IP Address | Dag Template | string |
-| vip1PublicIpDns | Service (VIP) Public DNS | Dag Template | string |
-| vip1PublicUrlHttp | Service (VIP) Public HTTP URL | Dag Template | string |
-| vip1PublicUrlHttps | Service (VIP) Public HTTPS URL | Dag Template | string |
-| wafPublicIps | External Public IP Addresses | Dag Template | array |
+| bigIpInstance01ManagementPublicIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance01ManagementPrivateIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance01ManagementPublicUrl | Dag Template | string | Management Public IP Address |
+| bigIpInstance01ManagementPrivateUrl | Dag Template | string | Management Public IP Address |
+| bigIpInstance02ManagementPublicIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance02ManagementPrivateIp | BIG-IP Template | string | Management Private IP Address |
+| bigIpInstance02ManagementPublicUrl | Dag Template | string | Management Public IP Address |
+| bigIpInstance02ManagementPrivateUrl | Dag Template | string | Management Public IP Address |
+| bigIpUsername | BIG-IP Template | string | BIG-IP user name |
+| bigIpInstance01VmId | BIG-IP Template | string | Virtual Machine resource ID |
+| bigIpInstance02VmId | BIG-IP Template | string | Virtual Machine resource ID |
+| vip1PrivateIp | Service Private IP Address | string | Service (VIP) Private IP Address |
+| vip1PrivateUrlHttp | Service Private IP Address| string | Service (VIP) Private HTTP URL |
+| vip1PrivateUrlHttps | Service Private IP Address| string | Service (VIP) Private HTTPS URL |
+| vip1PublicIp | Dag Template | string | Service (VIP) Public IP Address |
+| vip1PublicIpDns | Dag Template | string | Service (VIP) Public DNS |
+| vip1PublicUrlHttp | Dag Template | string | Service (VIP) Public HTTP URL |
+| vip1PublicUrlHttps | Dag Template | string | Service (VIP) Public HTTPS URL |
+| wafPublicIps | Dag Template | array | External Public IP Addresses |
 
 ## Deploying this Solution
 
