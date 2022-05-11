@@ -52,7 +52,7 @@ else
 fi
 
 # verify command to execute has simplified setup script
-vmss_settings[virtualMachineProfile.extensionProfile.extensions\[\].settings.commandToExecute]="base64 -d /var/lib/waagent/customData | bash"
+vmss_settings[virtualMachineProfile.extensionProfile.extensions\[\].settings.commandToExecute]="base64 -d /var/lib/waagent/CustomData | bash"
 
 # verify load balancer backend address pools based network.json environmental setup
 if [ <NUMBER PUBLIC MGMT IP ADDRESSES> = 0 ] && [ "<INTERNAL LOAD BALANCER NAME>" != "none" ]; then

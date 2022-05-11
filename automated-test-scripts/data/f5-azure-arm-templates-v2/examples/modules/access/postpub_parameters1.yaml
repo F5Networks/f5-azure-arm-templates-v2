@@ -1,6 +1,8 @@
 REGION: westus
 RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
-BUILT IN ROLE TYPE: Reader
+SOLUTION TYPE: standard
+ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
+ROLE DESCRIPTION: This role is created as part of dewdrop tests
 KEY VAULT NAME: dd-n-<DEWPOINT JOB ID>fv
 SECRET NAME: secert-<DEWPOINT JOB ID>
 PASSWORD: StrongPassword212+

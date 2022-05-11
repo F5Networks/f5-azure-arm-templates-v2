@@ -5,6 +5,7 @@
 #  replayTimeout = 0
 
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
+SRC_IP=$(curl ifconfig.me)/32
 
 if [[ "<PROVISION PUBLIC IP>" == "True" ]]; then 
     echo "Template validation succeeded"
@@ -16,7 +17,7 @@ else
     SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public | jq .value --raw-output)
 
     az network nsg create -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-nsg
-    az network nsg rule create -g <RESOURCE GROUP> --nsg-name <RESOURCE GROUP>-bastion-nsg -n <RESOURCE GROUP>-bastion-nsg-rule --priority 100 --source-address-prefixes '*' --destination-port-ranges 22 --access Allow --protocol Tcp
+    az network nsg rule create -g <RESOURCE GROUP> --nsg-name <RESOURCE GROUP>-bastion-nsg -n <RESOURCE GROUP>-bastion-nsg-rule --priority 100 --source-address-prefixes ${SRC_IP} --destination-port-ranges 22 --access Allow --protocol Tcp
     NSG_ID=$(az network nsg show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-nsg | jq -r .id)
 
     if echo "<TEMPLATE URL>" | grep "autoscale"; then

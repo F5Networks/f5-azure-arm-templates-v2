@@ -21,18 +21,18 @@ if [[ <PROVISION PUBLIC IP> == False ]]; then
     echo "IP: $IP"
     ssh-keygen -R ${BASTION_HOST} 2>/dev/null
     SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" azureuser@"${IP}" 'list auth user azureuser')
-    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${BASTION_HOST} "curl -skvvu quickstart:${PASSWORD} --connect-timeout 10 https://${IP}:${MGMT_PORT}/mgmt/tm/auth/user/quickstart" | jq -r .description)
+    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${BASTION_HOST} "curl -skvvu admin:${PASSWORD} --connect-timeout 10 https://${IP}:${MGMT_PORT}/mgmt/tm/auth/user/admin" | jq -r .description)
 else
     IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
     echo "IP: $IP"
     ssh-keygen -R ${IP} 2>/dev/null
     SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${IP} -p $SSH_PORT 'list auth user azureuser')
-    PASSWORD_RESPONSE=$(curl -sku quickstart:${PASSWORD} https://${IP}:${MGMT_PORT}/mgmt/tm/auth/user/quickstart | jq -r .description)
+    PASSWORD_RESPONSE=$(curl -sku admin:${PASSWORD} https://${IP}:${MGMT_PORT}/mgmt/tm/auth/user/admin | jq -r .description)
 fi
 echo "SSH_RESPONSE: ${SSH_RESPONSE}"
 echo "PASSWORD_RESPONSE: ${PASSWORD_RESPONSE}"
 
-if echo ${SSH_RESPONSE} | grep -q "encrypted-password !!" && echo ${PASSWORD_RESPONSE} | grep -q "quickstart"; then
+if echo ${SSH_RESPONSE} | grep -q "encrypted-password !!" && echo ${PASSWORD_RESPONSE} | grep -q "Admin User"; then
     echo "SUCCEEDED"
 else
     echo "FAILED"

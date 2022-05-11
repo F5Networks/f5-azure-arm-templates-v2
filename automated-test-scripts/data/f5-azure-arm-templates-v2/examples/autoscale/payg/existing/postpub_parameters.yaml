@@ -7,18 +7,18 @@ ARTIFACT LOCATION: 'templates/'
 BIGIQ TENANT: <RESOURCE GROUP>-vmss
 CREATE WORKSPACE: true
 DISAGGREGATOR: LB
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.000000
-INSTANCE TYPE: Standard_DS3_v2
-LICENSE TYPE: bigiq
+IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.201000
+INSTANCE TYPE: Standard_D4_v3
+LICENSE TYPE: payg
 NIC COUNT: 1
 PROVISION EXTERNAL LB: true
-PROVISION INTERNAL LB: false
+PROVISION INTERNAL LB: true
 PROVISION PUBLIC IP: true
 REGION: westus
 RESOURCE GROUP: dd-auto-<DEWPOINT JOB ID>
 RESTRICTED SRC ADDRESS: '*'
 RESTRICTED SRC ADDRESS APP: '*'
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
 SCALE IN CPU THRESHOLD: 20
 SCALE IN THROUGHPUT THRESHOLD: 10000000
 SCALE IN TIME WINDOW: 10
