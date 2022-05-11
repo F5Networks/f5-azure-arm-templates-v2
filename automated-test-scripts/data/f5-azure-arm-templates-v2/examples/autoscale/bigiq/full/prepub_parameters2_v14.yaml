@@ -10,17 +10,17 @@ BIGIQ ADDRESS: <RESOURCE GROUP>-bigiq.<REGION>.cloudapp.azure.com
 BIGIQ TENANT: myTenant
 CREATE WORKSPACE: false
 DISAGGREGATOR: LB
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.000000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.201000
 INSTANCE TYPE: Standard_D4_v3
 LICENSE TYPE: bigiq
 PROVISION EXTERNAL LB: true
-PROVISION INTERNAL LB: false
-PROVISION PUBLIC IP: true
+PROVISION INTERNAL LB: true
+PROVISION PUBLIC IP: false
 REGION: westus
 RESOURCE GROUP: dd-auto-<DEWPOINT JOB ID>
 RESTRICTED SRC ADDRESS: '*'
 RESTRICTED SRC ADDRESS APP: '*'
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
 SCALE IN CPU THRESHOLD: 20
 SCALE IN THROUGHPUT THRESHOLD: 10000000
 SCALE IN TIME WINDOW: 10
@@ -30,7 +30,6 @@ SCALE OUT TIME WINDOW: 10
 SCALING MAX: 10
 SCALING MIN: 2
 SECRET VALUE: 'B!giq2017'
-PASSWORD: 'B!giq2017'
 SEQUENCE NUMBER: 1
 NETWORK STACK: full
 SUBSCRIPTION ID: d18b486a-112d-4402-add2-7fb1006f943a

@@ -52,7 +52,7 @@ else
 fi
 
 # verify command to execute has simplified setup script
-vm_settings[resources\[\].settings.commandToExecute]="base64 -d /var/lib/waagent/customData | bash"
+vm_settings[resources\[\].settings.commandToExecute]="base64 -d /var/lib/waagent/CustomData | bash"
 vm_settings[resources\[\].provisioningState]="Succeeded"
 
 # verify number of network interfaces
