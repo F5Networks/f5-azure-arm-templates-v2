@@ -1,9 +1,9 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "2.0.0.0",
+  "contentVersion": "2.1.0.0",
   "parameters": {
     "artifactLocation": {
-      "value": "f5-azure-arm-templates-v2/v2.0.0.0/examples/"
+      "value": "f5-azure-arm-templates-v2/v2.1.0.0/examples/"
     },
     "bigIpExternalSelfAddress": {
       "value": "10.0.1.11"
@@ -30,7 +30,7 @@
       "value": ""
     },
     "bigIpRuntimeInitConfig": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.1.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
       "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"
