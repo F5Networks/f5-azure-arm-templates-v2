@@ -37,47 +37,51 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| adminUsername | No | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
-| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
-| bigIpRuntimeInitConfig | Yes | Url to bigip-runtime-init configuration file or json string to use for configuration file. |
-| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
-| image | No | There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
-| instanceType | No | Enter a valid instance type. |
-| loadBalancerBackendAddressPoolsArray | No | Enter an array of pools where BIG-IP instance is to be added. |
-| mgmtNsgId | No | The resource ID of a network security group to apply to the management network interface. |
-| mgmtPublicIpId | No | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. |
-| mgmtSelfIp | No | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. |
-| mgmtSubnetId | Yes | The resource ID of the management subnet. |
-| nic1NsgId | No | The optional resource ID of a network security group to apply to the first non-management network interface.|
-| nic1PrimaryPublicId | No | The resource ID of the public IP address to apply to the primary IP configuration on the first non-management network interface. |
-| nic1SelfIp | No | The private IP address to apply to the primary IP configuration on the first non-management network interface. The address must reside in the subnet provided in the nic1SubnetId parameter. |
-| nic1ServiceIPs | No | An array of one or more public/private IP address pairs to apply to the secondary external IP configurations on the first non-management network interface. The private addresses must reside in the subnet provided in the same subnet as the network interface, if deploying with 2 or more network interfaces. When deploying a 1 NIC BIG-IP VE, these IP configurations will be created on the management network interface, and the addresses must reside in the subnet provided in the mgmtSubnetId parameter. For example, this value will create one public/private and one private IP configuration on NIC1: ```[{"publicIpId":"/subscriptions/<subscriptionId>/resourceGroups/<resource group name>/providers/Microsoft.Network/publicIPAddresses/<public ip name>","privateIpAddress":"10.0.1.10"},{"privateIpAddress":"10.0.1.11"}]``` |
-| nic1SubnetId | No | The resource ID of the subnet to apply to the first non-management network interface. |
-| nic2NsgId | No | The optional resource ID of a network security group to apply to the second non-management network interface. |
-| nic2PrimaryPublicId | No | The resource ID of the public IP address to apply to the primary IP configuration on the second non-management network interface. |
-| nic2SelfIp | No | The private IP address to apply to the primary IP configuration on the second non-management network interface. The address must reside in the subnet provided in the nic2SubnetId parameter. |
-| nic2ServiceIPs | No | An array of one or more public/private IP address pairs to apply to the secondary external IP configurations on the first non-management network interface. The private addresses must reside in the subnet provided in the same subnet as the network interface, if deploying with 2 or more network interfaces. When deploying a 1 NIC BIG-IP VE, these IP configurations will be created on the management network interface, and the addresses must reside in the subnet provided in the mgmtSubnetId parameter. For example, this value will create one public/private and one private IP configuration on NIC2: ```[{"publicIpId":"/subscriptions/<subscriptionId>/resourceGroups/<resource group name>/providers/Microsoft.Network/publicIPAddresses/<public ip name>","privateIpAddress":"10.0.2.10"},{"privateIpAddress":"10.0.2.11"}]```|
-| nic2SubnetId | No | The resource ID of the internal subnet to apply to the second non-management network interface. |
-| roleDefinitionId | No | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
-| sshKey | Yes | Supply the SSH public key you want to use to connect to the BIG-IP. |
-| tagValues | No | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
-| uniqueString | Yes | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
-| useAvailabilityZones | No | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set false. If the region does not support availability zones, the input should be set to false. |
-| userAssignManagedIdentity | No | Enter user assigned management identity Id to be associated to VM. Leave default if not used. |
-| vmName | No | Name to use for Virtual Machine. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details.
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| adminUsername | No | "azureuser" | string | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
+| bigIpPeerAddr | No |  | string | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
+| bigIpRuntimeInitConfig | Yes |  | string | URL to bigip-runtime-init configuration file or json string to use for configuration file. |
+| bigIpRuntimeInitPackageUrl | No | "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run" | string | Supply a URL to the bigip-runtime-init package. |
+| cfeStorageAccountName | No |  | string | CFE storage account created and used for cloud-failover-extension. |
+| cfeTag | No |  | string | Cloud Failover deployment tag value. |
+| image | No | "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000" | string | There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
+| instanceType | No | "Standard_D8_v3" | string | Enter a valid instance type. |
+| mgmtNsgId | No |  | string | The resource ID of a network security group to apply to the management network interface. |
+| mgmtPublicIpId | No |  | string | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. |
+| mgmtSelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. |
+| mgmtSubnetId | Yes |  | string | The resource ID of the management subnet. |
+| nic1NsgId | No |  | string | The optional resource ID of a network security group to apply to the first non-management network interface.|
+| nic1PrimaryPublicId | No |  | string | The resource ID of the public IP address to apply to the primary IP configuration on the first non-management network interface. |
+| nic1SelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the first non-management network interface. The address must reside in the subnet provided in the nic1SubnetId parameter. |
+| nic1ServiceIPs | No |  | array | An array of one or more public/private IP address pairs to apply to the secondary external IP configurations on the first non-management network interface. The private addresses must reside in the subnet provided in the same subnet as the network interface, if deploying with 2 or more network interfaces. When deploying a 1 NIC BIG-IP VE, these IP configurations will be created on the management network interface, and the addresses must reside in the subnet provided in the mgmtSubnetId parameter. For example, this value will create one public/private and one private IP configuration on NIC1: ```[{"publicIpId":"/subscriptions/<subscriptionId>/resourceGroups/<resource group name>/providers/Microsoft.Network/publicIPAddresses/<public ip name>","privateIpAddress":"10.0.1.10"},{"privateIpAddress":"10.0.1.11"}]``` |
+| nic1SubnetId | No |  | string | The resource ID of the subnet to apply to the first non-management network interface. |
+| nic2NsgId | No |  | string | The optional resource ID of a network security group to apply to the second non-management network interface. |
+| nic2PrimaryPublicId | No |  | string | The resource ID of the public IP address to apply to the primary IP configuration on the second non-management network interface. |
+| nic2SelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the second non-management network interface. The address must reside in the subnet provided in the nic2SubnetId parameter. |
+| nic2ServiceIPs | No |  | array | An array of one or more public/private IP address pairs to apply to the secondary external IP configurations on the first non-management network interface. The private addresses must reside in the subnet provided in the same subnet as the network interface, if deploying with 2 or more network interfaces. When deploying a 1 NIC BIG-IP VE, these IP configurations will be created on the management network interface, and the addresses must reside in the subnet provided in the mgmtSubnetId parameter. For example, this value will create one public/private and one private IP configuration on NIC2: ```[{"publicIpId":"/subscriptions/<subscriptionId>/resourceGroups/<resource group name>/providers/Microsoft.Network/publicIPAddresses/<public ip name>","privateIpAddress":"10.0.2.10"},{"privateIpAddress":"10.0.2.11"}]```|
+| nic2SubnetId | No |  | string | The resource ID of the internal subnet to apply to the second non-management network interface. |
+| roleDefinitionId | No |  | string | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
+| sshKey | Yes |  | string | Supply the SSH public key you want to use to connect to the BIG-IP. |
+| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
+| uniqueString | Yes |  | string | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
+| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set false. If the region does not support availability zones, the input should be set to false. |
+| userAssignManagedIdentity | No |  | string | Enter user-assigned management identity Id to be associated to VM. Leave default if not used. |
+| vmName | No | "bigip-vm" | string | Name to use for Virtual Machine. |
+| workspaceId | No | "WORKSPACE_ID" | string | Log Analytics workspace ID used by Telemetry Streaming for sending logs. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| roleAssignmentId | Role Assignment resource ID | Role Definition | string |
-| selfIp0 | Private IP addresses | Network Interface | string |
-| selfIp1 | Private IP addresses | Network Interface | string |
-| selfIp2 | Private IP addresses | Network Interface | string |
-| selfIp3 | Private IP addresses | Network Interface | string |
-| vmId | Virtual Machine resource ID | Virtual Machine | string |
+| roleAssignmentId | Role Definition | string | Role Assignment resource ID |
+| selfIp0 | Network Interface | string | Private IP addresses |
+| selfIp1 | Network Interface | string | Private IP addresses |
+| selfIp2 | Network Interface | string | Private IP addresses |
+| selfIp3 | Network Interface | string | Private IP addresses |
+| vmId | Virtual Machine | string | Virtual Machine resource ID |
 
 
 ## Example Configurations

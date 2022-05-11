@@ -4,6 +4,7 @@
 #  replayEnabled = false
 #  replayTimeout = 0
 
+SRC_IP=$(curl ifconfig.me)/32
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
 
 # download and use --template-file because --template-uri is limiting
@@ -87,9 +88,9 @@ RUNTIME_CONFIG_URL_01=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>01.yaml
 RUNTIME_CONFIG_URL_02=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>02.yaml
 
 if [[ <USE DEFAULT PARAMETERS> == 'Yes' ]]; then
-    DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"}}'
+    DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"}}'
 else
-    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIp":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"restrictedSrcAddressMgmt":{"value":"<RESTRICTED SRC ADDRESS>"},"restrictedSrcAddressApp":{"value":"<RESTRICTED SRC ADDRESS APP>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"provisionServicePublicIp":{"value":<PROVISION APP>},"bigIpMgmtSubnetId":{"value":"'"${MGMT_SUBNET_ID}"'"},"bigIpExternalSubnetId":{"value":"'"${EXT_SUBNET_ID}"'"},"bigIpInternalSubnetId":{"value":"'"${INT_SUBNET_ID}"'"},"bigIpExternalSelfAddress01":{"value":"<SELF EXT 1>"},"bigIpExternalSelfAddress02":{"value":"<SELF EXT 2>"},"bigIpInternalSelfAddress01":{"value":"<SELF INT 1>"},"bigIpInternalSelfAddress02":{"value":"<SELF INT 2>"},"bigIpMgmtSelfAddress01":{"value":"<SELF MGMT 1>"},"bigIpMgmtSelfAddress02":{"value":"<SELF MGMT 2>"},"servicePrivateIpAddress":{"value":"<EXT VIP ADDRESS>"},"cfeStorageAccountName":{"value":"<RESOURCE GROUP>"},"cfeTag":{"value":"<CFE TAG>"},"bigIpRuntimeInitConfig01":{"value":"'"${RUNTIME_CONFIG_URL_01}"'"},"bigIpRuntimeInitConfig02":{"value":"'"${RUNTIME_CONFIG_URL_02}"'"}}'
+    DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"provisionServicePublicIp":{"value":<PROVISION APP>},"bigIpMgmtSubnetId":{"value":"'"${MGMT_SUBNET_ID}"'"},"bigIpExternalSubnetId":{"value":"'"${EXT_SUBNET_ID}"'"},"bigIpInternalSubnetId":{"value":"'"${INT_SUBNET_ID}"'"},"bigIpExternalSelfIp01":{"value":"<SELF EXT 1>"},"bigIpExternalSelfIp02":{"value":"<SELF EXT 2>"},"bigIpInternalSelfIp01":{"value":"<SELF INT 1>"},"bigIpInternalSelfIp02":{"value":"<SELF INT 2>"},"bigIpMgmtAddress01":{"value":"<SELF MGMT 1>"},"bigIpMgmtAddress02":{"value":"<SELF MGMT 2>"},"bigIpExternalVip01":{"value":"<EXT VIP ADDRESS>"},"cfeStorageAccountName":{"value":"<RESOURCE GROUP>"},"cfeTag":{"value":"<CFE TAG>"},"bigIpRuntimeInitConfig01":{"value":"'"${RUNTIME_CONFIG_URL_01}"'"},"bigIpRuntimeInitConfig02":{"value":"'"${RUNTIME_CONFIG_URL_02}"'"}}'
 fi
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json

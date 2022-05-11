@@ -10,19 +10,15 @@ runtime_parameters:
       environment: azure
       field: name
   - name: UNIQUE_STRING
-    type: url
-    value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
-    query: "[?name=='uniqueString'].value|[0]"
-    headers:
-      - name: Metadata
-        value: true
+    type: tag
+    tagProvider:
+      environment: azure
+      key: uniqueString
   - name: WORKSPACE_ID
-    type: url
-    value: 'http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2020-09-01'
-    query: "[?name=='workspaceId'].value|[0]"
-    headers:
-      - name: Metadata
-        value: true
+    type: tag
+    tagProvider:
+      environment: azure
+      key: workspaceId
   - name: BIGIQ_PASSWORD
     type: secret
     secretProvider:
@@ -41,14 +37,14 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.27.0
-      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
+      extensionVersion: 1.28.0
+      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
     - extensionType: as3
-      extensionVersion: 3.34.0
-      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
+      extensionVersion: 3.36.0
+      extensionHash: f7d88910535b97e024b7208b521c9f1a802d39176dc0f81da0ed166abc1617e0
     - extensionType: ts
-      extensionVersion: 1.26.0
-      extensionHash: 128ec4fb6fd93e4dd7f43520a58f4810a9e20d45b60e7098a3c65ee960964bfa
+      extensionVersion: 1.28.0
+      extensionHash: c3dc9cd67ef89815c58da4a148080744ef7b4337e53d67f00a46c8b591fb8187
 extension_services:
   service_operations:
     - extensionType: do

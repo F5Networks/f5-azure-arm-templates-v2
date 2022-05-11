@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "2.0.0.0",
+  "contentVersion": "2.1.0.0",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -23,9 +23,9 @@
       "type": "string"
     },
     "bigIpImage": {
-      "defaultValue": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000",
+      "defaultValue": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000",
       "metadata": {
-        "description": "2 formats accepted. URN of the image to use in Azure marketplace or id of custom image. Example URN value: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.000000. You can find the URNs of F5 marketplace images in the README for this template or by running the command: az vm image list --output yaml --publisher f5-networks --all. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image."
+        "description": "2 formats accepted. URN of the image to use in Azure marketplace or id of custom image. Example URN value: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.201000. You can find the URNs of F5 marketplace images in the README for this template or by running the command: az vm image list --output yaml --publisher f5-networks --all. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image."
       },
       "type": "string"
     },
@@ -69,8 +69,8 @@
       },
       "type": "bool"
     },
-    "provisionPublicIp": {
-      "defaultValue": false,
+    "provisionPublicIpMgmt": {
+      "defaultValue": true,
       "metadata": {
         "description": "Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s)."
       },
@@ -94,42 +94,49 @@
       },
       "type": "string"
     },
-    "bigIpExternalSelfAddress01": {
+    "bigIpExternalSelfIp01": {
       "defaultValue": "10.0.1.11",
       "metadata": {
         "description": "External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpExternalSelfAddress02": {
+    "bigIpExternalSelfIp02": {
       "defaultValue": "10.0.1.12",
       "metadata": {
         "description": "External Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpInternalSelfAddress01": {
+    "bigIpExternalVip01": {
+      "defaultValue": "10.0.1.101",
+      "metadata": {
+        "description": "External private VIP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. The address must reside in the same subnet and address space as the IP address provided for bigIpExternalSelfIp01."
+      },
+      "type": "string"
+    },
+    "bigIpInternalSelfIp01": {
       "defaultValue": "10.0.2.11",
       "metadata": {
         "description": "Internal Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpInternalSelfAddress02": {
+    "bigIpInternalSelfIp02": {
       "defaultValue": "10.0.2.12",
       "metadata": {
         "description": "Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpMgmtSelfAddress01": {
+    "bigIpMgmtAddress01": {
       "defaultValue": "10.0.0.11",
       "metadata": {
         "description": "Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x."
       },
       "type": "string"
     },
-    "bigIpMgmtSelfAddress02": {
+    "bigIpMgmtAddress02": {
       "defaultValue": "10.0.0.12",
       "metadata": {
         "description": "Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x."
@@ -137,14 +144,14 @@
       "type": "string"
     },
     "bigIpRuntimeInitConfig01": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
       "type": "string"
     },
     "bigIpRuntimeInitConfig02": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
@@ -199,11 +206,11 @@
     "numSubnets": "[if(parameters('provisionExampleApp'), 4, 3)]",
     "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
     "vnetAddressPrefix": "10.0",
-    "builtInRoleType": "Contributor",
-    "customRoleAssignableScopes": [],
-    "customRoleDescription": "",
-    "customRoleName": "",
+    "solutionType": "failover",
+    "customAssignableScopes": [],
     "customRolePermissions": [],
+    "roleDescription": "Role created by failover deployment",
+    "roleName": "[concat(variables('uniqueString'), '-custom-role')]",
     "keyVaultPermissionsKeys": [
       "list",
       "get"
@@ -271,7 +278,6 @@
     "appInstanceName": "[variables('uniqueString')]",
     "appInstanceType": "Standard_D2s_v3",
     "cloudInitUrl": "",
-    "nic1ServiceIP1": "10.0.1.101",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm01')]",
     "vmName02": "[concat(variables('uniqueString'), '-bigip-vm02')]"
   },
@@ -297,7 +303,7 @@
             "value": "[variables('vnetAddressPrefix')]"
           },
           "createNatGateway": {
-            "value": "[not(parameters('provisionPublicIp'))]"
+            "value": "[not(parameters('provisionPublicIpMgmt'))]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -316,17 +322,17 @@
           "contentVersion": "[variables('contentVersion')]"
         },
         "parameters": {
-          "builtInRoleType": {
-            "value": "[variables('builtInRoleType')]"
+          "solutionType": {
+            "value": "[variables('solutionType')]"
           },
-          "customRoleAssignableScopes": {
-            "value": "[variables('customRoleAssignableScopes')]"
+          "customAssignableScopes": {
+            "value": "[variables('customAssignableScopes')]"
           },
-          "customRoleDescription": {
-            "value": "[variables('customRoleDescription')]"
+          "roleDescription": {
+            "value": "[variables('roleDescription')]"
           },
-          "customRoleName": {
-            "value": "[variables('customRoleName')]"
+          "roleName": {
+            "value": "[variables('roleName')]"
           },
           "customRolePermissions": {
             "value": "[variables('customRolePermissions')]"
@@ -391,7 +397,7 @@
             "value": "[if(parameters('provisionExampleApp'), 3, 2)]"
           },
           "numberPublicMgmtIpAddresses": {
-            "value": "[if(parameters('provisionPublicIp'), 2, 1)]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), 2, 1)]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -451,7 +457,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "condition": "[not(parameters('provisionPublicIp'))]",
+      "condition": "[not(parameters('provisionPublicIpMgmt'))]",
       "name": "bastionTemplate",
       "dependsOn": [
         "networkTemplate",
@@ -535,10 +541,10 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "mgmtPublicIpId": {
-            "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), reference('dagTemplate').outputs.mgmtIpIds.value[0], '')]"
           },
           "mgmtSelfIp": {
-            "value": "[parameters('bigIpMgmtSelfAddress01')]"
+            "value": "[parameters('bigIpMgmtAddress01')]"
           },
           "nic1SubnetId": {
             "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
@@ -550,7 +556,7 @@
             "value": "[reference('dagTemplate').outputs.externalIpIds.value[0]]"
           },
           "nic1SelfIp": {
-            "value": "[parameters('bigIpExternalSelfAddress01')]"
+            "value": "[parameters('bigIpExternalSelfIp01')]"
           },
           "nic1ServiceIPs": {
             "value": []
@@ -565,7 +571,7 @@
             "value": ""
           },
           "nic2SelfIp": {
-            "value": "[parameters('bigIpInternalSelfAddress01')]"
+            "value": "[parameters('bigIpInternalSelfIp01')]"
           },
           "nic2ServiceIPs": {
             "value": []
@@ -641,10 +647,10 @@
             "value": "[reference('dagTemplate').outputs.nsg0Id.value]"
           },
           "mgmtPublicIpId": {
-            "value": "[if(parameters('provisionPublicIp'), reference('dagTemplate').outputs.mgmtIpIds.value[1], '')]"
+            "value": "[if(parameters('provisionPublicIpMgmt'), reference('dagTemplate').outputs.mgmtIpIds.value[1], '')]"
           },
           "mgmtSelfIp": {
-            "value": "[parameters('bigIpMgmtSelfAddress02')]"
+            "value": "[parameters('bigIpMgmtAddress02')]"
           },
           "nic1SubnetId": {
             "value": "[reference('networkTemplate').outputs.subnets.value[1]]"
@@ -656,13 +662,13 @@
             "value": "[reference('dagTemplate').outputs.externalIpIds.value[1]]"
           },
           "nic1SelfIp": {
-            "value": "[parameters('bigIpExternalSelfAddress02')]"
+            "value": "[parameters('bigIpExternalSelfIp02')]"
           },
           "nic1ServiceIPs": {
             "value": [
               {
                 "publicIpId": "[if(parameters('provisionExampleApp'), reference('dagTemplate').outputs.externalIpIds.value[2], '')]",
-                "privateIpAddress": "[variables('nic1ServiceIP1')]"
+                "privateIpAddress": "[parameters('bigIpExternalVip01')]"
               }
             ]
           },
@@ -676,7 +682,7 @@
             "value": ""
           },
           "nic2SelfIp": {
-            "value": "[parameters('bigIpInternalSelfAddress02')]"
+            "value": "[parameters('bigIpInternalSelfIp02')]"
           },
           "nic2ServiceIPs": {
             "value": []
@@ -718,7 +724,7 @@
       "value": "[reference('networkTemplate').outputs.virtualNetwork.value]"
     },
     "bastionPublicIp": {
-      "condition": "[not(parameters('provisionPublicIp'))]",
+      "condition": "[not(parameters('provisionPublicIpMgmt'))]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
     },
@@ -731,40 +737,40 @@
       "value": "[reference('bigIpTemplate02').outputs.vmId.value]"
     },
     "bigIpInstance01ManagementPublicIp": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.mgmtIps.value[0]]"
     },
     "bigIpInstance02ManagementPublicIp": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[reference('dagTemplate').outputs.mgmtIps.value[1]]"
     },
     "bigIpInstance01ManagementPrivateIp": {
       "type": "string",
-      "value": "[parameters('bigIpMgmtSelfAddress01')]"
+      "value": "[parameters('bigIpMgmtAddress01')]"
     },
     "bigIpInstance02ManagementPrivateIp": {
       "type": "string",
-      "value": "[parameters('bigIpMgmtSelfAddress02')]"
+      "value": "[parameters('bigIpMgmtAddress02')]"
     },
     "bigIpInstance01ManagementPublicUrl": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[concat('https://', reference('dagTemplate').outputs.mgmtIps.value[0], ':443/')]"
     },
     "bigIpInstance02ManagementPublicUrl": {
-      "condition": "[parameters('provisionPublicIp')]",
+      "condition": "[parameters('provisionPublicIpMgmt')]",
       "type": "string",
       "value": "[concat('https://', reference('dagTemplate').outputs.mgmtIps.value[1], ':443/')]"
     },
     "bigIpInstance01ManagementPrivateUrl": {
       "type": "string",
-      "value": "[concat('https://', parameters('bigIpMgmtSelfAddress01'), ':443/')]"
+      "value": "[concat('https://', parameters('bigIpMgmtAddress01'), ':443/')]"
     },
     "bigIpInstance02ManagementPrivateUrl": {
       "type": "string",
-      "value": "[concat('https://', parameters('bigIpMgmtSelfAddress02'), ':443/')]"
+      "value": "[concat('https://', parameters('bigIpMgmtAddress02'), ':443/')]"
     },
     "wafPublicIps": {
       "condition": "[parameters('provisionExampleApp')]",
@@ -773,7 +779,7 @@
     },
     "vip1PrivateIp": {
       "type": "string",
-      "value": "[variables('nic1ServiceIP1')]"
+      "value": "[parameters('bigIpExternalVip01')]"
     },
     "vip1PublicIp": {
       "condition": "[parameters('provisionExampleApp')]",
@@ -782,7 +788,7 @@
     },
     "vip1PrivateUrlHttp": {
       "type": "string",
-      "value": "[concat('http://', variables('nic1ServiceIP1'), '/')]"
+      "value": "[concat('http://', parameters('bigIpExternalVip01'), '/')]"
     },
     "vip1PublicUrlHttp": {
       "condition": "[parameters('provisionExampleApp')]",
@@ -791,7 +797,7 @@
     },
     "vip1PrivateUrlHttps": {
       "type": "string",
-      "value": "[concat('https://', variables('nic1ServiceIP1'), '/')]"
+      "value": "[concat('https://', parameters('bigIpExternalVip01'), '/')]"
     },
     "vip1PublicUrlHttps": {
       "condition": "[parameters('provisionExampleApp')]",

@@ -11,36 +11,26 @@ TEMPLATE_FILE=${TMP_DIR}/<RESOURCE GROUP>.json
 curl -k <TEMPLATE URL> -o ${TEMPLATE_FILE}
 echo "TEMPLATE URI: <TEMPLATE URL>"
 
-TEMP_VAR="<BUILT IN ROLE TYPE>"
-if [[ $TEMP_VAR =~ "BUILT IN ROLE TYPE" || -z $TEMP_VAR ]]; then
-    BUILT_INT_ROLE_TYPE='"builtInRoleType":{"value":"Reader"}'
+TEMP_VAR="<SOLUTION TYPE>"
+if [[ $TEMP_VAR =~ "SOLUTION TYPE" || -z $TEMP_VAR ]]; then
+    SOLUTION_TYPE='"solutionType":{"value":"standard"}'
 else
-    BUILT_INT_ROLE_TYPE='"builtInRoleType":{"value":"<BUILT IN ROLE TYPE>"}'
+    SOLUTION_TYPE='"solutionType":{"value":"<SOLUTION TYPE>"}'
 fi
 
-TEMP_VAR="<CUSTOM ROLE NAME>"
-if [[ $TEMP_VAR =~ "CUSTOM ROLE NAME" || -z $TEMP_VAR ]]; then
-   CUSTOM_ROLE_NAME=',"customRoleName":{"value":""}'
+TEMP_VAR="<ROLE NAME>"
+if [[ $TEMP_VAR =~ "ROLE NAME" || -z $TEMP_VAR ]]; then
+   ROLE_NAME=',"roleName":{"value":"<DEWPOINT JOB ID>-role-name"}'
 else
-   CUSTOM_ROLE_NAME=',"customRoleName":{"value":"<CUSTOM ROLE NAME>"}'
+   ROLE_NAME=',"roleName":{"value":"<ROLE NAME>"}'
 fi
 
-TEMP_VAR="<CUSTOM ROLE DESCRIPTION>"
-if [[ $TEMP_VAR =~ "CUSTOM ROLE DESCRIPTION" || -z $TEMP_VAR ]]; then
-   CUSTOM_ROLE_DESCRIPTION=',"customRoleDescription":{"value":""}'
+TEMP_VAR="<ROLE DESCRIPTION>"
+if [[ $TEMP_VAR =~ "ROLE DESCRIPTION" || -z $TEMP_VAR ]]; then
+   ROLE_DESCRIPTION=',"roleDescription":{"value":"This role is created as part of dewdrop tests"}'
 else
-   CUSTOM_ROLE_DESCRIPTION=',"customRoleDescription":{"value":"<CUSTOM ROLE DESCRIPTION>"}'
+   ROLE_DESCRIPTION=',"roleDescription":{"value":"<ROLE DESCRIPTION>"}'
 fi
-
-TEMP_VAR="<CUSTOM ROLE PERMISSIONS>"
-if [[ $TEMP_VAR =~ "CUSTOM ROLE PERMISSIONS" || -z $TEMP_VAR ]]; then
-   CUSTOM_ROLE_PERMISSIONS=',"customRolePermissions":{"value":[]}'
-else
-   CUSTOM_ROLE_PERMISSIONS=',"customRolePermissions":{"value":<CUSTOM ROLE PERMISSIONS>}'
-fi
-
-SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
-SECRET_ID_STRING=',"secretId":{"value":"'"$SECRET_ID"'"}'
 
 TEMP_VAR="<USER ASSIGNED IDENT NAME>"
 if [[ $TEMP_VAR =~ "USER ASSIGNED IDENT NAME" || -z $TEMP_VAR ]]; then
@@ -49,14 +39,24 @@ else
    USER_ASSIGNED_IDENT_NAME=',"userAssignedIdentityName":{"value":"<USER ASSIGNED IDENT NAME>"}'
 fi
 
-TEMP_VAR="<CUSTOM ROLE SCOPE>"
-if [[ $TEMP_VAR =~ "CUSTOM ROLE SCOPE" || -z $TEMP_VAR ]]; then
-   CUSTOM_ROLE_SCOPE=',"customRoleAssignableScopes":{"value":[]}'
+TEMP_VAR="<ROLE PERMISSIONS>"
+if [[ $TEMP_VAR =~ "ROLE PERMISSIONS" || -z $TEMP_VAR ]]; then
+   CUSTOM_ROLE_PERMISSIONS=',"customRolePermissions":{"value":[]}'
 else
-   CUSTOM_ROLE_SCOPE=',"customRoleAssignableScopes":{"value":["<CUSTOM ROLE SCOPE>"]}'
+   CUSTOM_ROLE_PERMISSIONS=',"customRolePermissions":{"value":<ROLE PERMISSIONS>}'
 fi
 
-DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${BUILT_INT_ROLE_TYPE}${CUSTOM_ROLE_NAME}${CUSTOM_ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${CUSTOM_ROLE_SCOPE}'}}'
+TEMP_VAR="<ROLE SCOPE>"
+if [[ $TEMP_VAR =~ "ROLE SCOPE" || -z $TEMP_VAR ]]; then
+   ROLE_SCOPE=',"customAssignableScopes":{"value":[]}'
+else
+   ROLE_SCOPE=',"customAssignableScopes":{"value":["<ROLE SCOPE>"]}'
+fi
+
+SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
+SECRET_ID_STRING=',"secretId":{"value":"'"$SECRET_ID"'"}'
+
+DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${SOLUTION_TYPE}${ROLE_NAME}${ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${ROLE_SCOPE}'}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

@@ -81,17 +81,13 @@ if [[ "<SERVICE IPS NIC2>" != "[]" ]]; then
 fi
 
 # identity section
+ASSIGNMANAGEDIDENTITY=""
 ROLEDEFINITIONID=""
-if [[ "<USER ASSIGN MANAGED IDENTITY>" == "Yes" ]]; then
-    ASSIGNMANAGEDIDENTITY="\"userAssignManagedIdentity\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.userAssignedIdentityId.value)\"},"
-elif [[ "<USER ASSIGN MANAGED IDENTITY>" == "No" ]]; then
-    ASSIGNMANAGEDIDENTITY=""
+TEMP_VAR="<USER ASSIGNED IDENT NAME>"
+if [[ $TEMP_VAR =~ "USER ASSIGNED IDENT NAME" || -z $TEMP_VAR ]]; then
+   ROLEDEFINITIONID="\"roleDefinitionId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq -r .properties.outputs.roleDefinitionId.value)\"},"
 else
-    ASSIGNMANAGEDIDENTITY="\"userAssignManagedIdentity\":{\"value\":\"<USER ASSIGN MANAGED IDENTITY>\"},"
-fi
-
-if [[ "<USE ROLE DEFINITION ID>" == "Yes" ]]; then
-    ROLEDEFINITIONID="\"roleDefinitionId\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq -r .properties.outputs.builtInRoleId.value)\"},"
+   ASSIGNMANAGEDIDENTITY="\"userAssignManagedIdentity\":{\"value\":\"$(az deployment group show -n <RESOURCE GROUP>-access-env -g <RESOURCE GROUP> | jq  -r .properties.outputs.userAssignedIdentityId.value)\"},"
 fi
 
 # parameters section

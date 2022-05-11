@@ -1,38 +1,41 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "2.0.0.0",
+  "contentVersion": "2.1.0.0",
   "parameters": {
     "artifactLocation": {
-      "value": "f5-azure-arm-templates-v2/v2.0.0.0/examples/"
+      "value": "f5-azure-arm-templates-v2/v2.1.0.0/examples/"
     },
-    "bigIpExternalSelfAddress01": {
+    "bigIpExternalSelfIp01": {
       "value": "10.0.1.11"
     },
-    "bigIpExternalSelfAddress02": {
+    "bigIpExternalSelfIp02": {
       "value": "10.0.1.12"
     },
     "bigIpExternalSubnetId": {
       "value": ""
     },
+    "bigIpExternalVip01": {
+      "value": "10.0.1.101"
+    },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.000000"
+      "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:16.1.201000"
     },
     "bigIpInstanceType": {
       "value": "Standard_D8_v3"
     },
-    "bigIpInternalSelfAddress01": {
+    "bigIpInternalSelfIp01": {
       "value": "10.0.2.11"
     },
-    "bigIpInternalSelfAddress02": {
+    "bigIpInternalSelfIp02": {
       "value": "10.0.2.12"
     },
     "bigIpInternalSubnetId": {
       "value": ""
     },
-    "bigIpMgmtSelfAddress01": {
+    "bigIpMgmtAddress01": {
       "value": "10.0.0.11"
     },
-    "bigIpMgmtSelfAddress02": {
+    "bigIpMgmtAddress02": {
       "value": "10.0.0.12"
     },
     "bigIpMgmtSubnetId": {
@@ -45,10 +48,10 @@
       "value": "10.0.1.11"
     },
     "bigIpRuntimeInitConfig01": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
     },
     "bigIpRuntimeInitConfig02": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
       "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"
@@ -59,7 +62,7 @@
     "cfeTag": {
       "value": "bigip_high_availability_solution"
     },
-    "provisionPublicIp": {
+    "provisionPublicIpMgmt": {
       "value": false
     },
     "provisionServicePublicIp": {
@@ -69,9 +72,6 @@
       "value": ""
     },
     "restrictedSrcAddressMgmt": {
-      "value": ""
-    },
-    "servicePrivateIpAddress": {
       "value": ""
     },
     "sshKey": {
