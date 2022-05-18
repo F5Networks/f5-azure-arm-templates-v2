@@ -19,14 +19,14 @@ case <PROVISION PUBLIC IP> in
     IP1=$(az vmss nic list -g <RESOURCE GROUP> --vmss-name <RESOURCE GROUP>-bigip-vmss | jq -r .[0].ipConfigurations[0].privateIpAddress)
     echo "IP1: ${IP1}"
 
-    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" azureuser@"${IP1}" "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" admin@"${IP1}" "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
     echo "SSH_RESPONSE: ${SSH_RESPONSE}" ;;
 "True")
     IP1=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vmss | jq -r .[0].ipAddress)
     echo "IP1: ${IP1}"
 
     ssh-keygen -R ${IP1} 2>/dev/null
-    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${IP1} -p $SSH_PORT "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY admin@${IP1} -p $SSH_PORT "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
     echo "SSH_RESPONSE: ${SSH_RESPONSE}" ;;
 *)
     echo "Did not find boolean for provisioning public IP" ;;

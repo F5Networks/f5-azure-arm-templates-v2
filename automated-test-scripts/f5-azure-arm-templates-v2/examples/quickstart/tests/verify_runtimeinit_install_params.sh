@@ -27,14 +27,14 @@ if [[ <PROVISION PUBLIC IP> == False ]]; then
     IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPrivateIp"].value')
     echo "IP: $IP"
     ssh-keygen -R ${BASTION_HOST} 2>/dev/null
-    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" azureuser@"${IP}" "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" admin@"${IP}" "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
 else
     IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPublicIp"].value')
     echo "IP: $IP"
     ssh-keygen -R ${IP} 2>/dev/null
-    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${IP} -p $SSH_PORT "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY admin@${IP} -p $SSH_PORT "bash -c 'cat /config/cloud/telemetry_install_params.tmp'")
 fi
 
-if echo $SSH_RESPONSE  | grep "examples/modules/bigip-standalone/bigip.jso"; then
+if echo $SSH_RESPONSE  | grep "examples/modules/bigip-standalone/bigip.json"; then
     echo "SUCCESS"
 fi
