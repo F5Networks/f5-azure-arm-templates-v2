@@ -4,7 +4,7 @@ APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
 AUTOFILL EVAL LICENSE KEY: ''
 INSTANCE TYPE: Standard_D4_v3
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.201000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000
 LICENSE TYPE: byol
 NIC COUNT: 2
 PROVISION APP: true
