@@ -19,7 +19,7 @@ case <PROVISION PUBLIC IP> in
     IP1=$(az vmss nic list -g <RESOURCE GROUP> --vmss-name <RESOURCE GROUP>-bigip-vmss | jq -r .[0].ipConfigurations[0].privateIpAddress)
     echo "IP1: ${IP1}"
 
-    SSH_RESPONSE_1=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" azureuser@"${IP1}" 'list auth user azureuser')
+    SSH_RESPONSE_1=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" admin@"${IP1}" 'tmsh list auth user admin')
     echo "SSH_RESPONSE_1: ${SSH_RESPONSE_1}"
 
     PASSWORD_RESPONSE_1=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${BASTION_HOST} "curl -skvvu admin:${PASSWORD} --connect-timeout 10 https://${IP1}:${MGMT_PORT}/mgmt/tm/auth/user/admin" | jq -r .description)
@@ -28,7 +28,7 @@ case <PROVISION PUBLIC IP> in
     IP2=$(az vmss nic list -g <RESOURCE GROUP> --vmss-name <RESOURCE GROUP>-bigip-vmss | jq -r .[1].ipConfigurations[0].privateIpAddress)
     echo "IP2: ${IP2}"
 
-    SSH_RESPONSE_2=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" azureuser@"${IP2}" 'list auth user azureuser')
+    SSH_RESPONSE_2=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i $SSH_KEY -W %h:%p azureuser@${BASTION_HOST}" admin@"${IP2}" 'tmsh list auth user admin')
     echo "SSH_RESPONSE_2: ${SSH_RESPONSE_2}"
 
     PASSWORD_RESPONSE_2=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${BASTION_HOST} "curl -skvvu admin:${PASSWORD} --connect-timeout 10 https://${IP2}:${MGMT_PORT}/mgmt/tm/auth/user/admin" | jq -r .description)
@@ -38,7 +38,7 @@ case <PROVISION PUBLIC IP> in
     echo "IP1: ${IP1}"
 
     ssh-keygen -R ${IP1} 2>/dev/null
-    SSH_RESPONSE_1=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${IP1} -p $SSH_PORT 'list auth user azureuser')
+    SSH_RESPONSE_1=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY admin@${IP1} -p $SSH_PORT 'tmsh list auth user admin')
     echo "SSH_RESPONSE_1: ${SSH_RESPONSE_1}"
 
     PASSWORD_RESPONSE_1=$(curl -skvvu admin:${PASSWORD} https://${IP1}:${MGMT_PORT}/mgmt/tm/auth/user/admin | jq -r .description)
@@ -48,7 +48,7 @@ case <PROVISION PUBLIC IP> in
     echo "IP2: ${IP2}"
 
     ssh-keygen -R ${IP2} 2>/dev/null
-    SSH_RESPONSE_2=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY azureuser@${IP2} -p $SSH_PORT 'list auth user azureuser')
+    SSH_RESPONSE_2=$(ssh -o "StrictHostKeyChecking no" -i $SSH_KEY admin@${IP2} -p $SSH_PORT 'tmsh list auth user admin')
     echo "SSH_RESPONSE_2: ${SSH_RESPONSE_2}"
 
     PASSWORD_RESPONSE_2=$(curl -skvvu admin:${PASSWORD} https://${IP2}:${MGMT_PORT}/mgmt/tm/auth/user/admin | jq -r .description)
@@ -57,13 +57,13 @@ case <PROVISION PUBLIC IP> in
     echo "Did not find boolean for provisioning public IP" ;;
 esac
 
-if echo ${SSH_RESPONSE_1} | grep -q "encrypted-password !!" && echo ${PASSWORD_RESPONSE_1} | grep -q "Admin User"; then
+if echo ${SSH_RESPONSE_1} | grep -q "encrypted-password" && echo ${PASSWORD_RESPONSE_1} | grep -q "Admin User"; then
     IP1_LOGIN='Succeeded'
 else
     IP1_LOGIN='Failed'
 fi
 
-if echo ${SSH_RESPONSE_2} | grep -q "encrypted-password !!" && echo ${PASSWORD_RESPONSE_2} | grep -q "Admin User"; then
+if echo ${SSH_RESPONSE_2} | grep -q "encrypted-password" && echo ${PASSWORD_RESPONSE_2} | grep -q "Admin User"; then
     IP2_LOGIN='Succeeded'
 else
     IP2_LOGIN='Failed'
