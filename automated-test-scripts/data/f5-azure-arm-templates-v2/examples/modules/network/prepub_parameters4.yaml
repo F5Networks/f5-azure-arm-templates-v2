@@ -1,8 +1,0 @@
----
-REGION: northcentralus
-RESOURCE GROUP: dd-network-<DEWPOINT JOB ID>
-TEMPLATE URL: file://$PWD/examples/modules/network/network.json
-VIRTUAL NETWORK NAME: dd_vnet_<DEWPOINT JOB ID>
-NUM SUBNETS: 5
-VNET ADDRESS PREFIX: '10.0'
-CREATE NAT GATEWAY: true
