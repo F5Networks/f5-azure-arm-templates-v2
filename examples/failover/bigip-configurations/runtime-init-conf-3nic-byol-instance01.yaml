@@ -51,7 +51,7 @@ extension_services:
           My_License:
             class: License
             licenseType: regKey
-            regKey: REPLACE_WITH_VALID_REGKEY
+            regKey: NLOML-KHHTX-VXYHO-NHDPN-OAYDFDQ
           admin:
             class: User
             userType: regular
