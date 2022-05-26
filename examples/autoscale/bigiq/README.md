@@ -71,15 +71,17 @@ This solution leverages more traditional Autoscale configuration management prac
       az group create -n ${RESOURCE_GROUP} -l ${REGION}
       ```
   - A location to host your custom BIG-IP config (runtime-init.conf) with your Azure Vault, BIG-IQ LM and logging information. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
-  - This solution requires an Azure Key Vault and secret containing the intended password the password used to obtain a license from BIG-IQ, provided in the format https://myVaultName.vault.azure.net/secrets/mySecretId. 
+  - This solution requires an Azure Key Vault and secret containing the password to access the BIG-IQ License Manager provided in the format https://yourvaultname.vault.azure.net/secrets/yoursecretid or https://yourvaultname.vault.azure.net/secrets/yoursecretid/yoursecretversion. 
 
     For example, to create the secret using the Azure CLI:
       ```bash
-      az keyvault create --name ${YOUR_VAULT_NAME} --resource-group ${YOUR_RESOURCE_GROUP} --location ${YOUR_REGION}
-      az keyvault secret set --vault-name ${YOUR_VAULT_NAME} --name ${YOUR_SECRET_ID} --value "${YOUR_BIGIP_PASSWORD}"
+      az keyvault create --name [YOUR_VAULT_NAME] --resource-group [YOUR_RESOURCE_GROUP] --location [YOUR_REGION]
+    az keyvault secret set --vault-name [YOUR_VAULT_NAME] --name [YOUR_SECRET_ID] --value "[YOUR_BIGIQ_PASSWORD]"
       ```
       - *NOTE:*
-        - By default, the example vault name used is `myVaultName` and secret name used is `mySecretId`. However, vault names are global in Azure and you will always need to customize this value by updating the Runtime-Init Configs and `bigSecretIdIpPassword` template input parameter to match your secret. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+        - Vault names in Azure are DNS based and hence globally unique.
+        - The Vault can be in a different resource group than the BIG-IP resource group.
+        - The user or service principal deploying the template must have `Key Vault Contributor` role in order for the Access template to create an Access Policy for the secret. For more information, see Azure [Docs](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#azure-built-in-roles-for-key-vault-data-plane-operations)
   - This solution requires an [SSH key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) for access to the BIG-IP instances. For more information about creating a key pair for use in Azure, see Azure SSH key [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys).
   - This solution requires you to accept any Azure Marketplace "License/Terms and Conditions" for the images used in this solution.
     - By default, this solution uses [F5 BIG-IP VE – ALL (BYOL, 2 Boot Locations)](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/f5-networks.f5-big-ip-byol?tab=PlansAndPrice)
@@ -167,7 +169,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | provisionPublicIp | No | true | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes |  | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **Important**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | restrictedSrcAddressApp | Yes |  | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
-| secretId | Yes |  | string | Enter the full URI of an existing secret, which should contain the password to the BIG-IQ. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
+| secretId | Yes |  | string | The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
 | sshKey | Yes |  | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
 | tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | https://cdn.f5.com/product/cloudsolutions/ | string | The publicly accessible URL where the linked ARM templates are located. |
@@ -219,7 +221,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | provisionInternalBigIpLoadBalancer | No | false | boolean | Select true if you would like to provision an internal Azure load balancer. |
 | provisionPublicIp | No | true | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes |  | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **Important**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet.|
-| secretId | Yes |  | string | Enter the full URI of an existing secret, which should contain the password to the BIG-IQ. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
+| secretId | Yes |  | string | The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
 | sshKey | Yes | | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
 | bigIpSubnetId | Yes |  | string | Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed. |
 | internalSubnetId | No |  | string | Supply the Azure resource ID of the subnet where the internal load balancer will be deployed. Leave empty if not deploying an internal load balancer. |

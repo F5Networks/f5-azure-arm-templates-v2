@@ -12,7 +12,7 @@
       "value": ""
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.4/dist/f5-bigip-runtime-init-1.4.4-1.gz.run"
     },
     "cpuMetricName": {
       "value": "Percentage CPU"
@@ -79,6 +79,9 @@
     },
     "scaleOutTimeWindow": {
       "value": 10
+    },
+    "secretId": {
+      "value": ""
     },
     "sshKey": {
       "value": ""

@@ -54,7 +54,7 @@
       "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.4/dist/f5-bigip-runtime-init-1.4.4-1.gz.run"
     },
     "cfeStorageAccountName": {
       "value": ""

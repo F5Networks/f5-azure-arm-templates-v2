@@ -34,12 +34,6 @@ fi
 /usr/bin/yq e ".controls.logLevel = \"<LOG LEVEL>\"" -i <DEWPOINT JOB ID>01.yaml
 /usr/bin/yq e ".controls.logLevel = \"<LOG LEVEL>\"" -i <DEWPOINT JOB ID>02.yaml
 
-# Runtime parameters
-/usr/bin/yq e ".runtime_parameters.[0].secretProvider.vaultUrl = \"https://<RESOURCE GROUP>fv.vault.azure.net/\"" -i <DEWPOINT JOB ID>01.yaml
-/usr/bin/yq e ".runtime_parameters.[0].secretProvider.vaultUrl = \"https://<RESOURCE GROUP>fv.vault.azure.net/\"" -i <DEWPOINT JOB ID>02.yaml
-/usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"<RESOURCE GROUP>bigiq\"" -i <DEWPOINT JOB ID>01.yaml
-/usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"<RESOURCE GROUP>bigiq\"" -i <DEWPOINT JOB ID>02.yaml
-
 # Disable AutoPhoneHome
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>01.yaml
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>02.yaml
