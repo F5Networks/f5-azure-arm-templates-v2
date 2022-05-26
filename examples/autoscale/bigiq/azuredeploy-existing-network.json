@@ -24,7 +24,7 @@
     },
     "secretId": {
       "metadata": {
-        "description": "REQUIRED - the full URI of the secretId, including KeyVault Name"
+        "description": "REQUIRED - The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid."
       },
       "type": "string"
     },
@@ -75,7 +75,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.4/dist/f5-bigip-runtime-init-1.4.4-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -627,6 +627,9 @@
           },
           "scaleOutTimeWindow": {
             "value": "[variables('scaleOutTimeWindow')]"
+          },
+          "secretId": {
+            "value": "[parameters('secretId')]"
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"

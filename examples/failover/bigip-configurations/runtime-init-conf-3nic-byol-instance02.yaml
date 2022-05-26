@@ -232,13 +232,19 @@ pre_onboard_enabled:
       - /usr/bin/setdb provision.extramb 1000
       - /usr/bin/setdb restjavad.useextramb true
 runtime_parameters:
+  - name: VAULT_URL
+    type: url
+    value: file:///config/cloud/vault_url
+  - name: SECRET_ID
+    type: url
+    value: file:///config/cloud/secret_id
   - name: BIGIP_PASSWORD
     type: secret
     secretProvider:
       type: KeyVault
       environment: azure
-      vaultUrl: 'https://myVaultName.vault.azure.net'
-      secretId: mySecretId
+      vaultUrl: '{{{VAULT_URL}}}'
+      secretId: '{{{SECRET_ID}}}'
   - name: SELF_IP_EXTERNAL
     type: metadata
     metadataProvider:

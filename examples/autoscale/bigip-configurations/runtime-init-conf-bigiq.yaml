@@ -19,13 +19,19 @@ runtime_parameters:
     tagProvider:
       environment: azure
       key: workspaceId
+  - name: VAULT_URL
+    type: url
+    value: file:///config/cloud/vault_url
+  - name: SECRET_ID
+    type: url
+    value: file:///config/cloud/secret_id
   - name: BIGIQ_PASSWORD
     type: secret
     secretProvider:
       type: KeyVault
       environment: azure
-      vaultUrl: 'https://myVaultName.vault.azure.net'
-      secretId: mySecretId
+      vaultUrl: '{{{VAULT_URL}}}'
+      secretId: '{{{SECRET_ID}}}'
   - name: REGION
     type: url
     value: 'http://169.254.169.254/metadata/instance/compute?api-version=2020-09-01'
