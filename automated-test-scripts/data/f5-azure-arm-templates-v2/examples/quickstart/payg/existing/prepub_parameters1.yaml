@@ -3,8 +3,8 @@ ADMIN USERNAME: azureuser
 APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
 EXT VIP ADDRESS: 10.0.1.101
-INSTANCE TYPE: Standard_D8_v3
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.202000
+INSTANCE TYPE: Standard_D8s_v4
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.202000
 LICENSE TYPE: payg
 NIC COUNT: 2
 PROVISION APP: false

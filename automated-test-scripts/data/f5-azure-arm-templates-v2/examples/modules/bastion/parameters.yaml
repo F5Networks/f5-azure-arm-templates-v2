@@ -9,7 +9,7 @@ DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: None
 INIT SCRIPT PARAMETERS: ''
 INIT SCRIPT URL: ''
-INSTANCE TYPE: Standard_D2s_v4
+INSTANCE TYPE: Standard_D2_v4
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []
 NSG0: '[{"destinationPortRanges": ["22"],"sourceAddressPrefix": "*", "protocol": "Tcp"}]'

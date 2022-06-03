@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion":"2.2.0.0",
+    "contentVersion":"2.3.0.0",
     "parameters":{
         "adminUsername":{
             "defaultValue":"azureuser",
@@ -30,10 +30,7 @@
             "type":"string"
         },
         "instanceType":{
-            "allowedValues":[
-                "Standard_D2s_v3"
-            ],
-            "defaultValue":"Standard_D2s_v3",
+            "defaultValue":"Standard_D2_v4",
             "metadata":{
                 "description":"Enter valid instance type."
             },
