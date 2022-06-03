@@ -5,8 +5,8 @@ SOLUTION TYPE: standard
 CREATE NAT GATEWAY: false
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: None
-IMAGE: f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly-po-f5:16.1.202000
-INSTANCE TYPE: Standard_DS3_v2
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.202000
+INSTANCE TYPE: Standard_D8s_v4
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []
 NSG0: '[{"destinationPortRanges": ["22","443"],"sourceAddressPrefix": "208.85.208.0/22", "protocol": "Tcp"}]'

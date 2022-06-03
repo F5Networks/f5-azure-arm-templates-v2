@@ -56,6 +56,9 @@ cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-<LICENSE TYPE
 /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"blocking\"" -i <DEWPOINT JOB ID>.yaml
 /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
 
+# Disable AutoPhoneHome
+/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
+
 if [[ "<LICENSE TYPE>" == "bigiq" ]]; then
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"${BIGIQ_ADDRESS}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqUsername = \"admin\"" -i <DEWPOINT JOB ID>.yaml

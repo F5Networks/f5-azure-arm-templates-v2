@@ -7,7 +7,7 @@ CREATE NAT GATEWAY: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: None
 IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000
-INSTANCE TYPE: Standard_DS3_v2
+INSTANCE TYPE: Standard_D8s_v4
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []
 NSG0: '[{"destinationPortRanges": ["22","443"],"sourceAddressPrefix": "208.85.208.0/22", "protocol": "Tcp"}]'

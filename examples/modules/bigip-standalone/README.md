@@ -48,7 +48,7 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 | cfeStorageAccountName | No |  | string | CFE storage account created and used for cloud-failover-extension. |
 | cfeTag | No |  | string | Cloud Failover deployment tag value. |
 | image | No | "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000" | string | There are two acceptable formats: Enter the URN of the image to use in Azure marketplace, or enter the ID of the custom image. An example URN value: 'f5-networks:f5-big-ip-byol:f5-big-ltm-2slot-byol:15.1.002000'. You can find the URNs of F5 marketplace images in the README for this template or by running the command: ``az vm image list --output yaml --publisher f5-networks --all``. See [this documentation](https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html) for information on creating a custom BIG-IP image. |
-| instanceType | No | "Standard_D8_v3" | string | Enter a valid instance type. |
+| instanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | mgmtNsgId | No |  | string | The resource ID of a network security group to apply to the management network interface. |
 | mgmtPublicIpId | No |  | string | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. |
 | mgmtSelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. |

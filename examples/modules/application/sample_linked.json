@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "2.2.0.0",
+	"contentVersion": "2.3.0.0",
 	"parameters": {
 		"artifactLocation": {
 			"defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
@@ -40,7 +40,7 @@
 						"value": "vm01"
 					},
 					"instanceType": {
-						"value": "Standard_D2s_v3"
+						"value": "Standard_D2_v4"
 					},
 					"subnetId": {
 						"value": "app-subnet"
@@ -65,7 +65,7 @@
 					}
 				},
 				"templateLink": {
-					"contentVersion": "2.2.0.0",
+					"contentVersion": "2.3.0.0",
 					"uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/application/application.json')]"
 				}
 			},

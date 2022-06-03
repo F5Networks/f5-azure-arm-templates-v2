@@ -46,7 +46,7 @@ This template deploys a simple example application. It launches a linux VM used 
 | cloudInitUrl | No |  | string | URI to cloud-init config. |
 | createAutoscaleGroup | No | true | boolean | Choose true to create the application instances in an autoscaling configuration. |
 | instanceName | No | "vm01" | string | Name of the Virtual Machine. |
-| instanceType | No | "Standard_D2s_v3" | string | Enter valid instance type. |
+| instanceType | No | "Standard_D2_v4" | string | Enter valid instance type. |
 | nsgId | No |  | string | Private NSG ID for the Virtual Machine. |
 | sshKey | Yes |  | string | Supply the SSH public key you want to use to connect to the application instance. |
 | subnetId | Yes |  | string | Private subnet ID for the Virtual Machine. |
