@@ -55,7 +55,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | inboundMgmtNatPoolId | No |  | string | NAT pool ID used for the BIG-IP management GUI connections. Leave as default if you do not want to use natpools or are using public IP. |
 | inboundSshNatPoolId | No |  | string | NAT pool ID used for SSH connections to BIG-IP. Leave as default if you do not want to use natpools or are using public IP. |
 | instanceHealthProbeId | No |  | string | Enter the resource ID of the probe that you wish to use to determine instance health when performing a rolling upgrade of scale set instances. Use the default value if you are using a manual upgrade policy. Note: The probe must be associated with a load balancing rule. |
-| instanceType | No | "Standard_D4_v3" | string | Enter a valid instance type. |
+| instanceType | No | "Standard_D2s_v4" | string | Enter a valid instance type. |
 | loadBalancerBackendAddressPoolsArray | No |  | array | Enter an array of pools where BIG-IP instances are to be added. |
 | maxBatchInstancePercent | No | 20 | integer | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
 | maxUnhealthyInstancePercent | No | 20 | integer | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
@@ -70,6 +70,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | scaleOutCpuThreshold | No | 80 | integer | The percentage of CPU utilization that should trigger a scale out event. This is required when the customAutoscaleRules parameter is not used. |
 | scaleOutThroughputThreshold | No | 20000000 | integer | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. This is required when the customAutoscaleRules parameter is not used. |
 | scaleOutTimeWindow | No | 10 | integer | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). This is required when customAutoscaleRules parameter not used. |
+| secretId | No |  | string | The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. |
 | sshKey | Yes |  | string | Supply the SSH public key you want to use to connect to the BIG-IP. |
 | subnetId | Yes |  | string | Enter the subnet ID to use. |
 | tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
@@ -371,7 +372,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.2.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -413,5 +414,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.2.0.0/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.3.0.0/examples/images/azure-bigip-autoscale-module.png)
 

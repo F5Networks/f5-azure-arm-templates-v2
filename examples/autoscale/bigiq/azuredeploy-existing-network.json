@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "2.2.0.0",
+  "contentVersion": "2.3.0.0",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -24,7 +24,7 @@
     },
     "secretId": {
       "metadata": {
-        "description": "REQUIRED - the full URI of the secretId, including KeyVault Name"
+        "description": "REQUIRED - The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid."
       },
       "type": "string"
     },
@@ -61,21 +61,21 @@
       "type": "string"
     },
     "bigIpInstanceType": {
-      "defaultValue": "Standard_D2s_v3",
+      "defaultValue": "Standard_D2s_v4",
       "metadata": {
         "description": "Enter valid instance type."
       },
       "type": "string"
     },
     "bigIpRuntimeInitConfig": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -627,6 +627,9 @@
           },
           "scaleOutTimeWindow": {
             "value": "[variables('scaleOutTimeWindow')]"
+          },
+          "secretId": {
+            "value": "[parameters('secretId')]"
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"

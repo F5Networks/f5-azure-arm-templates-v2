@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-	"contentVersion": "2.2.0.0",
+	"contentVersion": "2.3.0.0",
 	"parameters": {
 		"vmssId": {
 			"defaultValue": "",
@@ -43,7 +43,7 @@
 		"secretId": {
 			"defaultValue": "",
 			"metadata": {
-				"description": "Enter full URI of existing secret."
+				"description": "The full URL of the secretId, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid."
 			},
 			"type": "string"
 		},
