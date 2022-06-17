@@ -82,7 +82,16 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
-            allowService: default
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
             trafficGroup: traffic-group-local-only
           internal:
             class: VLAN
@@ -95,7 +104,7 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
             vlan: internal
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
     - extensionType: cf
       type: inline
@@ -244,7 +253,16 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
-            allowService: default
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
             trafficGroup: traffic-group-local-only
           internal:
             class: VLAN
@@ -257,7 +275,7 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
             vlan: internal
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync

@@ -275,7 +275,7 @@ Example on one line:
 			"class": "SelfIp",
 			"address": "{{{ SELF_IP_INTERNAL }}}",
 			"vlan": "internal",
-			"allowService": "default",
+			"allowService": "none",
 			"trafficGroup": "traffic-group-local-only"
 		}
 	}
