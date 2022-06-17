@@ -150,7 +150,7 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
             vlan: internal
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
     - extensionType: as3
       type: inline

@@ -39,7 +39,7 @@ else
     echo "SUBNET_ID is "
     echo $SUBNET_ID
 
-    DEPLOY_PARAMS='{"adminUsername":{"value":"azureuser"},"createAutoscaleGroup":{"value":'$CREATE_AUTOSCALE'},"instanceName":{"value":"<RESOURCE GROUP>"},"instanceType":{"value":"Standard_D2s_v3"},"nsgId":{"value":"'"${NSG_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"subnetId":{"value":"'"${SUBNET_ID}"'"},"publicIpId":{"value":"'"${PUBLIC_IP_ID}"'"},"vmScaleSetMaxCount":{"value":1},"vmScaleSetMinCount":{"value":1}}'
+    DEPLOY_PARAMS='{"adminUsername":{"value":"azureuser"},"createAutoscaleGroup":{"value":'$CREATE_AUTOSCALE'},"instanceName":{"value":"<RESOURCE GROUP>"},"instanceType":{"value":"Standard_D2s_v4"},"nsgId":{"value":"'"${NSG_ID}"'"},"sshKey":{"value":"'"${SSH_KEY}"'"},"subnetId":{"value":"'"${SUBNET_ID}"'"},"publicIpId":{"value":"'"${PUBLIC_IP_ID}"'"},"vmScaleSetMaxCount":{"value":1},"vmScaleSetMinCount":{"value":1}}'
 
     DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
