@@ -5,8 +5,6 @@ azure-arm-autoscale-example-payg-test:
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters3.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prepub_parameters4_v14.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/demo_app.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prod_app.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/demo_app_v14.yaml"
