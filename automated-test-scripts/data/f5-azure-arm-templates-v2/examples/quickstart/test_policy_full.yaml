@@ -3,40 +3,26 @@
 azure-arm-quickstart-byol-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 2
   parameters-files:
-    # 3nic
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters.yaml"
-    # 2nic
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters1.yaml"
-    # 1nic
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters2.yaml"
-    # 3nic - prod stack
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters3.yaml"
-    # 2nic - prod stack
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters4.yaml"
-    # 1nic - prod stack
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prepub_parameters5.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_2nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_3nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_2nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_3nic.yaml"
 
 # quickstart payg example test
 azure-arm-quickstart-payg-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 2
   parameters-files:
-    # 3nic
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters.yaml"
-    # 2nic
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters1.yaml"
-    # 1nic
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters2.yaml"
-    # 3nic - prod stack
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters3.yaml"
-    # 2nic - prod stack
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters4.yaml"
-    # 1nic - prod stack
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters5.yaml"
-    # v14 public IP
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters6_v14.yaml"
-    # v14 no public IP
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prepub_parameters7_v14.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_2nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_3nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_2nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_3nic.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_3nic_v14.yaml"
+    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_3nic_v14.yaml"
