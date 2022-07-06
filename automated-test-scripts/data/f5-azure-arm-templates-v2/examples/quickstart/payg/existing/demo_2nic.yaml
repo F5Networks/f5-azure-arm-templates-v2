@@ -2,7 +2,7 @@
 ADMIN USERNAME: azureuser
 APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
-EXT VIP ADDRESS: 10.0.0.101
+EXT VIP ADDRESS: 10.0.1.101
 INSTANCE TYPE: Standard_D4s_v4
 IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.202000
 LICENSE TYPE: payg

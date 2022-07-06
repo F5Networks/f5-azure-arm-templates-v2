@@ -109,6 +109,8 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 - By default, this solution modifies the username **admin** with a password set to value of the Azure Key Vault secret which is provided in the input **bigIpPasswordSecretId** of the parent template.
 
+- When specifying values for the **bigIpInstanceType** parameter, ensure that the instance type you select is appropriate for the deployment scenario. Each instance types allow a fixed number of NICs and Secondary IP addresses. See [Azure Virtual Machine Instance Types](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes) for more information.
+
 - This solution requires Internet access for: 
   1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self-IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package URL and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
   2. Contacting native cloud services for various cloud integrations: 
@@ -368,21 +370,26 @@ F5 has provided the following example configuration files in the `examples/failo
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
 
-- When specifying values for the bigIpInstanceType parameter, ensure that the instance type you select is appropriate for the deployment scenario. See [Azure Virtual Machine Instance Types](https://docs.microsoft.com/en-us/azure/virtual-machines/dv2-dsv2-series) for more information.
 
-However, most changes require modifying the configurations themselves. For example:
+**IMPORTANT**: 
+By default, this solution deploys 3-NIC PAYG BIG-IPs:
+  - The **Full Stack** (azuredeploy.json) references the `runtime-init-conf-3nic-payg-instanceXX-with-app.yaml` BIG-IP config files, which include an example virtual service, and can be used as is. These example configurations do not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
+  - The **Existing Network Stack** (azuredeploy-existing-network.json) references the `runtime-init-conf-3nic-payg-instanceXX.yaml` BIG-IP config files, which only provide basic system onboarding and do not **NOT** include an example virtual service, and can be used as is.
+
+However, most other changes require modifying the configurations themselves. For example:
 
 To deploy **BYOL** instances:
 
+
   1. Edit/modify the Declarative Onboarding (DO) declarations in a corresponding `byol` runtime-init config file with the new `regKey` value. 
 
-Example:
-```yaml
-          My_License:
-            class: License
-            licenseType: regKey
-            regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
-```
+      Example:
+      ```yaml
+                My_License:
+                  class: License
+                  licenseType: regKey
+                  regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
+      ```
   2. Publish/host the customized runtime-init config files at a location reachable by the BIG-IP at deploy time (for example: github, Azure Storage, etc.)
   3. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the new URL of the updated configuration.
   4. Update the **bigIpImage** input parameter to use `byol` image.

@@ -205,7 +205,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpMaxUnhealthyInstancePercent | No | 20 | integer | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
 | bigIpMaxUnhealthyUpgradedInstancePercent | No | 20 | integer | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
 | bigIpPauseTimeBetweenBatches | No | 0 | integer | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
-| bigIpRuntimeInitConfig | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitConfig | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
 | bigIpScalingMaxSize | No | 10 | integer | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
 | bigIpScalingMinSize | No | 1 | integer | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
@@ -315,7 +315,7 @@ Example from azuredeploy.parameters.json
         "value": false
     },
     "bigIpRuntimeInitConfig": {
-        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
+        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
     },
 
 ```
@@ -340,50 +340,43 @@ NOTE: If providing the JSON inline as a template parameter, you must escape all 
  
 F5 has provided the following example configuration files in the `examples/autoscale/bigip-configurations` folder:
 
-- `runtime-init-conf-bigiq.yaml` - This configuration file installs packages for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
-- `runtime-init-conf-payg.yaml` - This inline configuration file installs packages for a PAYG licensed deployment.
 - `runtime-init-conf-bigiq-with-app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
 - `runtime-init-conf-payg-with-app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples. 
  
-By default, this solution deploys the `runtime-init-conf-bigiq-with-app.yaml` configuration. However, this file must be customized with your BIG-IQ information and republished before deploying.
+By default, this solution references the example `runtime-init-conf-bigiq-with-app.yaml` runtime-init config file.
 
-This example configuration does not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, in production, these files are commonly customized further. Some examples of small customizations or modifications are provided below. 
+
+**IMPORTANT**: 
+By default, this solution references the `runtime-init-conf-bigiq-with-app.yaml` example BIG-IP config file.
+  - The **Full Stack** (azuredeploy.json) always **requires** customizing this file with your BIG-IQ Licensing configuration.
+  - The **Existing Network Stack** (azuredeploy-existing-network.json) always **requires** customizing this file (with your BIG-IQ Licensing **AND** Virtual Service configuration pointing at your own application) and republishing before deploying
+
+
+**Example Customization 1:**
 
 To change the BIG-IQ Licensing configuration:
 
   1. Edit/modify the Declarative Onboarding (DO) declaration in the runtime-init config file [runtime-init-conf-bigiq-with-app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `License` values. 
 
-Example:
-```yaml
-          My_License:
-            class: License
-            hypervisor: azure
-            licenseType: <YOUR_LICENSE_TYPE>
-            licensePool: <YOUR_LICENSE_POOL>
-            bigIqHost: <YOUR_BIG_IQ_HOST>
-            bigIqUsername: <YOUR_BIG_IQ_USERNAME>
-            bigIqPassword: '{{{BIGIQ_PASSWORD}}}'
-            tenant: <YOUR_TENANT>
-            skuKeyword1: <YOUR_SKU_KEYWORD>
-            unitOfMeasure: <YOUR_UNIT_OF_MEASURE>
-            reachable: false
-            overwrite: false
-```
-
-  2. Edit/modify the BIG-IQ secret runtime-parameter in the runtime-init config file [runtime-init-conf-bigiq-with-app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with your `secretId` and `vaultUrl` values. 
-
-```yaml
-  - name: BIGIQ_PASSWORD
-    type: secret
-    secretProvider:
-      type: KeyVault
-      environment: azure
-      vaultUrl: 'https://<YOUR-VAULT-NAME>.vault.azure.net'
-      secretId: <YOUR_SECRET_ID>
-```
+  Example:
+  ```yaml
+            My_License:
+              class: License
+              hypervisor: azure
+              licenseType: <YOUR_LICENSE_TYPE>
+              licensePool: <YOUR_LICENSE_POOL>
+              bigIqHost: <YOUR_BIG_IQ_HOST>
+              bigIqUsername: <YOUR_BIG_IQ_USERNAME>
+              bigIqPassword: '{{{BIGIQ_PASSWORD}}}'
+              tenant: <YOUR_TENANT>
+              skuKeyword1: <YOUR_SKU_KEYWORD>
+              unitOfMeasure: <YOUR_UNIT_OF_MEASURE>
+              reachable: false
+              overwrite: false
+  ```
   3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc.) or render/format to send as inline json.
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
   5. Update required BIG-IQ related input parameters to match.
@@ -391,108 +384,111 @@ Example:
   6. Deploy or Re-Deploy the template.
 
 
-This example configuration does not require any further modification to deploy successfully. *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you need to have satisfied the [Prerequisites](#prerequisites).* However, the configurations are commonly customized further. Some additional examples of customizations or modifications are provided below for illustration. 
+**Example Customization 2:**
 
+To change the Virtual Service configuration:
 
-The example AS3 declaration in this config uses [Service Discovery](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/service-discovery.html#using-service-discovery-with-as3) to populate the pool with the private IP addresses of application servers in a Virtual Machine Scale Set. By default, the fields for the service discovery configuration (**resourceGroup**, **subscriptionId** and ***uniqueString***) are rendered similarly from Azure metadata. If the application Virtual Machine Scale Set is located in a different resource group or subscription, you can modify these values. 
+  1. Edit/modify the Application Services 3 (AS3) declaration in the example runtime-init config file ` [runtime-init-conf-payg-with-app.yaml](../bigip-configurations/runtime-init-conf-payg-with-app.yaml) to point at your own application.  See AS3 [documentation](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/composing-a-declaration.html) for more details and examples.
 
-To change the Pool configuration:
+      Example: At a minimum, update the Pool class:
 
-  1. Edit/modify the AS3 Declaration (AS3) declaration in a corresponding runtime-init config file with the new `Pool` values. 
+      ```yaml
+                    class: Pool
+                    remark: Service 1 shared pool
+                    members:
+                      _ addressDiscovery: azure
+                        addressRealm: private
+                        resourceGroup: <YOUR_RESOURCE_GROUP>
+                        resourceId: <YOUR_VMSS_NAME>
+                        resourceType: scaleSet
+                        servicePort: 80
+                        subscriptionId: <YOUR_SUBSCRIPTION_ID>
+                        updateInterval: 60
+                        useManagedIdentity: true
+      ```
 
-Example:
-```yaml
-              class: Pool
-              remark: Service 1 shared pool
-              members:
-                _ addressDiscovery: azure
-                  addressRealm: private
-                  resourceGroup: <YOUR_RESOURCE_GROUP>
-                  resourceId: <YOUR_VMSS_NAME>
-                  resourceType: scaleSet
-                  servicePort: 80
-                  subscriptionId: <YOUR_SUBSCRIPTION_ID>
-                  updateInterval: 60
-                  useManagedIdentity: true
-```
-
-  - *NOTE:* 
-    - The managed identity assigned to the BIG-IP VE instance(s) must have read permissions on the Virtual Machine Scale Set resource.
-    - The Service Discovery configuration listed above targets a specific application Virtual Machine Scale Set ID to reduce the number of requests made to the Azure API endpoints. When choosing capacity for the BIG-IP VE and application Virtual Machine Scale Set, it is possible to exceed the API request limits. Consult the Azure resource manager [documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling) for more information.
-
+      *NOTE:* 
+      - The example AS3 declaration in this configuration uses [Service Discovery](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/service-discovery.html#using-service-discovery-with-as3) to populate the pool with the private IP addresses of application servers in a Virtual Machine Scale Set. By default, the fields for the service discovery configuration (**resourceGroup**, **subscriptionId** and ***uniqueString***) are rendered similarly from Azure metadata. If the application Virtual Machine Scale Set are located in a different resource group or subscription, you can modify these values. 
+      - The managed identity assigned to the BIG-IP VE instance(s) must have read permissions on the Virtual Machine Scale Set resource.
+      - The Service Discovery configuration listed above targets a specific application Virtual Machine Scale Set ID to reduce the number of requests made to the Azure API endpoints. When choosing capacity for the BIG-IP VE and application Virtual Machine Scale Set, it is possible to exceed the API request limits. Consult the Azure resource manager [documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling) for more information.
   - Or even with another pool configuration entirely. For example, using the [FQDN](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/declarations/discovery.html#using-an-fqdn-pool-to-identify-pool-members) Service Discovery instead to point to a DNS name.
 
-```yaml
-              class: Pool
-              remark: Service 1 shared pool
-              members:
-              - addressDiscovery: fqdn
-                autoPopulate: true
-                hostname: <WWW.YOURSITE.COM>
-                servicePort: 80
-```
+    Example:
+    ```yaml
+                  class: Pool
+                  remark: Service 1 shared pool
+                  members:
+                  - addressDiscovery: fqdn
+                    autoPopulate: true
+                    hostname: <WWW.YOURSITE.COM>
+                    servicePort: 80
+    ```
 
-  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc) or render/format to send as inline json.
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc.) or render/format to send as inline JSON.
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
-  4. Deploy or Re-Deploy.
+  4. Deploy or redeploy.
 
+**Example Customization 3:**
+
+The example configuration contains a Telemetry Streaming declaration that sends metrics to Azure Insights and logs to Azure Log Analytics. By default, the fields for the Telemetry Streaming declaration (**appInsightsResourceName** and **workspaceId**) are rendered from values from Azure metadata and/or a specific naming convention. These values can be modified to use different static values. 
 
 To change the logging destination: 
 
   1. *OPTIONAL*: If the remote logging destination requires authentication, edit/modify the the corresponding runtime-init config file to fetch the secret from Azure Vault.
 
-Example:
-```yaml
-runtime_parameters:
-  - name: LOGGING_API_KEY
-    type: secret
-    secretProvider:
-      type: KeyVault
-      environment: azure
-      vaultUrl: 'https://<YOUR_VAULT_NAME>.vault.azure.net'
-      secretId: <YOUR_SECRET_NAME>
-```
-  NOTE: Ensure that the Azure Managed User Identity assigned to BIG-IP has permissions to access this secret.
+      Example:
+      ```yaml
+      runtime_parameters:
+        - name: LOGGING_API_KEY
+          type: secret
+          secretProvider:
+            type: KeyVault
+            environment: azure
+            vaultUrl: 'https://<YOUR_VAULT_NAME>.vault.azure.net'
+            secretId: <YOUR_SECRET_NAME>
+      ```
+      NOTE: Ensure the Azure Managed User Identity assigned to BIG-IP has permissions to access this secret.
 
   2. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file with the new logging consumer/destination. 
 
-Example:
-```yaml
-        My_Remote_Logs_Namespace:
-          class: Telemetry_Namespace
-          My_Listener:
-            class: Telemetry_Listener
-            port: 6514
-          My_Azure_Log_Analytics:
-            class: Telemetry_Consumer
-            type: Azure_Log_Analytics
-            workspaceId: '{{{WORKSPACE_ID}}}'
-            useManagedIdentity: true
-            region: '{{{REGION}}}'
+      Example:
+      ```yaml
+              My_Remote_Logs_Namespace:
+                class: Telemetry_Namespace
+                My_Listener:
+                  class: Telemetry_Listener
+                  port: 6514
+                My_Azure_Log_Analytics:
+                  class: Telemetry_Consumer
+                  type: Azure_Log_Analytics
+                  workspaceId: '{{{WORKSPACE_ID}}}'
+                  useManagedIdentity: true
+                  region: '{{{REGION}}}'
 
-```
-to:
+      ```
+      to:
 
-```yaml
-        My_Remote_Logs_Namespace:
-          class: Telemetry_Namespace
-          My_Listener:
-            class: Telemetry_Listener
-            port: 6514            
-          My_Remote_Consumer:
-            class: Telemetry_Consumer
-            type: Splunk
-            host: <YOUR_HOST>
-            protocol: https
-            port: 8088
-            passphrase:
-                cipherText: '{{{ LOGGING_API_KEY }}}'
-            compressionType: gzip
-```
+      ```yaml
+              My_Remote_Logs_Namespace:
+                class: Telemetry_Namespace
+                My_Listener:
+                  class: Telemetry_Listener
+                  port: 6514            
+                My_Remote_Consumer:
+                  class: Telemetry_Consumer
+                  type: Splunk
+                  host: <YOUR_HOST>
+                  protocol: https
+                  port: 8088
+                  passphrase:
+                      cipherText: '{{{ LOGGING_API_KEY }}}'
+                  compressionType: gzip
+      ```
 
-  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: GitHub, Azure Storage, etc.) or render/format to send as inline JSON.
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, GitHub, Azure Storage, etc.) or render/format to send as inline JSON.
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
   4. Deploy or redeploy.
+
 
 ## Validation
 
@@ -666,13 +662,13 @@ By default, Rolling Upgrades are configured to upgrade in batches of 20% with ze
   - If using tags for versions, change from`
     ```json
         "bigIpRuntimeInitConfig": {
-          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
+          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
         },
     ```
     to `v2.3.0.0`
     ```json
         "bigIpRuntimeInitConfig": {
-          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml"
+          "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
         },
     ```
 2. Re-deploy the template with new **bigIpRuntimeInitConfig** parameter
