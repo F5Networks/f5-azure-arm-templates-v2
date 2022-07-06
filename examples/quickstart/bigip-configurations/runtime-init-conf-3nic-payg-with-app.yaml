@@ -64,8 +64,8 @@ extension_packages:
       extensionVersion: 1.29.0
       extensionHash: d4b1df7a4b79e15bd0d1f56465d96000989858b20546a7bf6cfb4c194a7c2a61
     - extensionType: fast
-      extensionVersion: 1.18.0
-      extensionHash: 8693d4a676abbf9cc4f4d5040c7b9c3274b574a1f2a64d68b517a118311151c3
+      extensionVersion: 1.19.0
+      extensionHash: d36ecbf05b997f214c2ab4883a52705aa41fbff9c1d8a11577072921eb3e42c7
 extension_services:
   service_operations:
     - extensionType: do
