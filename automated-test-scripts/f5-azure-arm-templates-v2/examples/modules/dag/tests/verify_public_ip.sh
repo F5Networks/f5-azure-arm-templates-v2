@@ -24,20 +24,20 @@ function verify_public_ip() {
 # setup management public ip array
 if [ <NUMBER PUBLIC MGMT IP ADDRESSES> -gt 0 ]; then
     declare -A mgmtip
-    upperlimit=$((<NUMBER PUBLIC MGMT IP ADDRESSES>-1))
-    for ((s=0; s<=upperlimit; s++));
+    upperlimit=$((<NUMBER PUBLIC MGMT IP ADDRESSES>))
+    for ((s=1; s<=upperlimit; s++));
         do         
-            mgmtip[mgmt-pip${s}]="dd-dag-<DEWPOINT JOB ID>-mgmt-pip${s}"
+            mgmtip[mgmt-pip-0${s}]="dd-dag-<DEWPOINT JOB ID>-mgmt-pip-0${s}"
         done
 fi
 
 # setup application Public ip array
 if [ <NUMBER PUBLIC EXT IP ADDRESSES> -gt 0 ]; then
     declare -A appip
-    upperlimit=$((<NUMBER PUBLIC EXT IP ADDRESSES>-1))
-    for ((s=0; s<=upperlimit; s++));
+    upperlimit=$((<NUMBER PUBLIC EXT IP ADDRESSES>))
+    for ((s=1; s<=upperlimit; s++));
         do         
-            appip[app-pip${s}]="dd-dag-<DEWPOINT JOB ID>-app-pip${s}"
+            appip[app-pip-0${s}]="dd-dag-<DEWPOINT JOB ID>-app-pip-0${s}"
         done
 fi
 

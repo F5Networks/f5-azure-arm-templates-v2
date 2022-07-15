@@ -50,7 +50,7 @@ This template deploys a simple example application. It launches a linux VM used 
 | nsgId | No |  | string | Private NSG ID for the Virtual Machine. |
 | sshKey | Yes |  | string | Supply the SSH public key you want to use to connect to the application instance. |
 | subnetId | Yes |  | string | Private subnet ID for the Virtual Machine. |
-| tagValues | No | "application":"APP", "cost":"COST", "environment":"ENV", "group":"GROUP", "owner":"OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
+| tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment":"f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
 
 ### Template Outputs
 

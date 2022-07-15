@@ -56,6 +56,9 @@
     "bigIpRuntimeInitPackageUrl": {
       "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run"
     },
+    "bigIpUserAssignManagedIdentity": {
+      "value": ""
+    },
     "cfeStorageAccountName": {
       "value": ""
     },
@@ -79,11 +82,11 @@
     },
     "tagValues": {
       "value": {
-        "application": "APP",
-        "cost": "COST",
-        "environment": "ENV",
-        "group": "GROUP",
-        "owner": "OWNER"
+        "application": "f5demoapp",
+        "cost": "f5cost",
+        "environment": "f5env",
+        "group": "f5group",
+        "owner": "f5owner"
       }
     },
     "templateBaseUrl": {
@@ -94,9 +97,6 @@
     },
     "useAvailabilityZones": {
       "value": false
-    },
-    "userAssignManagedIdentity": {
-      "value": ""
     }
   }
 }

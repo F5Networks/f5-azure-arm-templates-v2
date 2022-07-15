@@ -28,18 +28,18 @@ function verify_outputs() {
 # array_name[jq_filter]=expected_response
 subscription=$(az account show | jq -r .id)
 mgmt_private_ip="10.0.0.11"
-id=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .vmId)
+id=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .vmId)
 
 if [[ <NIC COUNT> -eq 1 ]]; then
     mgmt_port="8443"
     nic1_service_index="0"
     nic2_service_index="0"
-    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[1].ipAddress)
+    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
 else
     mgmt_port="443"
     nic1_service_index="1"
     nic2_service_index="2"
-    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
+    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
 fi
 
 vip_1_private_ip="10.0.${nic1_service_index}.101"
@@ -50,7 +50,7 @@ outputs[bigIpManagementPrivateUrl]="https://${mgmt_private_ip}:${mgmt_port}/"
 outputs[bigIpVmId]="${id}"
 
 if [[ <PROVISION PUBLIC IP> == True ]]; then
-    mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    mgmt_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     outputs[bigIpManagementPublicIp]=$mgmt_public_ip
     outputs[bigIpManagementPublicUrl]="https://${mgmt_public_ip}:${mgmt_port}/"
 fi
@@ -73,7 +73,7 @@ if echo "<TEMPLATE URL>" | grep "azuredeploy.json"; then
         outputs[appVmName]="<RESOURCE GROUP>-app-vm"
     fi
     if [[ <PROVISION PUBLIC IP> == False ]]; then
-        bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+        bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
         outputs[bastionPublicIp]=$bastion_public_ip
     fi
 fi

@@ -5,6 +5,6 @@
 
 
 echo "Shutting down active device to force failover"
-response=$(az vm stop -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 --no-wait)
+response=$(az vm stop -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 --no-wait)
 
 echo "SUCCESS"

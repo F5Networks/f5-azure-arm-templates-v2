@@ -28,15 +28,15 @@ if [ <NUM SUBNETS> -gt 0 ]; then
     declare -A assigned_route_table
     declare -A assigned_nat_gw
     declare -A subnets
-    upperlimit=$((<NUM SUBNETS>-1))
-    for ((s=0; s<=upperlimit; s++));
+    upperlimit=$((<NUM SUBNETS>))
+    for ((s=1; s<=upperlimit; s++));
         do         
-            assigned_route_table[subnet${s}]="routeTable-subnet${s}"
-            subnets[subnet${s}]="<VNET ADDRESS PREFIX>.${s}.0/24"
+            assigned_route_table[subnet-0${s}]="route-table-subnet-0${s}"
+            subnets[subnet-0${s}]="<VNET ADDRESS PREFIX>"
         done
 
     if [ <CREATE NAT GATEWAY> == "True" ]; then
-        assigned_nat_gw[subnet0]="<VIRTUAL NETWORK NAME>"
+        assigned_nat_gw[subnet-01]="<VIRTUAL NETWORK NAME>"
     fi
 fi
 

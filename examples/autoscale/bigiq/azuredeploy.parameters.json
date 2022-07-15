@@ -62,6 +62,9 @@
     "bigIpScalingMinSize": {
       "value": 1
     },
+    "bigIpUserAssignManagedIdentity": {
+      "value": ""
+    },
     "bigIqVnetId": {
       "value": ""
     },
@@ -91,11 +94,11 @@
     },
     "tagValues": {
       "value": {
-        "application": "APP",
-        "cost": "COST",
-        "environment": "ENV",
-        "group": "GROUP",
-        "owner": "OWNER"
+        "application": "f5demoapp",
+        "cost": "f5cost",
+        "environment": "f5env",
+        "group": "f5group",
+        "owner": "f5owner"
       }
     },
     "templateBaseUrl": {

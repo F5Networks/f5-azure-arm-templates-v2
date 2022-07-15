@@ -15,7 +15,7 @@ case <CREATE AUTOSCALE> in
 "True")
     BASTION_HOST=$(az vmss list-instance-public-ips -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vmss | jq -r .[0].ipAddress) ;;
 "False")
-    BASTION_HOST=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress) ;;
+    BASTION_HOST=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress) ;;
 *)
     echo "Did not find boolean for provisioning autoscale" ;;
 esac

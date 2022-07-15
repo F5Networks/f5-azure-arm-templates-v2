@@ -91,7 +91,7 @@ else
 fi
 
 # parameters section
-DEPLOY_PARAMS='{"uniqueString":{"value":"<DNSLABEL>"},"adminUsername":{"value":"<ADMIN USERNAME>"},"sshKey":{"value":"'"$SSH_KEY"'"},"image":{"value":"<IMAGE>"},"instanceType":{"value":"<INSTANCE TYPE>"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"vmName":{"value":"<VM NAME>"},'${ASSIGNMANAGEDIDENTITY}''${ROLEDEFINITIONID}''${NIC2_SUBNET_ID}''${NIC2_PRIMARY_PUBLIC_IP_ID}''${NIC2_SELF_IP}''${NIC2_SERVICE_IPS}''${NIC2_NSG_ID}''${NIC1_SUBNET_ID}''${NIC1_PRIMARY_PUBLIC_IP_ID}''${NIC1_SELF_IP}''${NIC1_SERVICE_IPS}''${NIC1_NSG_ID}''${MGMT_NSG_ID}''${MGMT_PUBLIC_IP_ID}''${MGMT_SELF_IP}''${MGMT_SUBNET_ID}'}'
+DEPLOY_PARAMS='{"uniqueString":{"value":"<DNSLABEL>"},"adminUsername":{"value":"<ADMIN USERNAME>"},"sshKey":{"value":"'"$SSH_KEY"'"},"image":{"value":"<IMAGE>"},"instanceType":{"value":"<INSTANCE TYPE>"},"bigIpRuntimeInitConfig":{"value":"<RUNTIME CONFIG>"},"vmName":{"value":"<VM NAME>"},'${ASSIGNMANAGEDIDENTITY}''${ROLEDEFINITIONID}''${NIC2_SUBNET_ID}''${NIC2_PRIMARY_PUBLIC_IP_ID}''${NIC2_SELF_IP}''${NIC2_SERVICE_IPS}''${NIC2_NSG_ID}''${NIC1_SUBNET_ID}''${NIC1_PRIMARY_PUBLIC_IP_ID}''${NIC1_SELF_IP}''${NIC1_SERVICE_IPS}''${NIC1_NSG_ID}''${MGMT_NSG_ID}''${MGMT_PUBLIC_IP_ID}''${MGMT_SELF_IP}''${MGMT_SUBNET_ID}'}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

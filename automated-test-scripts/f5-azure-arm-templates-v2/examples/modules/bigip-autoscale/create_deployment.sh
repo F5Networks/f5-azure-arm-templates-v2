@@ -11,7 +11,7 @@ TEMPLATE_FILE=${TMP_DIR}/<RESOURCE GROUP>.json
 curl -k <TEMPLATE URL> -o ${TEMPLATE_FILE}
 echo "TEMPLATE URI: <TEMPLATE URL>"
 
-ID=$(az network vnet subnet show --resource-group dd-bigip-<DEWPOINT JOB ID> --name subnet0 --vnet-name vnet-<DEWPOINT JOB ID> | jq -r .id)
+ID=$(az network vnet subnet show --resource-group dd-bigip-<DEWPOINT JOB ID> --name subnet-01 --vnet-name vnet-<DEWPOINT JOB ID> | jq -r .id)
 SUBNETID="\"subnetId\":{\"value\":\"${ID}\"},"
 SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public | jq .value --raw-output)
 if [[ "<NSG0>" != "{}" ]]; then

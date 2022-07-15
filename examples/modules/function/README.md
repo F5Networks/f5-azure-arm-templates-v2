@@ -54,7 +54,7 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 | functionAppVnetId | No |  | string | The fully-qualified resource ID of the Azure Virtual Network where BIG-IQ is deployed. This is required when connecting to BIG-IQ via a private IP address; the Azure function app will be granted ingress permission to the virtual network. When specifying an Azure public IP address for bigIqAddress, leave the default of **Default**. |
 | secretId | No |  | string | The full URL of the secretId, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. |
 | userAssignManagedIdentity | No |  | string | Enter user-assigned management identity ID to be associated to Virtual Machine Scale Set. Leave default if not used. |
-| tagValues| No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | List of tags to add to created resources. |
+| tagValues| No | {"application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner"}, | object | List of tags to add to created resources. |
 | vmssId | No |  | string | Supply the fully-qualified resource ID of the Azure Virtual Machine Scale Set to be monitored. |
 
 ### Template Outputs

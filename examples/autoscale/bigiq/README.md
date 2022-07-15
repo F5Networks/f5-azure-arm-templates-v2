@@ -49,7 +49,7 @@ The modules below create the following cloud resources:
 - **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IPs.*(Full stack only)*
 - **Bastion**: This template creates a generic example bastion for use when connecting to the management interfaces of BIG-IPs. *(Full stack only)*
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Azure Network Security Groups, Public IP Addresses, internal/external Load Balancers, and accompanying resources such as load balancing rules, NAT rules, and probes.
-- **Access**: This template creates an Azure Managed User Identity, KeyVault, and secret used to set the admin password on the BIG-IP instances.
+- **Access**: This template creates a User-Assigned Managed Identity, grants it access to the supplied BIG-IP password Key Vault secret, and assigns it to the BIG-IP instances and BIG-IQ revocation function. Alternately, you can supply a pre-existing User-Assigned Managed Identity to assign to the instances.
 - **BIG-IP**: This template creates the Microsoft Azure Virtual Machine Scale Set with F5 BIG-IP Virtual Editions provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). Traffic flows from the Azure load balancer to the BIG-IP VE instances and then to the application servers. The BIG-IP VE(s) are configured in single-NIC mode. Auto scaling means that as certain thresholds are reached, the number of BIG-IP VE instances automatically increases or decreases accordingly. The BIG-IP module template can be deployed separately from the example template provided here into an "existing" stack.
 - **Telemetry**: This template creates resources to support sending metrics and remote logging (for example, an Azure Log Analytics Workspace and Workbook). 
 - **Function**: This template creates an Azure Function and associated resources for revoking license assignments from the BIG-IQ device when an autoscaled BIG-IP instance is deleted.
@@ -64,14 +64,14 @@ This solution leverages more traditional Autoscale configuration management prac
 
 ## Prerequisites
 
-  - This solution requires an Azure account that can provision objects described in the solution and [resource group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups).
+  - This solution requires an Azure [account](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/overview#template-deployment-process) that can provision objects described in the solution and [resource group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups).
     - Azure Portal: [Create a Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups)
     - Azure CLI: 
       ```bash
       az group create -n ${RESOURCE_GROUP} -l ${REGION}
       ```
   - A location to host your custom BIG-IP config (runtime-init.conf) with your Azure Vault, BIG-IQ LM and logging information. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
-  - This solution requires an Azure Key Vault and secret containing the password to access the BIG-IQ License Manager provided in the format https://yourvaultname.vault.azure.net/secrets/yoursecretid or https://yourvaultname.vault.azure.net/secrets/yoursecretid/yoursecretversion. 
+  - This solution requires an Azure Key Vault and secret containing the password to access the BIG-IQ License Manager provided in the format `https://yourvaultname.vault.azure.net/secrets/yoursecretid` or `https://yourvaultname.vault.azure.net/secrets/yoursecretid/yoursecretversion`. 
 
     For example, to create the secret using the Azure CLI:
       ```bash
@@ -80,8 +80,20 @@ This solution leverages more traditional Autoscale configuration management prac
       ```
       - *NOTE:*
         - Vault names in Azure are DNS based and hence globally unique.
-        - The Vault can be in a different resource group than the BIG-IP resource group.
-        - The user or service principal deploying the template must have `Key Vault Contributor` role in order for the Access template to create an Access Policy for the secret. For more information, see Azure [Docs](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#azure-built-in-roles-for-key-vault-data-plane-operations)
+        - By default, the Key Vault needs to be in the same resource group as the deployment. 
+          - **Different Resource Group:** 
+            - If the Key Vault is another resource group, you must supply a pre-existing user-assigned managed identity (using the  **bigIpUserAssignManagedIdentity** parameter value) which has access to the Key Vault.  For instructions on creating user-assigned managed identity and role assignment, see Azure [documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity).
+            - You must grant the pre-existing identity [`Contributor` role](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-steps#step-2-select-the-appropriate-role) access to the deployment resource group. This is required for the serverless Azure function and instances to successfully access Azure resources during BIG-IQ license revocation.
+            - You must grant the pre-existing existing identity `get` and `list` access to the Key Vault by creating a [Key Vault Access policy](https://docs.microsoft.com/en-us/azure/key-vault/general/assign-access-policy).
+              - For example, to create the identity, role assignment and Key Vault access policy using the Azure CLI:
+                ```bash
+                az identity create --name [YOUR_IDENTITY_NAME] --resource-group [YOUR_RESOURCE_GROUP] | jq -r .principalId
+                az role assignment create --assignee-object-id [YOUR_PRINCIPAL_ID] --assignee-principal-type ServicePrincipal --role "Contributor" --resource-group [YOUR_RESOURCE_GROUP]
+                az keyvault set-policy --name [YOUR_VAULT_NAME] --secret-permissions get list --object-id [YOUR_PRINCIPAL_ID]
+                ```
+          - **Same Resource Group:** 
+            - By default, if the **userAssignManagedIdentity** parameter is left empty, a user-assigned managed identity and Key Vault access policy will be created by the Access module.  
+            - The [account](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/overview#template-deployment-process) used for deploying the template itself must have sufficient permissions to create the user-assigned managed identities, roles and Key Vault access policies (including [Key Vault Contributer Role](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#azure-built-in-roles-for-key-vault-data-plane-operations)). For more information out the IAM resources created in this solution, see the Access Template [documentation](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/main/examples/modules/access/README.md).
   - This solution requires an [SSH key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) for access to the BIG-IP instances. For more information about creating a key pair for use in Azure, see Azure SSH key [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys).
   - This solution requires you to accept any Azure Marketplace "License/Terms and Conditions" for the images used in this solution.
     - By default, this solution uses [F5 BIG-IP VE – ALL (BYOL, 2 Boot Locations)](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/f5-networks.f5-big-ip-byol?tab=PlansAndPrice)
@@ -146,7 +158,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | appScalingMaxSize | No | 10 | integer | Maximum number of application instances (2-100) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | 1 | integer | Minimum number of application instances (1-99) you want available in the Autoscale Group. |
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpImage | No | "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D2s_v4" | string | Enter a valid instance type. |
 | bigIpMaxBatchInstancePercent | No | 20 | integer | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
 | bigIpMaxUnhealthyInstancePercent | No | 20 | integer | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
@@ -162,20 +174,21 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutCpuThreshold | No | 80 | integer | The percentage of CPU utilization that should trigger a scale out event. |
 | bigIpScaleOutThroughputThreshold | No | 20000000 | integer | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. |
 | bigIpScaleOutTimeWindow | No | 10 | integer | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
+| bigIpUserAssignManagedIdentity | No |  | string | Enter user-assigned pre-existing management identity ID to be associated to Virtual Machine Scale Set. For example: "/subscriptions/f18b486b-112d-4402-add2-1112222333444/resourcegroups/yourresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/youridentity". If not specified, a new identity will be created. |
 | bigIqVnetId | No |  | string | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
 | createWorkspace | No | true | boolean | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
 | provisionExternalBigIpLoadBalancer | No | true| boolean | Select true if you would like to provision an external Azure load balancer. |
 | provisionInternalBigIpLoadBalancer | No | false | boolean | Select true if you would like to provision an internal Azure load balancer. |
 | provisionPublicIp | No | true | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | restrictedSrcAddressMgmt | Yes |  | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **Important**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
-| restrictedSrcAddressApp | Yes |  | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| restrictedSrcAddressApp | Yes |  | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example "X.X.X.X/32" for a host, "0.0.0.0/0" for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | secretId | Yes |  | string | The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. This will be used by the revoke function as well as the BIG-IP to manage the License lifecycle of the device. |
 | sshKey | Yes |  | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
-| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
+| tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | https://cdn.f5.com/product/cloudsolutions/ | string | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | Yes |  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
-| workspaceId | No | "WORKSPACE_ID" | string | Azure Logging Workspace ID. for example, "0ad61913-8c82-4d58-b93c-89d612812c84" |
+| workspaceId | No | "WORKSPACE_ID" | string | Azure Logging Workspace ID. For example: "0ad61913-8c82-4d58-b93c-89d612812c84". |
 
 ### Template Outputs
 
@@ -199,7 +212,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- | --- | --- |
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpImage | No | "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: `f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000`. You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D2s_v4" | string | Enter a valid instance type. |
 | bigIpMaxBatchInstancePercent | No | 20 | integer | The maximum percentage of total virtual machine instances that will be upgraded simultaneously by the rolling upgrade in one batch. |
 | bigIpMaxUnhealthyInstancePercent | No | 20 | integer | The maximum percentage of the total virtual machine instances in the scale set that can be simultaneously unhealthy. |
@@ -215,6 +228,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutCpuThreshold | No | 80 | integer | The percentage of CPU utilization that should trigger a scale out event. |
 | bigIpScaleOutThroughputThreshold | No | 20000000 | integer | The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB. |
 | bigIpScaleOutTimeWindow | No | 10 | integer | The time window required to trigger a scale out event. This is used to determine the amount of time needed for a threshold to be breached, as well as to prevent excessive scaling events (flapping). **Note:** Allowed values are 1-60 (minutes). |
+| bigIpUserAssignManagedIdentity | No |  | string | Enter user-assigned pre-existing management identity ID to be associated to Virtual Machine Scale Set. For example: "/subscriptions/f18b486b-112d-4402-add2-1112222333444/resourcegroups/yourresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/youridentity". If not specified, a new identity will be created. |
 | bigIqVnetId | No |  | string | The fully-qualified Azure resource ID of the virtual network where BIG-IQ is deployed. This is required to allow inbound communication from the Azure license revocation function and the BIG-IQ device. Leave the default value if the BIG-IQ device uses a public IP address for licensing. |
 | createWorkspace | No | True | boolean | This deployment will create a workspace and workbook as part of the Telemetry module, intended for enabling Remote Logging using Azure Log Workspace. |
 | provisionExternalBigIpLoadBalancer | No | true | boolean | Select true if you would like to provision an external Azure load balancer. |
@@ -225,11 +239,11 @@ This solution leverages more traditional Autoscale configuration management prac
 | sshKey | Yes | | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. Note: This should be the public key as a string, typically starting with **ssh-rsa**. |
 | bigIpSubnetId | Yes |  | string | Supply the Azure resource ID of the subnet where BIG-IP VE instances will be deployed. |
 | internalSubnetId | No |  | string | Supply the Azure resource ID of the subnet where the internal load balancer will be deployed. Leave empty if not deploying an internal load balancer. |
-| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
+| tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | https://cdn.f5.com/product/cloudsolutions/ | string | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | Yes | | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
-| workspaceId | No | "WORKSPACE_ID" | string | Azure Logging Workspace ID. for example, "0ad61913-8c82-4d58-b93c-89d612812c84" |
+| workspaceId | No | "WORKSPACE_ID" | string | Azure Logging Workspace ID. For example: "0ad61913-8c82-4d58-b93c-89d612812c84". |
 
 ### Existing Network Template Outputs
 
@@ -292,7 +306,7 @@ RESOURCE_GROUP="myGroupName"
 REGION="eastus"
 DEPLOYMENT_NAME="parentTemplate"
 TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v1.3.1.0/examples/autoscale/bigiq/azuredeploy.json"
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v1.3.1.0/examples/"},{"secretId":{"value":"https://mySecretsKeyVault.vault.azure.net/secrets/mySecretName"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D2s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig":{"value":"<YOUR_VALUE>"},"useAvailabilityZones":{"value":false},"tagValues":{"value":{"application":"APP","cost":"COST","environment":"ENV","group":"GROUP","owner":"OWNER"},"workspaceId":{"value":"<YOUR_VALUE>"},"bigIqVnetId":{"value":"<YOUR_VALUE>"}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v1.3.1.0/examples/"},{"secretId":{"value":"https://mySecretsKeyVault.vault.azure.net/secrets/mySecretName"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D2s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig":{"value":"<YOUR_VALUE>"},"useAvailabilityZones":{"value":false},"tagValues":{"value":{"application": "f5demoapp","cost": "f5cost","environment":"f5env","group": "f5group","owner": "f5owner"},"workspaceId":{"value":"<YOUR_VALUE>"},"bigIqVnetId":{"value":"<YOUR_VALUE>"}}'
 DEPLOY_PARAMS_FILE=deploy_params.json
 echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 

@@ -5,7 +5,7 @@
 
 
 echo "Verifying active device is shut down"
-response=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 -d | jq -r .powerState)
+response=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 -d | jq -r .powerState)
 
 if echo $response | grep 'stopped'; then
     echo "SUCCESS"
