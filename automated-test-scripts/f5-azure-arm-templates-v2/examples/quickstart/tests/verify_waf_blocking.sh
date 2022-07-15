@@ -9,9 +9,9 @@ else
     # get app address
     # the first (primary) IP config is always assigned to the self IP, so we need the second IP config
     if [[ <NIC COUNT> -eq 1 ]]; then
-        APP_ADDRESS=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[1].ipAddress)
+        APP_ADDRESS=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     else
-        APP_ADDRESS=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
+        APP_ADDRESS=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
     fi
     echo "APP_ADDRESS: ${APP_ADDRESS}"
 

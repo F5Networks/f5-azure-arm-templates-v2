@@ -24,7 +24,7 @@ NSG4: '[]'
 NUMBER PUBLIC EXT IP ADDRESSES: 1
 NUMBER PUBLIC MGMT IP ADDRESSES: 1
 PROVISION PUBLIC IP: {}
-REGION: westus2
+REGION: eastus2
 RESOURCE GROUP: dd-bigip-<DEWPOINT JOB ID>
 RUNTIME CONFIG: https://cdn.f5.com/product/cloudsolutions/declarations/template2-0/autoscale-waf/userData.yaml
 SCALE IN CPU THRESHOLD: 20

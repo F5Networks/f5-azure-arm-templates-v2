@@ -32,11 +32,11 @@
         },
         "tagValues": {
             "defaultValue": {
-                "application": "APP",
-                "cost": "COST",
-                "environment": "ENV",
-                "group": "GROUP",
-                "owner": "OWNER"
+                "application": "f5demoapp",
+                "cost": "f5cost",
+                "environment": "f5env",
+                "group": "f5group",
+                "owner": "f5owner"
             },
             "type": "object",
             "metadata": {
@@ -49,11 +49,11 @@
             {
                 "count": "[parameters('numSubnets')]",
                 "input": {
-                    "name": "[concat('subnet', copyIndex('constructSubnetArray'))]",
+                    "name": "[concat('subnet-0', copyIndex('constructSubnetArray', 1))]",
                     "properties": {
                         "addressPrefix": "[concat(parameters('vnetAddressPrefix'), '.', copyIndex('constructSubnetArray'),'.0/24')]",
                         "routeTable": {
-                            "id": "[resourceId('Microsoft.Network/routeTables', concat('routeTable-subnet', copyIndex('constructSubnetArray')))]"
+                            "id": "[resourceId('Microsoft.Network/routeTables', concat('route-table-subnet-0', copyIndex('constructSubnetArray', 1)))]"
                         },
                         "natGateway": "[if(and(equals(copyIndex('constructSubnetArray'), 0), parameters('createNatGateway')), json(concat('{\"id\": \"', resourceId('Microsoft.Network/natGateways', variables('natGatewayName')), '\"}')), json('null'))]"
                     }
@@ -61,8 +61,8 @@
                 "name": "constructSubnetArray"
             }
         ],
-        "natGatewayName": "[concat(parameters('vnetName'), '-natgw')]",
-        "natGatewayPublicIpName": "[concat(parameters('vnetName'), '-natgw-pip')]"
+        "natGatewayName": "[concat(parameters('vnetName'), '-vgw')]",
+        "natGatewayPublicIpName": "[concat(parameters('vnetName'), '-vgw-pip-01')]"
     },
     "resources": [
         {
@@ -72,7 +72,7 @@
                 "name": "routeTableLoop",
                 "count": "[parameters('numSubnets')]"
             },
-            "name": "[concat('routeTable-subnet', copyIndex())]",
+            "name": "[concat('route-table-subnet-0', copyIndex(1))]",
             "location": "[resourceGroup().location]",
             "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]"
         },
@@ -138,7 +138,7 @@
             "condition": "[greaterOrEquals(parameters('numSubnets'), 1)]",
             "copy": {
                 "count": "[parameters('numSubnets')]",
-                "input": "[resourceId('Microsoft.Network/routeTables', concat('routeTable-subnet', copyIndex()))]"
+                "input": "[resourceId('Microsoft.Network/routeTables', concat('route-table-subnet-0', copyIndex(1)))]"
             },
             "type": "Array"
         },
@@ -150,7 +150,7 @@
             "condition": "[greaterOrEquals(parameters('numSubnets'), 1)]",
             "copy": {
                 "count": "[parameters('numSubnets')]",
-                "input": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet', copyIndex()))]"
+                "input": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-0', copyIndex(1)))]"
             },
             "type": "Array"
         },

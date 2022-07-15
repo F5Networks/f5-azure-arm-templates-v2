@@ -1,4 +1,4 @@
-REGION: westus
+REGION: eastus
 RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
 SOLUTION TYPE: failover
 CUSTOM ROLE NAME: cust-role-def-<DEWPOINT JOB ID>

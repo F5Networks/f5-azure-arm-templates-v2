@@ -6,7 +6,7 @@ BIGIQ LICENSE POOL NAME: clpv2
 BIGIQ UTILITY SKU: F5-BIG-MSP-BT-1G
 FUNCTION APP NAME: <RESOURCE GROUP>
 FUNCTION APP SKU: '{"Tier":"ElasticPremium","Name":"EP1"}'
-REGION: westus
+REGION: eastus
 RESOURCE GROUP: dd-fn-<DEWPOINT JOB ID>
 SECRET VALUE: 'B!giq2017'
 TEMPLATE URL: file://$PWD/f5-azure-arm-templates-v2/master/examples/modules/function/function.json

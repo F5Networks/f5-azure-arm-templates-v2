@@ -35,7 +35,7 @@ This ARM template creates Telemetry module intended to setup infrastructure (i.e
 | --- | --- | --- | --- | --- |
 | uniqueString | Yes |  | string | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
 | sku | No | PerGB2018 | string | Specifies the service tier of the workspace: Standalone, PerNode, and Per-GB. |
-| tagValues | No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
+| tagValues | No | {"application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner"}, | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | workbookDisplayName | No | "F5 BIG-IP WAF View" | string | The friendly name for the workbook that is used in the Gallery or Saved List.  This name must be unique within a resource group. |
 | workspaceName | No | "f5telemetry" | string | Specifies the name of the workspace. |
 

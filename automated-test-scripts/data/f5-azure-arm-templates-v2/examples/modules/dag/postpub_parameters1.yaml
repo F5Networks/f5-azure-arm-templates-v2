@@ -21,6 +21,6 @@ DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
 LOAD BALANCER RULE PORTS: [80,443,445]
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
-REGION: westus2
+REGION: eastus2
 RESOURCE GROUP: dd-dag-<DEWPOINT JOB ID>
 TEMPLATE URL: https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/main/examples/modules/dag/dag.json

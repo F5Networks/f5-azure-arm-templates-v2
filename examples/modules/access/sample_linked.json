@@ -41,7 +41,7 @@
 					"keyVaultPermissionsSecrets": { "value": [ "get", "list" ] },
 					"secretId": { "value": "https://mySecretVault.vault.azure.net/secrets/secretName" },
 					"userAssignedIdentityName": { "value": "" },
-					"tagValues": { "value": { "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" } }
+					"tagValues": { "value": { "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" } }
 				}
 			}
 		}

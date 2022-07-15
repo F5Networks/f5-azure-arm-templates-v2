@@ -11,7 +11,7 @@ INIT SCRIPT PARAMETERS: ''
 INIT SCRIPT URL: ''
 INSTANCE TYPE: Standard_D2_v4
 LICENSE TYPE: opensource
-REGION: westus
+REGION: eastus2
 RESOURCE GROUP: dd-app-<DEWPOINT JOB ID>
 SEQUENCE NUMBER: 0
 SOLUTION LOGS: 'cloud-init.log;cloud-init-output.log,waagent.log'

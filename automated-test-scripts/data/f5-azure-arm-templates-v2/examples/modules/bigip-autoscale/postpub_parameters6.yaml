@@ -33,7 +33,7 @@ NSG4: '[]'
 NUMBER PUBLIC EXT IP ADDRESSES: 2
 NUMBER PUBLIC MGMT IP ADDRESSES: 0
 PROVISION PUBLIC IP: '{ "name": "publicIp01", "properties": { "idleTimeoutInMinutes": 15 } }'
-REGION: westus2
+REGION: eastus2
 RESOURCE GROUP: dd-bigip-<DEWPOINT JOB ID>
 RUNTIME CONFIG: >-
   {\"runtime_parameters\":[{\"name\":\"HOST_NAME\",\"type\":\"metadata\",\"metadataProvider\":{\"environment\":\"azure\",\"type\":\"compute\",\"field\":\"name\"}}],\"pre_onboard_enabled\":[],\"post_onboard_enabled\":[],

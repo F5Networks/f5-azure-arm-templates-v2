@@ -9,7 +9,7 @@
 # Array: [rule]="expected_value"
 function verify_autoscale_resource() {
     local -n _arr=$1
-    local autoscale_resource_object=$(az monitor autoscale show --name <RESOURCE GROUP>-autoscaleconfig --resource-group <RESOURCE GROUP> | jq -rc .)
+    local autoscale_resource_object=$(az monitor autoscale show --name <RESOURCE GROUP>-bigip-vmss-autoscale-settings --resource-group <RESOURCE GROUP> | jq -rc .)
     for r in "${!_arr[@]}";
     do
         local response=$(echo ${autoscale_resource_object} | jq -rc .$r)

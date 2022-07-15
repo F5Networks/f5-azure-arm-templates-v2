@@ -5,6 +5,6 @@
 
 
 echo "Restarting previously active device"
-response=$(az vm start -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 --no-wait)
+response=$(az vm start -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 --no-wait)
 
 echo "SUCCESS"

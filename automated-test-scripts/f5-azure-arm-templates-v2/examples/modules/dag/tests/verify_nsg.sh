@@ -26,48 +26,26 @@ function verify_nsg_security_rule() {
 # Build associative security group arrays
 case "<NSG0>" in
 "[]")
-    declare -A nsg0_port_security_rules_inbound
-    declare -A nsg0_destination_security_rule 
-    declare -A nsg0_protocol ;;
-*)
-    declare -A nsg0_port_security_rules_inbound
-    nsg0_port_security_rules_inbound[nsg0_allow_0]="<NSG0 MGMT PORTS>"
-    nsg0_port_security_rules_inbound[nsg0_allow_1]="<NSG0 EXT PORTS>"
-
-    declare -A nsg0_destination_security_rule
-    nsg0_destination_security_rule[nsg0_allow_0]="<NSG0 SOURCE>"
-    nsg0_destination_security_rule[nsg0_allow_1]="<NSG0 SOURCE>"
-
-    declare -A nsg0_protocol
-    nsg0_protocol[nsg0_allow_0]="<NSG0 PROTOCOL>"
-    nsg0_protocol[nsg0_allow_1]="<NSG0 PROTOCOL>"
-
-    nsg_to_test="<RESOURCE GROUP>-nsg0" ;;
-esac
-
-case "<NSG1>" in
-"[]")
     declare -A nsg1_port_security_rules_inbound
-    declare -A nsg1_port_security_rules_outbound
     declare -A nsg1_destination_security_rule 
     declare -A nsg1_protocol ;;
 *)
     declare -A nsg1_port_security_rules_inbound
-    nsg1_port_security_rules_inbound[nsg1_allow_0]="<NSG1 PORTS>"
-
-    declare -A nsg1_port_security_rules_outbound
-    nsg1_port_security_rules_outbound[allow_loadBalancer_traffic]="*"
+    nsg1_port_security_rules_inbound[nsg_01_allow_0]="<NSG0 MGMT PORTS>"
+    nsg1_port_security_rules_inbound[nsg_01_allow_1]="<NSG0 EXT PORTS>"
 
     declare -A nsg1_destination_security_rule
-    nsg1_destination_security_rule[nsg1_allow_0]="<NSG1 SOURCE>"
+    nsg1_destination_security_rule[nsg_01_allow_0]="<NSG0 SOURCE>"
+    nsg1_destination_security_rule[nsg_01_allow_1]="<NSG0 SOURCE>"
 
     declare -A nsg1_protocol
-    nsg1_protocol[nsg1_allow_0]="<NSG1 PROTOCOL>"
+    nsg1_protocol[nsg_01_allow_0]="<NSG0 PROTOCOL>"
+    nsg1_protocol[nsg_01_allow_1]="<NSG0 PROTOCOL>"
 
-    nsg_to_test="<RESOURCE GROUP>-nsg1" ;;
+    nsg_to_test="<RESOURCE GROUP>-nsg-01" ;;
 esac
 
-case "<NSG2>" in
+case "<NSG1>" in
 "[]")
     declare -A nsg2_port_security_rules_inbound
     declare -A nsg2_port_security_rules_outbound
@@ -75,34 +53,56 @@ case "<NSG2>" in
     declare -A nsg2_protocol ;;
 *)
     declare -A nsg2_port_security_rules_inbound
-    nsg2_port_security_rules_inbound[nsg2_allow_0]="<NSG2 PORTS>"
+    nsg2_port_security_rules_inbound[nsg_02_allow_0]="<NSG1 PORTS>"
 
     declare -A nsg2_port_security_rules_outbound
     nsg2_port_security_rules_outbound[allow_loadBalancer_traffic]="*"
 
     declare -A nsg2_destination_security_rule
-    nsg2_destination_security_rule[nsg2_allow_0]="<NSG2 SOURCE>"
+    nsg2_destination_security_rule[nsg_02_allow_0]="<NSG1 SOURCE>"
 
     declare -A nsg2_protocol
-    nsg2_protocol[nsg2_allow_0]="<NSG2 PROTOCOL>"
+    nsg2_protocol[nsg_02_allow_0]="<NSG1 PROTOCOL>"
 
-    nsg_to_test="<RESOURCE GROUP>-nsg2" ;;
+    nsg_to_test="<RESOURCE GROUP>-nsg-02" ;;
+esac
+
+case "<NSG2>" in
+"[]")
+    declare -A nsg3_port_security_rules_inbound
+    declare -A nsg3_port_security_rules_outbound
+    declare -A nsg3_destination_security_rule 
+    declare -A nsg3_protocol ;;
+*)
+    declare -A nsg3_port_security_rules_inbound
+    nsg3_port_security_rules_inbound[nsg_03_allow_0]="<NSG2 PORTS>"
+
+    declare -A nsg3_port_security_rules_outbound
+    nsg3_port_security_rules_outbound[allow_loadBalancer_traffic]="*"
+
+    declare -A nsg3_destination_security_rule
+    nsg3_destination_security_rule[nsg_03_allow_0]="<NSG2 SOURCE>"
+
+    declare -A nsg3_protocol
+    nsg3_protocol[nsg_03_allow_0]="<NSG2 PROTOCOL>"
+
+    nsg_to_test="<RESOURCE GROUP>-nsg-03" ;;
 esac
 
 # Run arrays through function
-response=$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg0" "nsg0_port_security_rules_inbound" "destinationPortRanges")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg0" "nsg0_destination_security_rule" "sourceAddressPrefix")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg0" "nsg0_protocol" "protocol")
+response=$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-01" "nsg1_port_security_rules_inbound" "destinationPortRanges")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-01" "nsg1_destination_security_rule" "sourceAddressPrefix")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-01" "nsg1_protocol" "protocol")
 
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg1" "nsg1_port_security_rules_inbound" "destinationPortRanges")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg1" "nsg1_port_security_rules_outbound" "destinationPortRange")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg1" "nsg1_destination_security_rule" "sourceAddressPrefix")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg1" "nsg1_protocol" "protocol")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-02" "nsg2_port_security_rules_inbound" "destinationPortRanges")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-02" "nsg2_port_security_rules_outbound" "destinationPortRange")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-02" "nsg2_destination_security_rule" "sourceAddressPrefix")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-02" "nsg2_protocol" "protocol")
 
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg2" "nsg2_port_security_rules_inbound" "destinationPortRanges")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg2" "nsg2_port_security_rules_outbound" "destinationPortRange")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg2" "nsg2_destination_security_rule" "sourceAddressPrefix")
-response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg1" "nsg1_protocol" "protocol")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-03" "nsg3_port_security_rules_inbound" "destinationPortRanges")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-03" "nsg3_port_security_rules_outbound" "destinationPortRange")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-03" "nsg3_destination_security_rule" "sourceAddressPrefix")
+response=${response}$(verify_nsg_security_rule "<RESOURCE GROUP>-nsg-03" "nsg3_protocol" "protocol")
 
 spacer=$'\n============\n'
 
