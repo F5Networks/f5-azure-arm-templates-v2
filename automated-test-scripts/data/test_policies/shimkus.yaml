@@ -41,7 +41,7 @@ azure-arm-autoscale-existing-payg-test:
 azure-arm-failover-byol-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/full/demo.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/full/prod.yaml"
@@ -62,7 +62,7 @@ azure-arm-failover-payg-example-test:
 azure-arm-failover-byol-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/demo.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/byol/existing/prod.yaml"
@@ -84,7 +84,7 @@ azure-arm-failover-payg-existing-test:
 azure-arm-quickstart-byol-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_2nic.yaml"
@@ -112,7 +112,7 @@ azure-arm-quickstart-payg-example-test:
 azure-arm-quickstart-byol-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/demo_app_2nic.yaml"
