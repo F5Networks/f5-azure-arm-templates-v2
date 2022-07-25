@@ -6,7 +6,7 @@
 # SSH login for <ADMIN USERNAME> is set when we provision the instances, the actual admin user password is configured by runtime init
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
 SSH_KEY=${TMP_DIR}/<RESOURCE GROUP>-private
-PASSWORD=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm | jq -r .vmId)
+PASSWORD=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .vmId)
 SSH_PORT='22'
 if [[ <NIC COUNT> -eq 1 ]]; then
     MGMT_PORT='8443'
@@ -15,7 +15,7 @@ else
 fi
 
 if [[ <PROVISION PUBLIC IP> == False ]]; then
-    BASTION_HOST=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    BASTION_HOST=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     echo "Host: $BASTION_HOST"
     IP=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP> | jq -r '.properties.outputs["bigIpManagementPrivateIp"].value')
     echo "IP: $IP"

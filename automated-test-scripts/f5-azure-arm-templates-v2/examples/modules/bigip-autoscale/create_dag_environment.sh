@@ -14,7 +14,7 @@ SUBNETID=""
 if [[ "<INTERNAL LOAD BALANCER NAME>" == "None" ]]; then
     echo 'Not creating ilb, subnet id not required'
 else
-    ID=$(az network vnet subnet show --resource-group dd-bigip-<DEWPOINT JOB ID> --name subnet0 --vnet-name vnet-<DEWPOINT JOB ID> | jq -r .id)
+    ID=$(az network vnet subnet show --resource-group dd-bigip-<DEWPOINT JOB ID> --name subnet-01 --vnet-name vnet-<DEWPOINT JOB ID> | jq -r .id)
     SUBNETID=",\"internalSubnetId\":{\"value\":\"${ID}\"}"
 fi
 PORTARRAY=""

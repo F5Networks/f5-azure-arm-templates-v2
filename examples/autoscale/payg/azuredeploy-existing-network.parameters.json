@@ -1,9 +1,9 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "2.3.0.0",
+  "contentVersion": "2.4.0.0",
   "parameters": {
     "artifactLocation": {
-      "value": "f5-azure-arm-templates-v2/v2.3.0.0/examples/"
+      "value": "f5-azure-arm-templates-v2/v2.4.0.0/examples/"
     },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.202000"
@@ -24,10 +24,10 @@
       "value": 0
     },
     "bigIpRuntimeInitConfig": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run"
     },
     "bigIpScaleInCpuThreshold": {
       "value": 20
@@ -56,6 +56,9 @@
     "bigIpSubnetId": {
       "value": ""
     },
+    "bigIpUserAssignManagedIdentity": {
+      "value": ""
+    },
     "createWorkspace": {
       "value": true
     },
@@ -79,11 +82,11 @@
     },
     "tagValues": {
       "value": {
-        "application": "APP",
-        "cost": "COST",
-        "environment": "ENV",
-        "group": "GROUP",
-        "owner": "OWNER"
+        "application": "f5demoapp",
+        "cost": "f5cost",
+        "environment": "f5env",
+        "group": "f5group",
+        "owner": "f5owner"
       }
     },
     "templateBaseUrl": {

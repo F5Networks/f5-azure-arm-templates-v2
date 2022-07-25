@@ -1,4 +1,4 @@
-REGION: westus
+REGION: eastus
 RESOURCE GROUP: dd-app-<DEWPOINT JOB ID>
 SEQUENCE NUMBER: 0
 SOLUTION LOGS: 'cloud-init.log;cloud-init-output.log,waagent.log'

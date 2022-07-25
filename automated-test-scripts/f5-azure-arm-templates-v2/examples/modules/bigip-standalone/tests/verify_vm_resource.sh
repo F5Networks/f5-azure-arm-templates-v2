@@ -59,7 +59,7 @@ vm_settings[resources\[\].provisioningState]="Succeeded"
 upperlimit=$((<NUMBER SUBNETS>-1))
 for ((s=0; s<=upperlimit; s++));
 do
-    vm_settings[networkProfile.networkInterfaces\[${s}\].id]="<RESOURCE GROUP>-nic${s}"
+    vm_settings[networkProfile.networkInterfaces\[${s}\].id]="nic"
 done
 
 # verify primary self IPs

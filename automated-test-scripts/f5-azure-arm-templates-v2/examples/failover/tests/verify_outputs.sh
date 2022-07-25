@@ -29,8 +29,8 @@ function verify_outputs() {
 subscription=$(az account show | jq -r .id)
 mgmt_private_ip_1="<SELF MGMT 1>"
 mgmt_private_ip_2="<SELF MGMT 2>"
-id_1=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 | jq -r .vmId)
-id_2=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm02 | jq -r .vmId)
+id_1=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .vmId)
+id_2=$(az vm show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-02 | jq -r .vmId)
 
 mgmt_port="443"
 vip_1_private_ip="10.0.1.101"
@@ -43,8 +43,8 @@ outputs[bigIpInstance01ManagementPrivateUrl]="https://${mgmt_private_ip_1}:${mgm
 outputs[bigIpInstance02ManagementPrivateUrl]="https://${mgmt_private_ip_2}:${mgmt_port}/"
 
 if [[ <PROVISION PUBLIC IP> == True ]]; then
-    mgmt_public_ip_1=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
-    mgmt_public_ip_2=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm02 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    mgmt_public_ip_1=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+    mgmt_public_ip_2=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-02 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
     outputs[bigIpInstance01ManagementPublicIp]=$mgmt_public_ip_1
     outputs[bigIpInstance01ManagementPublicUrl]="https://${mgmt_public_ip_1}:${mgmt_port}/"
     outputs[bigIpInstance02ManagementPublicIp]=$mgmt_public_ip_2
@@ -52,7 +52,7 @@ if [[ <PROVISION PUBLIC IP> == True ]]; then
 fi
 
 if [[ <PROVISION APP> == True ]]; then
-    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm01 | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
+    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
     outputs[vip1PrivateIp]=$vip_1_private_ip
     outputs[vip1PrivateUrlHttp]="http://${vip_1_private_ip}/"
     outputs[vip1PrivateUrlHttps]="https://${vip_1_private_ip}/"
@@ -66,10 +66,10 @@ if echo "<TEMPLATE URL>" | grep "azuredeploy.json"; then
     if [[ <PROVISION APP> == True ]]; then
         outputs[appPrivateIp]="10.0.3.4"
         outputs[appUsername]="azureuser"
-        outputs[appVmName]="<RESOURCE GROUP>-app-vm"
+        outputs[appVmName]="<RESOURCE GROUP>-app-vm-01"
     fi
     if [[ <PROVISION PUBLIC IP> == False ]]; then
-        bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
+        bastion_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bastion-vm-01 | jq -r .[0].virtualMachine.network.publicIpAddresses[0].ipAddress)
         outputs[bastionPublicIp]=$bastion_public_ip
     fi
 fi

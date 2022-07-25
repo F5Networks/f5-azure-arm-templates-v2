@@ -64,7 +64,7 @@ REGION:
   - centralus
   - eastus
   - eastus2
-  - westus
+  - eastus
   - northcentralus
   - southcentralus
   - northeurope
@@ -82,7 +82,7 @@ REGION:
   - uksouth
   - ukwest
   - westcentralus
-  - westus2
+  - eastus2
   - koreacentral
   - koreasouth
   - francecentral

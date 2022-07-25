@@ -112,7 +112,7 @@ These are the RBAC permissions produced by each type of solution supported by th
 | roleName| Yes |  | string | Provides value for role definition which will be created by the template. |
 | secretId | No |  | string | The full URL of the secretId, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. |
 | solutionType | No | standard | string | Specifies solution type. Allowed values are 'standard', 'failover', and 'logging'. |
-| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique, adjust them as needed for each key. |
+| tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique, adjust them as needed for each key. |
 | userAssignedIdentityName | No |  | string | User-Assigned Identity name. |
 
 ### Template Outputs
@@ -127,4 +127,4 @@ These are the RBAC permissions produced by each type of solution supported by th
 ## Resource Creation Flow Chart
 
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.3.0.0/examples/images/azure-access-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.4.0.0/examples/images/azure-access-module.png)
