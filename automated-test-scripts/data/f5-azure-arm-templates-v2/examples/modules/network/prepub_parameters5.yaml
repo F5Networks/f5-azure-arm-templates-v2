@@ -1,8 +1,0 @@
----
-REGION: australiaeast
-RESOURCE GROUP: dd-network-<DEWPOINT JOB ID>
-TEMPLATE URL: file://$PWD/examples/modules/network/network.json
-VIRTUAL NETWORK NAME: dd_vnet_<DEWPOINT JOB ID>
-NUM SUBNETS: 6
-VNET ADDRESS PREFIX: '12.12'
-CREATE NAT GATEWAY: false
