@@ -167,7 +167,7 @@
     "cfeStorageAccountName": {
       "defaultValue": "",
       "metadata": {
-        "description": "CFE storage account created and used for cloud-failover-extension."
+        "description": "Supply a unique name for a CFE storage account created and used by Cloud Failover Extension."
       },
       "type": "string"
     },
@@ -285,6 +285,7 @@
     "bastionInstanceType": "Standard_D2_v4",
     "appInstanceName": "[variables('uniqueString')]",
     "appInstanceType": "Standard_D2_v4",
+    "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
     "cloudInitUrl": "",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm-01')]",
     "vmName02": "[concat(variables('uniqueString'), '-bigip-vm-02')]"
@@ -532,7 +533,7 @@
             "value": ""
           },
           "cfeStorageAccountName": {
-            "value": "[concat(uniqueString(parameters('uniqueString'), resourceGroup().id, deployment().name), 'cfedata000')]"
+            "value": "[variables('cfeStorageAccountName')]"
           },
           "cfeTag": {
             "value": "[parameters('cfeTag')]"

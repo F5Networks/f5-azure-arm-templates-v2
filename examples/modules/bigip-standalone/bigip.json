@@ -26,7 +26,7 @@
     "cfeStorageAccountName": {
       "defaultValue": "",
       "metadata": {
-        "description": "CFE storage account created and used for cloud-failover-extension."
+        "description": "Supply a unique name for a CFE storage account created and used by Cloud Failover Extension."
       },
       "type": "string"
     },
@@ -380,7 +380,6 @@
       "workspaceId": "[parameters('workspaceId')]",
       "uniqueString": "[parameters('uniqueString')]"
     },
-    "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
     "cfeTag": {
       "f5_cloud_failover_label": "[parameters('cfeTag')]"
     },
@@ -396,7 +395,7 @@
       "condition": "[not(empty(parameters('cfeStorageAccountName')))]",
       "kind": "Storage",
       "location": "[resourceGroup().location]",
-      "name": "[variables('cfeStorageAccountName')]",
+      "name": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
       "properties": {
         "supportsHttpsTrafficOnly": true
       },
