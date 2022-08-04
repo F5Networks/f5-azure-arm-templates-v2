@@ -172,7 +172,7 @@
     "cfeStorageAccountName": {
       "defaultValue": "",
       "metadata": {
-        "description": "CFE storage account created and used for cloud-failover-extension."
+        "description": "Supply a unique name for a CFE storage account created and used by Cloud Failover Extension."
       },
       "type": "string"
     },
@@ -267,6 +267,7 @@
     "mgmtSecurityGroup": "[variables('mgmtNsgRulesArray')]",
     "externalSecurityGroup": "[variables('externalNsgRulesArray')]",
     "internalSecurityGroup": "[variables('internalNsgRulesArray')]",
+    "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm-01')]",
     "vmName02": "[concat(variables('uniqueString'), '-bigip-vm-02')]"
   },
@@ -385,7 +386,7 @@
             "value": ""
           },
           "cfeStorageAccountName": {
-            "value": "[concat(uniqueString(parameters('uniqueString'), resourceGroup().id, deployment().name), 'cfedata000')]"
+            "value": "[variables('cfeStorageAccountName')]"
           },
           "cfeTag": {
             "value": "[parameters('cfeTag')]"

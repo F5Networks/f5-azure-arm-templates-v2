@@ -29,7 +29,7 @@ else
     NETWORK_PARAMS=',"restrictedSrcAddressVip":{"value":"'"${SRC_IP}"'"}'
 fi
 
-DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"cfeStorageAccountName":{"value":"<RESOURCE GROUP>cfe"}'${NETWORK_PARAMS}'}'
+DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"}'${NETWORK_PARAMS}'}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values
