@@ -179,9 +179,9 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpExternalSubnetId | Yes |  | string | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
 | bigIpInternalSubnetId | Yes |  | string | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
 | bigIpMgmtSubnetId | Yes |  | string | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
-| bigIpExternalSelfAddress | No | "10.0.1.11" | string | External Private IP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfAddress | No | "10.0.2.11" | string | Internal Private IP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfAddress | No | "10.0.0.11" | string | Management Private IP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSelfAddress | No | 10.0.1.11 | string | External Private IP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfAddress | No | 10.0.2.11 | string | Internal Private IP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfAddress | No | 10.0.0.11 | string | Management Private IP Address for BIGIP Instance. IP address parameter must be in the form x.x.x.x. |
 | bigIpUserAssignManagedIdentity | No |  | string | Enter user-assigned pre-existing management identity ID to be associated to Virtual Machine. For example: "/subscriptions/f18b486b-112d-4402-add2-1112222333444/resourcegroups/yourresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/youridentity". |
 | provisionPublicIpMgmt | No | false | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance. |
 | provisionServicePublicIp | No | false | boolean | Flag to deploy public IP address resource for application. |
