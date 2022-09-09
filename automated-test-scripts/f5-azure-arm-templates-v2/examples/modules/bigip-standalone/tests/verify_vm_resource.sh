@@ -70,7 +70,7 @@ vm_settings[privateIps]=$test_mgmt_self_ip
 vm_settings[osProfile.adminUsername]="<ADMIN USERNAME>"
 
 # verify vm name
-vm_settings[osProfile.computerName]="<VM NAME>"
+vm_settings[osProfile.computerName]="bigip01.local"
 
 # verify ssh key set
 vm_settings[osProfile.linuxConfiguration.ssh.publicKeys[].keyData]="BEGIN SSH2 PUBLIC KEY"

@@ -34,19 +34,17 @@ if [[ <NIC COUNT> -ge 3 ]]; then
     echo $INT_SUBNET_ID
 fi 
 
+# Add BYOL license to parameters
+LIC_KEY=""
+if [[ <LICENSE TYPE> == "byol" ]]; then
+    LIC_KEY="<AUTOFILL EVAL LICENSE KEY>"
+fi
+
 ## Create runtime configs with yq
 if [[ "<PROVISION APP>" == "False" ]]; then
     cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>.yaml <DEWPOINT JOB ID>.yaml
 else
     cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-with-app.yaml <DEWPOINT JOB ID>.yaml
-fi
-
-# Disable AutoPhoneHome
-/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
-
-# Add BYOL license to declaration
-if [[ <LICENSE TYPE> == "byol" ]]; then
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY>\"" -i <DEWPOINT JOB ID>.yaml
 fi
 
 if [[ "<PROVISION APP>" == "True" ]]; then
@@ -60,7 +58,7 @@ fi
 CONFIG_RESULT=$(az storage blob upload -f <DEWPOINT JOB ID>.yaml --account-name ${STORAGE_ACCOUNT_NAME} -c templates -n <DEWPOINT JOB ID>.yaml)
 RUNTIME_CONFIG_URL=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>.yaml
 
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"provisionServicePublicIp":{"value":<PROVISION APP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpMgmtSubnetId":{"value":"'"${MGMT_SUBNET_ID}"'"},"bigIpExternalSubnetId":{"value":"'"${EXT_SUBNET_ID}"'"},"bigIpInternalSubnetId":{"value":"'"${INT_SUBNET_ID}"'"},"bigIpMgmtSelfAddress":{"value":"<SELF MGMT>"},"bigIpExternalSelfAddress":{"value":"<SELF EXT>"},"bigIpInternalSelfAddress":{"value":"<SELF INT>"},"servicePrivateIpAddress":{"value":"<EXT VIP ADDRESS>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpRuntimeInitConfig":{"value":"'"${RUNTIME_CONFIG_URL}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"numNics":{"value":<NIC COUNT>}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"allowUsageAnalytics":{"value":False},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"provisionServicePublicIp":{"value":<PROVISION APP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpLicenseKey":{"value":"'"${LIC_KEY}"'"},"bigIpMgmtSubnetId":{"value":"'"${MGMT_SUBNET_ID}"'"},"bigIpExternalSubnetId":{"value":"'"${EXT_SUBNET_ID}"'"},"bigIpInternalSubnetId":{"value":"'"${INT_SUBNET_ID}"'"},"bigIpMgmtSelfAddress":{"value":"<SELF MGMT>"},"bigIpExternalSelfAddress":{"value":"<SELF EXT>"},"bigIpInternalSelfAddress":{"value":"<SELF INT>"},"servicePrivateIpAddress":{"value":"<EXT VIP ADDRESS>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpRuntimeInitConfig":{"value":"'"${RUNTIME_CONFIG_URL}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"numNics":{"value":<NIC COUNT>}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

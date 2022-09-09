@@ -24,7 +24,7 @@ if echo "<TEMPLATE URL>" | grep -q "existing-network"; then
     echo "Network params: $NETWORK_PARAMS"
 fi
 
-DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"}'${NETWORK_PARAMS}'}'
+DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"allowUsageAnalytics":{"value":False},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"}'${NETWORK_PARAMS}'}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

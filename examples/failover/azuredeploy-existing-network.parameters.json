@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "2.4.0.0",
   "parameters": {
+    "allowUsageAnalytics": {
+      "value": true
+    },
     "artifactLocation": {
       "value": "f5-azure-arm-templates-v2/v2.4.0.0/examples/"
     },
@@ -17,6 +20,12 @@
     "bigIpExternalVip01": {
       "value": "10.0.1.101"
     },
+    "bigIpHostname01": {
+      "value": "failover01.local"
+    },
+    "bigIpHostname02": {
+      "value": "failover02.local"
+    },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.202000"
     },
@@ -30,6 +39,12 @@
       "value": "10.0.2.12"
     },
     "bigIpInternalSubnetId": {
+      "value": ""
+    },
+    "bigIpLicenseKey01": {
+      "value": ""
+    },
+    "bigIpLicenseKey02": {
       "value": ""
     },
     "bigIpMgmtAddress01": {

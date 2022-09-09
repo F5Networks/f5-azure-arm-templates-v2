@@ -9,6 +9,13 @@
       },
       "type": "string"
     },
+    "allowUsageAnalytics": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent."
+      },
+      "type": "bool"
+    },
     "artifactLocation": {
       "defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
       "metadata": {
@@ -19,6 +26,20 @@
     "uniqueString": {
       "metadata": {
         "description": "REQUIRED - A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value."
+      },
+      "type": "string"
+    },
+    "bigIpHostname01": {
+      "defaultValue": "failover01.local",
+      "metadata": {
+        "description": "Supply the hostname you would like to use for the BIG-IP instance. The hostname must contain fewer than 63 characters."
+      },
+      "type": "string"
+    },
+    "bigIpHostname02": {
+      "defaultValue": "failover02.local",
+      "metadata": {
+        "description": "Supply the hostname you would like to use for the BIG-IP instance. The hostname must contain fewer than 63 characters."
       },
       "type": "string"
     },
@@ -33,6 +54,20 @@
       "defaultValue": "Standard_D8s_v4",
       "metadata": {
         "description": "Enter valid instance type."
+      },
+      "type": "string"
+    },
+    "bigIpLicenseKey01": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution."
+      },
+      "type": "string"
+    },
+    "bigIpLicenseKey02": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Supply the F5 BYOL license key for BIG-IP instance 02. Leave this parameter blank if deploying the PAYG solution."
       },
       "type": "string"
     },
@@ -529,8 +564,20 @@
           "adminUsername": {
             "value": "[variables('adminUsername')]"
           },
+          "allowUsageAnalytics": {
+            "value": "[parameters('allowUsageAnalytics')]"
+          },
+          "hostname": {
+            "value": "[parameters('bigIpHostname01')]"
+          },
+          "licenseKey": {
+            "value": "[parameters('bigIpLicenseKey01')]"
+          },
           "bigIpPeerAddr": {
             "value": ""
+          },
+          "bigIpPeerHostname": {
+            "value": "[parameters('bigIpHostname02')]"
           },
           "cfeStorageAccountName": {
             "value": "[variables('cfeStorageAccountName')]"
@@ -638,8 +685,20 @@
           "adminUsername": {
             "value": "[variables('adminUsername')]"
           },
+          "allowUsageAnalytics": {
+            "value": "[parameters('allowUsageAnalytics')]"
+          },
+          "hostname": {
+            "value": "[parameters('bigIpHostname02')]"
+          },
+          "licenseKey": {
+            "value": "[parameters('bigIpLicenseKey02')]"
+          },
           "bigIpPeerAddr": {
             "value": "[parameters('bigIpPeerAddr')]"
+          },
+          "bigIpPeerHostname": {
+            "value": "[parameters('bigIpHostname01')]"
           },
           "cfeStorageAccountName": {
             "value": ""

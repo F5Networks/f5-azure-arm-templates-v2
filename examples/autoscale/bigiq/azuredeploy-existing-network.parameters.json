@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "2.4.0.0",
   "parameters": {
+    "allowUsageAnalytics": {
+      "value": true
+    },
     "artifactLocation": {
       "value": "f5-azure-arm-templates-v2/v2.4.0.0/examples/"
     },

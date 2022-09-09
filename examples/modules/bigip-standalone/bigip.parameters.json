@@ -5,7 +5,13 @@
     "adminUsername": {
       "value": "azureuser"
     },
+    "allowUsageAnalytics": {
+      "value": true
+    },
     "bigIpPeerAddr": {
+      "value": ""
+    },
+    "bigIpPeerHostname": {
       "value": ""
     },
     "bigIpRuntimeInitConfig": {
@@ -20,11 +26,17 @@
     "cfeTag": {
       "value": ""
     },
+    "hostname": {
+      "value": "bigip01.local"
+    },
     "image": {
       "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000"
     },
     "instanceType": {
       "value": "Standard_D8s_v4"
+    },
+    "licenseKey": {
+      "value": ""
     },
     "mgmtNsgId": {
       "value": ""

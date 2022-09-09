@@ -4,14 +4,14 @@ controls:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.31.0
-      extensionHash: 8c31d858f78100ce866b70fdf73ebc47f05adbdd2e62ac6ecc4a2162645fc852
+      extensionVersion: 1.32.0
+      extensionHash: 56eff7e20abb8c0636d2293926cd5106cefff9e2b4bb71592c661cfd6732af3e
     - extensionType: as3
-      extensionVersion: 3.38.0
-      extensionHash: 38b9b96826c2da997750ba2054811d8606768df43d08b870d68f8d7cb3fff58d
+      extensionVersion: 3.39.0
+      extensionHash: 54d82a0844b46555c023e22a7887debd8ce49dd3ab4a4a4afca9ee30541dca23
     - extensionType: cf
-      extensionVersion: 1.11.0
-      extensionHash: f3c7aca8a19d0dc01e529d38aa0d235b4dfad34beec2584f8402aa9a92c34699
+      extensionVersion: 1.12.0
+      extensionHash: 6ab10081ca13982d99f05500266a14dc6410646058fd04a4451a75bfd579d7ae
 extension_services:
   service_operations:
     - extensionType: do
@@ -47,7 +47,7 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover1.local'
+            hostname: '{{{HOST_NAME}}}'
           admin:
             class: User
             userType: regular
@@ -155,7 +155,7 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover1.local'
+            hostname: '{{{HOST_NAME}}}'
           admin:
             class: User
             userType: regular
@@ -223,8 +223,8 @@ extension_services:
             class: DeviceGroup
             type: sync-failover
             members:
-              - failover0.local
-              - failover1.local
+              - '{{{REMOTE_HOST_NAME}}}'
+              - '{{{HOST_NAME}}}'
             owner: /Common/failoverGroup/members/0
             autoSync: true
             saveOnAutoSync: false
@@ -273,11 +273,6 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 2
-  - name: REMOTE_HOST
-    type: tag
-    tagProvider:
-      environment: azure
-      key: bigIpPeerAddr
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:
@@ -294,3 +289,18 @@ runtime_parameters:
       field: ipv4
       index: 0
       ipcalc: first
+  - name: HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: hostname
+  - name: REMOTE_HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerHostname
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerAddr

@@ -9,6 +9,13 @@
       },
       "type": "string"
     },
+    "allowUsageAnalytics": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent."
+      },
+      "type": "bool"
+    },
     "artifactLocation": {
       "defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
       "metadata": {
@@ -19,6 +26,13 @@
     "uniqueString": {
       "metadata": {
         "description": "REQUIRED - A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value."
+      },
+      "type": "string"
+    },
+    "bigIpHostname": {
+      "defaultValue": "bigip01.local",
+      "metadata": {
+        "description": "Supply the hostname you would like to use for the BIG-IP instance. The hostname must contain fewer than 63 characters."
       },
       "type": "string"
     },
@@ -33,6 +47,13 @@
       "defaultValue": "Standard_D8s_v4",
       "metadata": {
         "description": "Enter valid instance type."
+      },
+      "type": "string"
+    },
+    "bigIpLicenseKey": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution."
       },
       "type": "string"
     },
@@ -419,6 +440,15 @@
         "parameters": {
           "adminUsername": {
             "value": "[variables('adminUsername')]"
+          },
+          "allowUsageAnalytics": {
+            "value": "[parameters('allowUsageAnalytics')]"
+          },
+          "hostname": {
+            "value": "[parameters('bigIpHostname')]"
+          },
+          "licenseKey": {
+            "value": "[parameters('bigIpLicenseKey')]"
           },
           "image": {
             "value": "[parameters('bigIpImage')]"

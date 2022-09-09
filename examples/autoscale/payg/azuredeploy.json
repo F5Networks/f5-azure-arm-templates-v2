@@ -9,6 +9,13 @@
       },
       "type": "string"
     },
+    "allowUsageAnalytics": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent."
+      },
+      "type": "bool"
+    },
     "artifactLocation": {
       "defaultValue": "[concat('f5-azure-arm-templates-v2/v', deployment().properties.template.contentVersion, '/examples/')]",
       "metadata": {
@@ -713,6 +720,9 @@
         "parameters": {
           "adminUsername": {
             "value": "[variables('adminUsername')]"
+          },
+          "allowUsageAnalytics": {
+            "value": "[parameters('allowUsageAnalytics')]"
           },
           "appInsights": {
             "value": "[variables('appInsights')]"
