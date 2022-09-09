@@ -52,7 +52,7 @@ if [[ <PROVISION PUBLIC IP> == True ]]; then
 fi
 
 if [[ <PROVISION APP> == True ]]; then
-    vip_1_public_ip=$(az vm list-ip-addresses -g <RESOURCE GROUP> -n <RESOURCE GROUP>-bigip-vm-01 | jq -r .[1].virtualMachine.network.publicIpAddresses[1].ipAddress)
+    vip_1_public_ip=$(az network public-ip show --name <RESOURCE GROUP>-app-pip-03 --resource-group <RESOURCE GROUP> | jq -r .ipAddress)
     outputs[vip1PrivateIp]=$vip_1_private_ip
     outputs[vip1PrivateUrlHttp]="http://${vip_1_private_ip}/"
     outputs[vip1PrivateUrlHttps]="https://${vip_1_private_ip}/"

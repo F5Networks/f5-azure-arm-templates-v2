@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "2.4.0.0",
   "parameters": {
+    "allowUsageAnalytics": {
+      "value": true
+    },
     "appContainerName": {
       "value": "f5devcentral/f5-demo-app:latest"
     },
@@ -17,6 +20,12 @@
     "bigIpExternalVip01": {
       "value": "10.0.1.101"
     },
+    "bigIpHostname01": {
+      "value": "failover01.local"
+    },
+    "bigIpHostname02": {
+      "value": "failover02.local"
+    },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.202000"
     },
@@ -28,6 +37,12 @@
     },
     "bigIpInternalSelfIp02": {
       "value": "10.0.2.12"
+    },
+    "bigIpLicenseKey01": {
+      "value": ""
+    },
+    "bigIpLicenseKey02": {
+      "value": ""
     },
     "bigIpMgmtAddress01": {
       "value": "10.0.0.11"

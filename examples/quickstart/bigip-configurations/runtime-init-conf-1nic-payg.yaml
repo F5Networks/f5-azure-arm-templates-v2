@@ -8,12 +8,17 @@ pre_onboard_enabled:
       - /usr/bin/setdb provision.extramb 1000
       - /usr/bin/setdb restjavad.useextramb true
 runtime_parameters:
-  - name: HOST_NAME
+  - name: NAME
     type: metadata
     metadataProvider:
       type: compute
       environment: azure
       field: name
+  - name: HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: hostname
   - name: BIGIP_PASSWORD
     type: url
     query: vmId
@@ -25,17 +30,17 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.31.0
-      extensionHash: 8c31d858f78100ce866b70fdf73ebc47f05adbdd2e62ac6ecc4a2162645fc852
+      extensionVersion: 1.32.0
+      extensionHash: 56eff7e20abb8c0636d2293926cd5106cefff9e2b4bb71592c661cfd6732af3e
     - extensionType: as3
-      extensionVersion: 3.38.0
-      extensionHash: 38b9b96826c2da997750ba2054811d8606768df43d08b870d68f8d7cb3fff58d
+      extensionVersion: 3.39.0
+      extensionHash: 54d82a0844b46555c023e22a7887debd8ce49dd3ab4a4a4afca9ee30541dca23
     - extensionType: ts
-      extensionVersion: 1.30.0
-      extensionHash: bbdc85019149af75c797a77e097417170c0efdc07c0ae34e610977e4e77a063d
+      extensionVersion: 1.31.0
+      extensionHash: 8d2b7c546a9dc4f487c5fb62eb801e2621ad620329ee6d91c64fd734e09a3c01
     - extensionType: fast
-      extensionVersion: 1.19.0
-      extensionHash: d36ecbf05b997f214c2ab4883a52705aa41fbff9c1d8a11577072921eb3e42c7
+      extensionVersion: 1.20.0
+      extensionHash: 84b72613298b46a6da7accab513a723d096df5d15aa5ad0a40990b86557d57f4
 extension_services:
   service_operations:
     - extensionType: do
@@ -72,7 +77,7 @@ extension_services:
           My_System:
             class: System
             autoPhonehome: true
-            hostname: '{{{HOST_NAME}}}.local'
+            hostname: '{{{HOST_NAME}}}'
           admin:
             class: User
             userType: regular

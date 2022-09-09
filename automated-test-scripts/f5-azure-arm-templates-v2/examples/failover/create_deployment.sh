@@ -23,6 +23,14 @@ echo "SECRET_ID: $SECRET_ID"
 IDENTITY=$(az identity show -g <RESOURCE GROUP> -n <RESOURCE GROUP>id | jq -r .id)
 echo "IDENTITY: $IDENTITY"
 
+# Add BYOL license to parameters
+LIC_KEY_1=""
+LIC_KEY_2=""
+if [[ <LICENSE TYPE> == "byol" ]]; then
+    LIC_KEY_1="<AUTOFILL EVAL LICENSE KEY>"
+    LIC_KEY_2="<AUTOFILL EVAL LICENSE KEY 2>"
+fi
+
 ## Create runtime configs with yq
 if [[ "<PROVISION APP>" == "False" ]]; then
     cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml <DEWPOINT JOB ID>01.yaml
@@ -37,19 +45,6 @@ fi
 # Set log level
 /usr/bin/yq e ".controls.logLevel = \"<LOG LEVEL>\"" -i <DEWPOINT JOB ID>01.yaml
 /usr/bin/yq e ".controls.logLevel = \"<LOG LEVEL>\"" -i <DEWPOINT JOB ID>02.yaml
-
-# Disable AutoPhoneHome
-/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>01.yaml
-/usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>02.yaml
-
-/usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>01.yaml
-/usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>02.yaml
-
-# Add BYOL license to declarations
-if [[ <LICENSE TYPE> == "byol" ]]; then
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY>\"" -i <DEWPOINT JOB ID>01.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY 2>\"" -i <DEWPOINT JOB ID>02.yaml
-fi
 
 # Update cfe tag
 /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<RESOURCE GROUP>\"" -i <DEWPOINT JOB ID>01.yaml
@@ -73,7 +68,7 @@ CONFIG_RESULT_02=$(az storage blob upload -f <DEWPOINT JOB ID>02.yaml --account-
 RUNTIME_CONFIG_URL_01=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>01.yaml
 RUNTIME_CONFIG_URL_02=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>02.yaml
 
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"provisionExampleApp":{"value":<PROVISION APP>},"restrictedSrcAddressVip":{"value":"'"${SRC_IP}"'"},"bigIpExternalSelfIp01":{"value":"<SELF EXT 1>"},"bigIpExternalSelfIp02":{"value":"<SELF EXT 2>"},"bigIpInternalSelfIp01":{"value":"<SELF INT 1>"},"bigIpInternalSelfIp02":{"value":"<SELF INT 2>"},"bigIpMgmtAddress01":{"value":"<SELF MGMT 1>"},"bigIpMgmtAddress02":{"value":"<SELF MGMT 2>"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"},"cfeTag":{"value":"<CFE TAG>"},"bigIpRuntimeInitConfig01":{"value":"'"${RUNTIME_CONFIG_URL_01}"'"},"bigIpRuntimeInitConfig02":{"value":"'"${RUNTIME_CONFIG_URL_02}"'"},"bigIpUserAssignManagedIdentity":{"value":"'"${IDENTITY}"'"}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"allowUsageAnalytics":{"value":False},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpLicenseKey01":{"value":"'"${LIC_KEY_1}"'"},"bigIpLicenseKey02":{"value":"'"${LIC_KEY_2}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"provisionExampleApp":{"value":<PROVISION APP>},"restrictedSrcAddressVip":{"value":"'"${SRC_IP}"'"},"bigIpExternalSelfIp01":{"value":"<SELF EXT 1>"},"bigIpExternalSelfIp02":{"value":"<SELF EXT 2>"},"bigIpInternalSelfIp01":{"value":"<SELF INT 1>"},"bigIpInternalSelfIp02":{"value":"<SELF INT 2>"},"bigIpMgmtAddress01":{"value":"<SELF MGMT 1>"},"bigIpMgmtAddress02":{"value":"<SELF MGMT 2>"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"},"cfeTag":{"value":"<CFE TAG>"},"bigIpRuntimeInitConfig01":{"value":"'"${RUNTIME_CONFIG_URL_01}"'"},"bigIpRuntimeInitConfig02":{"value":"'"${RUNTIME_CONFIG_URL_02}"'"},"bigIpUserAssignManagedIdentity":{"value":"'"${IDENTITY}"'"}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
