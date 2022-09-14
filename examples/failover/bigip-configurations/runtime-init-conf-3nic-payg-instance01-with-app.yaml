@@ -10,8 +10,8 @@ extension_packages:
       extensionVersion: 3.39.0
       extensionHash: 54d82a0844b46555c023e22a7887debd8ce49dd3ab4a4a4afca9ee30541dca23
     - extensionType: cf
-      extensionVersion: 1.12.0
-      extensionHash: 6ab10081ca13982d99f05500266a14dc6410646058fd04a4451a75bfd579d7ae
+      extensionVersion: 1.13.0
+      extensionHash: 93be496d250838697d8a9aca8bd0e6fe7480549ecd43280279f0a63fc741ab50
 extension_services:
   service_operations:
     - extensionType: do
