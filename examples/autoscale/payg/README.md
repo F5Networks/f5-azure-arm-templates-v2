@@ -61,7 +61,7 @@ This solution leverages more traditional Autoscale configuration management prac
 
 ## Diagram
 
-![Configuration Example](diagram.png)
+![Configuration Example](diagrams/diagram.png)
 
 ## Prerequisites
 

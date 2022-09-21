@@ -71,7 +71,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 
 ## Diagram
 
-![Configuration Example](diagram.png)
+![Configuration Example](diagrams/diagram.png)
 
 For information about this type of deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/azure.html).
 
@@ -401,7 +401,14 @@ By default, this solution deploys 3-NIC PAYG BIG-IPs:
   - The **Existing Network Stack** (azuredeploy-existing-network.json) references the `runtime-init-conf-3nic-payg-instanceXX.yaml` BIG-IP config files, which only provide basic system onboarding and do not **NOT** include an example virtual service, and can be used as is.
 
 To deploy **BYOL** instances:
-  1. Update the **bigIpLicenseKey01** and **bigIpLicenseKey02** input parameters to reference the unique registration keys to use when licensing the BIG-IP instances.
+  1. Update the **bigIpImage** input parameter to use a `byol` image.
+      Example:
+      ```json 
+      "bigIpImage":{ 
+        "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000" 
+      }
+      ```
+  2. Update the **bigIpLicenseKey01** and **bigIpLicenseKey02** input parameters to reference the unique registration keys to use when licensing the BIG-IP instances.
       Example:
       ```json
       "bigIpLicenseKey01":{ 
@@ -411,15 +418,35 @@ To deploy **BYOL** instances:
         "value": "AAAAA-BBBBB-CCCCC-DDDDD-FFFFFFF" 
       }
       ```
-  2. Update the **bigIpImage** input parameter to use `byol` image.
+  3. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the corresponding `byol` config files (for example, `runtime-init-conf-3nic-byol-instance01-with-app.yaml` and `runtime-init-conf-3nic-byol-instance02-with-app.yaml`).
+
+
+However, most changes require customizing the example configuration files. 
+
+To change BIG-IP configuration(s):
+
+  1. Edit/modify the declaration(s) in the example runtime-init config file(s) with the new `<VALUES>`. For example, if you wanted to change the DNS or NTP settings, update values in the Declarative Onboarding declaration(s):
+
       Example:
-      ```json 
-      "bigIpImage":{ 
-        "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000" 
-      }
+
+      ```yaml
+                My_Dns:
+                  class: DNS
+                  nameServers:
+                    - <YOUR_CUSTOM_DNS_SERVER>
+                My_License:
+                  class: License
+                  licenseType: regKey
+                  regKey: '{{{LICENSE_KEY}}}'
+                My_Ntp:
+                  class: NTP
+                  servers:
+                    - <YOUR_CUSTOM_NTP_SERVER>
+                  timezone: UTC
       ```
 
-Other changes may require customizing the example configuration files. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
+  2. Publish/host the customized runtime-init config(s) file at a location reachable by the BIG-IP at deploy time (for example: github, Azure Storage, etc.)
+  3. Update the **bigIpRuntimeInitConfig** input parameter(s) to reference the new URL(s) of the updated BIG-IP configuration(s).
 
 
 In order deploy additional **virtual services**:

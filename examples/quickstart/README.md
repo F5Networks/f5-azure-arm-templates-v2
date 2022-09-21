@@ -69,7 +69,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 
 ## Diagram
 
-![Configuration Example](diagram.png)
+![Configuration Example](diagrams/diagram.png)
 
 ## Prerequisites
 
@@ -336,30 +336,59 @@ By default, this solution deploys a 3-NIC PAYG BIG-IP:
   - The **Existing Network Stack** (azuredeploy-existing-network.json) references the `runtime-init-conf-3nic-payg.yaml` BIG-IP config file, which only provides basic system onboarding and does not **NOT** include an example virtual service, and can be used as is.
 
 To deploy a **1NIC** instance:
-  1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `1nic` config file (for example, runtime-init-conf-1nic-payg.yaml).
-  2. Update the **numNics** input parameter to **1**.
+  1. Update the **numNics** input parameter to **1**.
+  2. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `1nic` config file (for example, runtime-init-conf-1nic-payg.yaml).
+
 
 To deploy a **2NIC** instance:
-  1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `2nic` config file (for example, runtime-init-conf-2nic-payg.yaml).
-  2. Update the **numNics** input parameter to **2**.
+  1. Update the **numNics** input parameter to **2**.
+  2. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `2nic` config file (for example, runtime-init-conf-2nic-payg.yaml).
+
 
 To deploy a **BYOL** instance:
-  1. Update the **bigIpLicenseKey** input parameters to reference the registration key to use when licensing the BIG-IP instance.
-      Example:
-      ```json
-      "bigIpLicenseKey":{ 
-        "value": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE" 
-      }
-      ```
-  2. Update the **bigIpImage** input parameter to use `byol` image.
+  1. Update the **bigIpImage** input parameter to use a `byol` image.
       Example:
       ```json 
       "bigIpImage":{ 
         "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.0.101000" 
       }
       ```
+  2. Update the **bigIpLicenseKey** input parameters to reference the registration key to use when licensing the BIG-IP instance.
+      Example:
+      ```json
+      "bigIpLicenseKey":{ 
+        "value": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE" 
+      }
+      ```
+  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the corresponding `byol` config file (for example, `runtime-init-conf-3nic-byol-with-app.yaml`).
 
-Other changes may require customizing the example configuration files. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
+
+However, most changes require customizing the example configuration files. 
+
+To change BIG-IP configuration:
+
+1. Edit/modify the declaration(s) in the example runtime-init config file with the new `<VALUES>`. For example, if you wanted to change the DNS or NTP settings, update values in the Declarative Onboarding declaration:
+
+    Example:
+
+    ```yaml
+              My_Dns:
+                class: DNS
+                nameServers:
+                  - <YOUR_CUSTOM_DNS_SERVER>
+              My_License:
+                class: License
+                licenseType: regKey
+                regKey: '{{{LICENSE_KEY}}}'
+              My_Ntp:
+                class: NTP
+                servers:
+                  - <YOUR_CUSTOM_NTP_SERVER>
+                timezone: UTC
+    ```
+
+2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, Azure Storage, git, etc.).
+3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated BIG-IP configuration.
 
 
 In order deploy additional **virtual services**:
