@@ -33,7 +33,7 @@
     "bigIpPeerAddr": {
       "defaultValue": "",
       "metadata": {
-        "description": "Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device."
+        "description": "Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide the first instances Self IP address."
       },
       "type": "string"
     },

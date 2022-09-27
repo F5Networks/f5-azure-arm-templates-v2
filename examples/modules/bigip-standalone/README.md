@@ -43,7 +43,7 @@ This ARM template creates a BIG-IP Virtual Machine (VM) and optionally associate
 | --- | --- | --- | --- | --- |
 | adminUsername | No | "azureuser" | string | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
 | allowUsageAnalytics | No | true | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
-| bigIpPeerAddr | No |  | string | Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
+| bigIpPeerAddr | No |  | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide the first instances Self IP address. |
 | bigIpPeerHostname | No |  | string | Type the hostname of the remote host here. Leave empty if not configuring peering with a remote host on this device. |
 | bigIpRuntimeInitConfig | Yes |  | string | URL to bigip-runtime-init configuration file or json string to use for configuration file. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |

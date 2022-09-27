@@ -175,7 +175,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpInternalSelfIp02 | No | 10.0.2.12 | string | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress01 | No | 10.0.0.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress02 | No | 10.0.0.12 | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpPeerAddr | No | 10.0.1.11 | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide first instance's Self IP address. |
+| bigIpPeerAddr | No | 10.0.1.11 | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide the first instances Self IP address. |
 | bigIpUserAssignManagedIdentity | No |  | string | Enter user-assigned pre-existing management identity ID to be associated to Virtual Machines. For example: "/subscriptions/f18b486b-112d-4402-add2-1112222333444/resourcegroups/yourresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/youridentity". If not specified, a new identity will be created. |
 | provisionExampleApp | No | true | boolean | Flag to deploy the demo web application. |
 | provisionPublicIpMgmt | No | true | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
@@ -246,7 +246,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpInternalSelfIp02 | No | 10.0.2.12 | string | Internal Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress01 | No | 10.0.0.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress02 | No | 10.0.0.12 | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpPeerAddr | No | 10.0.1.11 | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide first instance's Self IP address. |
+| bigIpPeerAddr | No | 10.0.1.11 | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide the first instances Self IP address. |
 | provisionPublicIpMgmt | No | false | boolean | Select true if you would like to provision a public IP address for accessing the BIG-IP instance(s). |
 | provisionServicePublicIp | No | false | boolean | Flag to deploy public IP address resource for application. |
 | restrictedSrcAddressApp | Yes |  | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example "X.X.X.X/32" for a host, "0.0.0.0/0" for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
