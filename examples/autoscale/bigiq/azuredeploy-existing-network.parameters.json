@@ -9,7 +9,7 @@
       "value": "f5-azure-arm-templates-v2/v2.4.0.0/examples/"
     },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.202000"
+      "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.301000"
     },
     "bigIpInstanceType": {
       "value": "Standard_D2s_v4"
