@@ -9,7 +9,7 @@ ARTIFACT LOCATION: 'templates/'
 BIGIQ TENANT: <RESOURCE GROUP>-vmss
 CREATE WORKSPACE: true
 DISAGGREGATOR: LB
-IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.202000
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.301000
 INSTANCE TYPE: Standard_D2s_v4
 LICENSE TYPE: payg
 PROVISION EXTERNAL LB: true
