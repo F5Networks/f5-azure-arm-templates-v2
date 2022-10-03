@@ -45,6 +45,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- | --- | --- |
 | adminUsername | No | "azureuser" | string | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
+| allowUsageAnalytics | No | true | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
 | appInsights | No |  | string | Valid values: empty value, an acceptable application insight component name. Creates application insight component with specified name. |
 | bigIpRuntimeInitConfig | Yes |  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
@@ -372,7 +373,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.5.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -414,5 +415,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.4.0.0/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.5.0.0/examples/images/azure-bigip-autoscale-module.png)
 

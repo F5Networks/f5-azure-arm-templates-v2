@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "2.4.0.0",
+  "contentVersion": "2.5.0.0",
   "parameters": {
     "adminUsername": {
       "defaultValue": "azureuser",
@@ -9,10 +9,38 @@
       },
       "type": "string"
     },
+    "allowUsageAnalytics": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent."
+      },
+      "type": "bool"
+    },
+    "hostname": {
+      "defaultValue": "bigip01.local",
+      "metadata": {
+        "description": "Supply the hostname you would like to use for the BIG-IP instance. The hostname must contain fewer than 63 characters."
+      },
+      "type": "string"
+    },
+    "licenseKey": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution."
+      },
+      "type": "string"
+    },
     "bigIpPeerAddr": {
       "defaultValue": "",
       "metadata": {
-        "description": "Type the static self IP address of the remote host here. Leave empty if not configuring peering with a remote host on this device."
+        "description": "Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide the first instances Self IP address."
+      },
+      "type": "string"
+    },
+    "bigIpPeerHostname": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Type the hostname of the remote host here. Leave empty if not configuring peering with a remote host on this device."
       },
       "type": "string"
     },
@@ -26,7 +54,7 @@
     "cfeStorageAccountName": {
       "defaultValue": "",
       "metadata": {
-        "description": "CFE storage account created and used for cloud-failover-extension."
+        "description": "Supply a unique name for a CFE storage account created and used by Cloud Failover Extension."
       },
       "type": "string"
     },
@@ -223,7 +251,7 @@
     }
   },
   "variables": {
-    "customData": "[base64(concat('#!/bin/bash -x\n\n# Log to local file and serial console\nmkdir -p /var/log/cloud /config/cloud /var/config/rest/downloads\nLOG_FILE=/var/log/cloud/startup-script.log\ntouch ${LOG_FILE}\nnpipe=/tmp/$$.tmp\ntrap \"rm -f $npipe\" EXIT\nmknod $npipe p\ntee <$npipe -a ${LOG_FILE} /dev/ttyS0 &\nexec 1>&-\nexec 1>$npipe\nexec 2>&1\n\necho \"$(date  +\"%Y-%m-%dT%H:%M:%S.%3NZ\") : Starting Custom Script\"\n# Optional optimizations required as early in boot as possible before mcpd starts\n/usr/bin/setdb provision.extramb 1000\n/usr/bin/setdb restjavad.useextramb true\n\n# VARS FROM TEMPLATE\nVAULT_URL=', variables('singleQuote'), variables('keyVault'), variables('singleQuote'), '\nSECRET_ID=', variables('singleQuote'), variables('secretId'), variables('singleQuote'), '\nPACKAGE_URL=', variables('singleQuote'), parameters('bigIpRuntimeInitPackageUrl'), variables('singleQuote'), '\nRUNTIME_CONFIG=',  variables('singleQuote'), parameters('bigIpRuntimeInitConfig'), variables('singleQuote'), '\n\n# Save variables to file\necho $VAULT_URL > /config/cloud/vault_url\necho $SECRET_ID > /config/cloud/secret_id\n\n# Render or download f5-bigip-runtime-init config\nif [[ \"${RUNTIME_CONFIG}\" =~ ^http.* ]]; then\n    for i in {1..30}; do\n        curl -sfv --retry 1 --connect-timeout 5 -L \"${RUNTIME_CONFIG}\" -o /config/cloud/runtime-init.conf && break || sleep 10;\n    done\nelse\n  printf ', variables('singleQuote'), '%s\\n', variables('singleQuote'), ' \"${RUNTIME_CONFIG}\" | jq . > /config/cloud/runtime-init.conf\nfi\n\n# Download and install f5-bigip-runtime-init package\nif [[ ! -s \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" ]]; then\n  for i in {1..30}; do\n    curl -fv --retry 1 --connect-timeout 5 -L \"${PACKAGE_URL}\" -o \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" && break || sleep 10\n  done\nfi\nbash \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" -- ', variables('singleQuote'), '--cloud azure --telemetry-params templateName:v2.4.0.0/examples/modules/bigip-standalone/bigip.json', variables('singleQuote'), '\n\n# Run\nf5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf\n'))]",
+    "customData": "[base64(concat('#!/bin/bash -x\n\n# Log to local file and serial console\nmkdir -p /var/log/cloud /config/cloud /var/config/rest/downloads\nLOG_FILE=/var/log/cloud/startup-script.log\ntouch ${LOG_FILE}\nnpipe=/tmp/$$.tmp\ntrap \"rm -f $npipe\" EXIT\nmknod $npipe p\ntee <$npipe -a ${LOG_FILE} /dev/ttyS0 &\nexec 1>&-\nexec 1>$npipe\nexec 2>&1\n\necho \"$(date  +\"%Y-%m-%dT%H:%M:%S.%3NZ\") : Starting Custom Script\"\n# Optional optimizations required as early in boot as possible before mcpd starts\n/usr/bin/setdb provision.extramb 1000\n/usr/bin/setdb restjavad.useextramb true\n\n# VARS FROM TEMPLATE\nVAULT_URL=', variables('singleQuote'), variables('keyVault'), variables('singleQuote'), '\nSECRET_ID=', variables('singleQuote'), variables('secretId'), variables('singleQuote'), '\nLICENSE_KEY=', variables('singleQuote'), parameters('licenseKey'), variables('singleQuote'), '\nPACKAGE_URL=', variables('singleQuote'), parameters('bigIpRuntimeInitPackageUrl'), variables('singleQuote'), '\nRUNTIME_CONFIG=',  variables('singleQuote'), parameters('bigIpRuntimeInitConfig'), variables('singleQuote'), '\n\n# Save variables to file\necho $VAULT_URL > /config/cloud/vault_url\necho $SECRET_ID > /config/cloud/secret_id\necho $LICENSE_KEY > /config/cloud/license_key\n\n# Render or download f5-bigip-runtime-init config\nif [[ \"${RUNTIME_CONFIG}\" =~ ^http.* ]]; then\n    for i in {1..30}; do\n        curl -sfv --retry 1 --connect-timeout 5 -L \"${RUNTIME_CONFIG}\" -o /config/cloud/runtime-init.conf && break || sleep 10;\n    done\nelse\n  printf ', variables('singleQuote'), '%s\\n', variables('singleQuote'), ' \"${RUNTIME_CONFIG}\" | jq . > /config/cloud/runtime-init.conf\nfi\n\n# Download and install f5-bigip-runtime-init package\nif [[ ! -s \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" ]]; then\n  for i in {1..30}; do\n    curl -fv --retry 1 --connect-timeout 5 -L \"${PACKAGE_URL}\" -o \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" && break || sleep 10\n  done\nfi\nbash \"/var/config/rest/downloads/${PACKAGE_URL##*/}\" -- ', variables('singleQuote'), '--cloud azure --telemetry-params templateName:v2.5.0.0/examples/modules/bigip-standalone/bigip.json', variables('singleQuote'), '\n\n# Run\nf5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf ', variables('singleQuote'), variables('skipTelemetry'), variables('singleQuote'), '\n'))]",
     "keyVault": "[if(empty(parameters('secretId')), '', first(split(parameters('secretId'), '/secrets/')))]",
     "secretId": "[if(empty(parameters('secretId')), '', last(split(parameters('secretId'), '/secrets/')))]",
     "diagnosticsStorageAccountName": "[concat(uniqueString(parameters('uniqueString'), resourceGroup().id, deployment().name), 'stbigip')]",
@@ -359,6 +387,7 @@
     ],
     "offerToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[1])]",
     "singleQuote": "'",
+    "skipTelemetry": "[if(parameters('allowUsageAnalytics'), '', '--skip-telemetry')]",
     "skuToUse": "[if(variables('useCustomImage'), json('null'), variables('image')[2])]",
     "storageProfileArray": {
       "customImage": {
@@ -378,15 +407,16 @@
     "vmId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
     "runtimeInitTag": {
       "workspaceId": "[parameters('workspaceId')]",
-      "uniqueString": "[parameters('uniqueString')]"
+      "uniqueString": "[parameters('uniqueString')]",
+      "hostname": "[parameters('hostname')]"
     },
-    "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
     "cfeTag": {
       "f5_cloud_failover_label": "[parameters('cfeTag')]"
     },
     "cfeTagValue": "[union(if(empty(parameters('tagValues')), json('null'), parameters('tagValues')), variables('cfeTag'))]",
     "bigIpPeerTag": {
-      "bigIpPeerAddr": "[parameters('bigIpPeerAddr')]"
+      "bigIpPeerAddr": "[parameters('bigIpPeerAddr')]",
+      "bigIpPeerHostname": "[parameters('bigIpPeerHostname')]"
     },
     "useAvailabilityZones": "[not(empty(parameters('zone')))]"
   },
@@ -396,7 +426,7 @@
       "condition": "[not(empty(parameters('cfeStorageAccountName')))]",
       "kind": "Storage",
       "location": "[resourceGroup().location]",
-      "name": "[variables('cfeStorageAccountName')]",
+      "name": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
       "properties": {
         "supportsHttpsTrafficOnly": true
       },
@@ -490,7 +520,7 @@
         },
         "osProfile": {
           "adminUsername": "[parameters('adminUsername')]",
-          "computerName": "[parameters('vmName')]",
+          "computerName": "[parameters('hostname')]",
           "customData": "[json('null')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": true,
