@@ -5,7 +5,7 @@ DNSLABEL: <RESOURCE GROUP>
 # must be true when not creating mgmt public IP
 CREATE NAT GATEWAY: false
 EXTERNAL LOAD BALANCER NAME: None
-IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.301000
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.302000
 INSTANCE TYPE: Standard_D8s_v4
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []
