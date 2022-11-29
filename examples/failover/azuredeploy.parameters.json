@@ -53,6 +53,9 @@
     "bigIpPasswordSecretId": {
       "value": ""
     },
+    "bigIpPasswordSecretValue": {
+      "value": ""
+    },
     "bigIpPeerAddr": {
       "value": "10.0.1.11"
     },

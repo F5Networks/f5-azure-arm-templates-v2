@@ -3,12 +3,6 @@
 #  replayEnabled = true
 #  replayTimeout = 10
 
-# SSH login for <ADMIN USERNAME> is set when we provision the instances, the actual admin user password is configured by runtime init
-TMP_DIR='/tmp/<DEWPOINT JOB ID>'
-SSH_KEY=${TMP_DIR}/<RESOURCE GROUP>-private
-PASSWORD='<SECRET VALUE>'
-MGMT_PORT='8443'
-SSH_PORT='22'
 
 # SSH login for <ADMIN USERNAME> is set when we provision the instances, the actual admin user password is configured by runtime init
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'

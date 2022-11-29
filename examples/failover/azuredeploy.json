@@ -72,10 +72,18 @@
       "type": "string"
     },
     "bigIpPasswordSecretId": {
+      "defaultValue": "",
       "metadata": {
-        "description": "REQUIRED - The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid."
+        "description": "The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is REQUIRED if bigIpPasswordSecretValue is empty."
       },
       "type": "string"
+    },
+    "bigIpPasswordSecretValue": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "The value to use for the BIG-IP admin password, if a value is not provided for the bigIpPasswordSecretId parameter. This parameter is REQUIRED if bigIpPasswordSecretId is empty."
+      },
+      "type": "securestring"
     },
     "bigIpPeerAddr": {
       "defaultValue": "10.0.1.11",
@@ -250,6 +258,7 @@
     "vnetAddressPrefix": "10.0",
     "solutionType": "failover",
     "createManagedIdentity": "[empty(parameters('bigIpUserAssignManagedIdentity'))]",
+    "createSecret": "[and(not(empty(parameters('bigIpPasswordSecretValue'))), empty(parameters('bigIpPasswordSecretId')))]",
     "customAssignableScopes": [],
     "customRolePermissions": [],
     "roleDescription": "Role created by failover deployment",
@@ -390,6 +399,12 @@
           },
           "secretId": {
             "value": "[parameters('bigIpPasswordSecretId')]"
+          },
+          "secretValue": {
+            "value": "[parameters('bigIpPasswordSecretValue')]"
+          },
+          "uniqueString": {
+            "value": "[variables('uniqueString')]"
           },
           "userAssignedIdentityName": {
             "value": "[variables('userAssignedIdentityName')]"
@@ -643,7 +658,7 @@
             "value": "[parameters('bigIpRuntimeInitConfig01')]"
           },
           "secretId": {
-            "value": "[parameters('bigIpPasswordSecretId')]"
+            "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"
@@ -769,7 +784,7 @@
             "value": "[parameters('bigIpRuntimeInitConfig02')]"
           },
           "secretId": {
-            "value": "[parameters('bigIpPasswordSecretId')]"
+            "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"
@@ -846,6 +861,10 @@
     "bigIpInstance02ManagementPrivateUrl": {
       "type": "string",
       "value": "[concat('https://', parameters('bigIpMgmtAddress02'), ':443/')]"
+    },
+    "bigIpSecretId": {
+      "type": "string",
+      "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
     },
     "wafPublicIps": {
       "condition": "[parameters('provisionExampleApp')]",

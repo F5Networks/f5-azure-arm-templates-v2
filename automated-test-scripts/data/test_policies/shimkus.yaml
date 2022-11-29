@@ -20,7 +20,7 @@ azure-arm-autoscale-existing-bigiq-test:
 azure-arm-autoscale-example-payg-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/autoscale/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/demo_app.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/autoscale/payg/full/prod_app.yaml"
@@ -49,7 +49,7 @@ azure-arm-failover-byol-example-test:
 azure-arm-failover-payg-example-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/failover/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/full/demo.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/failover/payg/full/prod.yaml"
@@ -121,7 +121,7 @@ azure-arm-quickstart-byol-existing-test:
 azure-arm-quickstart-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/quickstart/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 3
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/demo_app_2nic.yaml"
@@ -134,7 +134,7 @@ azure-arm-quickstart-payg-existing-test:
 azure-access-module-test:
   test-url: "file://automated-test-scripts/f5-azure-arm-templates-v2/examples/modules/access/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 2
   parameters-files:
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/modules/access/prepub_parameters1.yaml"

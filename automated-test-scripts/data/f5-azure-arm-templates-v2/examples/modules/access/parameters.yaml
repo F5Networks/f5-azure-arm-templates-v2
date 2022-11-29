@@ -1,11 +1,14 @@
 REGION: eastus
 RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
 SOLUTION TYPE: failover
+# both of these can be false but never both true
+CREATE SECRET: 'true'
+USE SECRET: 'false'
 CUSTOM ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
 CUSTOM ROLE DESCRIPTION: This role is created as part of dewdrop tests
 CUSTOM ROLE PERMISSIONS: >-
   [{"actions":["Microsoft.Resources/subscriptions/resourceGroups/read","Microsoft.Resources/subscriptions/resourceGroups/write"],"notActions":["Microsoft.Resources/subscriptions/resourceGroups/delete"]}]
-KEY VAULT NAME: dd-n-<DEWPOINT JOB ID>fv
+KEY VAULT NAME: dd-n-<DEWPOINT JOB ID>kv
 USER ASSIGNED IDENT NAME: identity-<DEWPOINT JOB ID>
 SECRET NAME: secert-<DEWPOINT JOB ID>
 PASSWORD: StrongPassword212+

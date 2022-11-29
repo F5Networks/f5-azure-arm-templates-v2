@@ -23,6 +23,12 @@
     "bigIpLicenseKey": {
       "value": ""
     },
+    "bigIpPasswordSecretId": {
+      "value": ""
+    },
+    "bigIpPasswordSecretValue": {
+      "value": ""
+    },
     "bigIpRuntimeInitConfig": {
       "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml"
     },

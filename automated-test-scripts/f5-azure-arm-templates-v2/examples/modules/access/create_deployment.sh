@@ -53,11 +53,18 @@ else
    ROLE_SCOPE=',"customAssignableScopes":{"value":["<ROLE SCOPE>"]}'
 fi
 
-SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
-SECRET_ID_STRING=',"secretId":{"value":"'"$SECRET_ID"'"}'
+if [[ "<CREATE SECRET>" == 'true' ]]; then
+   SECRET_ID_STRING=',"secretId":{"value":""},"secretValue":{"value":"<SECRET VALUE>"}'
+elif [[ "<USE SECRET>" == 'true' ]]; then
+   SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
+   SECRET_ID_STRING=',"secretId":{"value":"'"$SECRET_ID"'"},"secretValue":{"value":""}'
+else
+   SECRET_ID_STRING=',"secretId":{"value":""},"secretValue":{"value":""}'
+fi
 
-DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${SOLUTION_TYPE}${ROLE_NAME}${ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${ROLE_SCOPE}'}}'
+UNIQUE_STRING=',"uniqueString":{"value":"<RESOURCE GROUP>"}'
 
+DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${SOLUTION_TYPE}${ROLE_NAME}${ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${ROLE_SCOPE}${UNIQUE_STRING}'}}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

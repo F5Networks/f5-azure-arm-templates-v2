@@ -1,9 +1,12 @@
 REGION: eastus
 RESOURCE GROUP: dd-n-<DEWPOINT JOB ID>
 SOLUTION TYPE: standard
+# both of these can be false but never both true
+CREATE SECRET: 'false'
+USE SECRET: 'true'
 ROLE NAME: cust-role-def-<DEWPOINT JOB ID>
 ROLE DESCRIPTION: This role is created as part of dewdrop tests
-KEY VAULT NAME: dd-n-<DEWPOINT JOB ID>fv
+KEY VAULT NAME: dd-n-<DEWPOINT JOB ID>kv
 SECRET NAME: secert-<DEWPOINT JOB ID>
 PASSWORD: StrongPassword212+
 SECRET VALUE: StrongPassword212+

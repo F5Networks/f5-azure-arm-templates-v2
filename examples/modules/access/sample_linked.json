@@ -35,11 +35,12 @@
 					"solutionType": { "value": "standard" },
 					"customRolePermissions": { "value": [ "Microsoft.Resources/subscriptions/resourceGroups/read", "Microsoft.Resources/subscriptions/resourceGroups/list"]	},
 					"customAssignableScopes": { "value": [ "[subscription().subscriptionId]"] },
-					"roleDescription": { "value": "this is a custom role defition for reader" },
+					"roleDescription": { "value": "this is a custom role definition for reader" },
 					"roleName": {	"value": "custom-reader" },
 					"keyVaultPermissionsKeys": { "value": [ "get", "list" ]	},
 					"keyVaultPermissionsSecrets": { "value": [ "get", "list" ] },
-					"secretId": { "value": "https://mySecretVault.vault.azure.net/secrets/secretName" },
+					"secretId": { "value": "https://BigIpSecretVault.vault.azure.net/secrets/secretName" },
+					"secretValue": { "value": "" },
 					"userAssignedIdentityName": { "value": "" },
 					"tagValues": { "value": { "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" } }
 				}

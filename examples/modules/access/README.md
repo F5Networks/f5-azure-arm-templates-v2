@@ -35,7 +35,7 @@ This solution creates RBAC permissions based on the following **solutionTypes**:
     - Permissions from standard + 
     - Update permissions for IP addresses/routes *(used by Cloud Failover Extension)*
 
-Additionally, when providing the identifier of an existing Azure Key Vault secret for the secretId input parameter, the Azure user-assigned managed identity created by this template is granted **get** and **list** access to the provided secret. These permissions are also customizable. **NOTE: The secretId is required by F5 BIG-IP Runtime Init when deploying the failover or standard solutions (if licensing via BIG-IQ).**
+Additionally, when providing the identifier of an existing Azure Key Vault secret for the secretId input parameter, or a secure string for the value of the secretValue parameter, the Azure user-assigned managed identity created by this template is granted **get** and **list** access to the secret. These permissions are also customizable. **NOTE: The secretId is required by F5 BIG-IP Runtime Init when deploying the failover or standard solutions (if licensing via BIG-IQ).**
 
 
 ## Prerequisites
@@ -111,8 +111,10 @@ These are the RBAC permissions produced by each type of solution supported by th
 | roleDescription | No | Role created by the Access template. | string | Description for role. |
 | roleName| Yes |  | string | Provides value for role definition which will be created by the template. |
 | secretId | No |  | string | The full URL of the secretId, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. |
+| secretValue | No |  | string | If provided and secretId is empty, a secret with the supplied value will be created in a new Azure Key Vault. |
 | solutionType | No | standard | string | Specifies solution type. Allowed values are 'standard', 'failover', and 'logging'. |
 | tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment. If you would like the values to be unique, adjust them as needed for each key. |
+| uniqueString | Yes |  | string | REQUIRED - A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | userAssignedIdentityName | No |  | string | User-Assigned Identity name. |
 
 ### Template Outputs
