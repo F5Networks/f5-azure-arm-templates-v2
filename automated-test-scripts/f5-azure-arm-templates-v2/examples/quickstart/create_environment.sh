@@ -14,19 +14,6 @@ az storage file download --share-name keyshare --path dewpt-private --dest ${TMP
 
 chmod 600 ${TMP_DIR}/<RESOURCE GROUP>-private
 
-### since we are creating the full stack, if we want to test production stack we will need to create the bastion host after the template deployment
-### (saving for later)
-# response="VM running"
-# if [[ <PROVISION PUBLIC IP> == False ]]; then
-#     response=$(az vm create -n <RESOURCE GROUP>-bastionvm -g <RESOURCE GROUP> --image UbuntuLTS --vnet-name <RESOURCE GROUP>-vnet --subnet subnet0 --private-ip-address 10.0.0.50 --public-ip-sku Standard --admin-username azureuser --admin-password 'B!giq2017P@zz' | jq -r .powerState)
-# fi
-
-# if [[ $response == "VM running" ]]; then
-#     echo "Deployment accepted"
-# else
-#     echo "Template validation failed"
-# fi
-
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED"
 else

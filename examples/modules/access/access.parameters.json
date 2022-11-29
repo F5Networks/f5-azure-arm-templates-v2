@@ -29,6 +29,9 @@
     "secretId": {
       "value": ""
     },
+    "secretValue": {
+      "value": ""
+    },
     "solutionType": {
       "value": "standard"
     },
@@ -40,6 +43,9 @@
         "group": "f5group",
         "owner": "f5owner"
       }
+    },
+    "uniqueString": {
+      "value": ""
     },
     "userAssignedIdentityName": {
       "value": ""

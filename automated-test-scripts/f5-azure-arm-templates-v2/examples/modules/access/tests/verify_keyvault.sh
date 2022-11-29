@@ -5,8 +5,7 @@
 #  replayTimeout = 10
 
 
-TEMP_VAR="<KEY VAULT NAME>"
-if [[ $TEMP_VAR =~ "KEY VAULT NAME" || -z $TEMP_VAR ]]; then
+if [[ "<CREATE SECRET>" == 'false' ]]; then
    echo "KeyVault was not requested"
    echo "KeyVault Creation Passed"
 else

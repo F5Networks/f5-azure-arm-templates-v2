@@ -129,6 +129,20 @@
       },
       "type": "string"
     },
+    "bigIpPasswordSecretId": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "The full URL of an existing secretId to pass to the BIG-IP instance, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is ignored if bigIpUserAssignManagedIdentity is provided."
+      },
+      "type": "string"
+    },
+    "bigIpPasswordSecretValue": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "The value to use for the secret to pass to the BIG-IP instance. If not provided, the solution will pass the value provided for the bigIpPasswordSecretId parameter. This parameter is ignored if bigIpUserAssignManagedIdentity is provided."
+      },
+      "type": "securestring"
+    },
     "tagValues": {
       "defaultValue": {
         "application": "f5demoapp",
@@ -147,6 +161,23 @@
     "contentVersion": "[deployment().properties.template.contentVersion]",
     "uniqueString": "[toLower(parameters('uniqueString'))]",
     "adminUsername": "[string('azureuser')]",
+    "createAccess": "[or(variables('createSecret'), variables('useSecret'))]",
+    "solutionType": "standard",
+    "createSecret": "[and(not(empty(parameters('bigIpPasswordSecretValue'))), empty(parameters('bigIpPasswordSecretId')), empty(parameters('bigIpUserAssignManagedIdentity')))]",
+    "useSecret": "[and(not(empty(parameters('bigIpPasswordSecretId'))), empty(parameters('bigIpPasswordSecretValue')), empty(parameters('bigIpUserAssignManagedIdentity')))]",
+    "customAssignableScopes": [],
+    "customRolePermissions": [],
+    "roleDescription": "Role created by quickstart deployment",
+    "roleName": "[concat(variables('uniqueString'), '-bigip-high-availability-role')]",
+    "keyVaultPermissionsKeys": [
+      "list",
+      "get"
+    ],
+    "keyVaultPermissionsSecrets": [
+      "list",
+      "get"
+    ],
+    "userAssignedIdentityName": "[concat(variables('uniqueString'), '-bigip-user-identity')]",
     "numSubnets": "[if(variables('provisionApp'), add(parameters('numNics'), 1), parameters('numNics'))]",
     "vnetName": "[concat(variables('uniqueString'), '-vnet')]",
     "vnetAddressPrefix": "10.0",
@@ -266,6 +297,57 @@
           },
           "createNatGateway": {
             "value": "[not(parameters('provisionPublicIpMgmt'))]"
+          },
+          "tagValues": {
+            "value": "[parameters('tagValues')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "condition": "[variables('createAccess')]",
+      "name": "accessTemplate",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'modules/access/access.json')]",
+          "contentVersion": "[variables('contentVersion')]"
+        },
+        "parameters": {
+          "solutionType": {
+            "value": "[variables('solutionType')]"
+          },
+          "customAssignableScopes": {
+            "value": "[variables('customAssignableScopes')]"
+          },
+          "roleDescription": {
+            "value": "[variables('roleDescription')]"
+          },
+          "roleName": {
+            "value": "[variables('roleName')]"
+          },
+          "customRolePermissions": {
+            "value": "[variables('customRolePermissions')]"
+          },
+          "keyVaultPermissionsKeys": {
+            "value": "[variables('keyVaultPermissionsKeys')]"
+          },
+          "keyVaultPermissionsSecrets": {
+            "value": "[variables('keyVaultPermissionsSecrets')]"
+          },
+          "secretId": {
+            "value": "[parameters('bigIpPasswordSecretId')]"
+          },
+          "secretValue": {
+            "value": "[parameters('bigIpPasswordSecretValue')]"
+          },
+          "uniqueString": {
+            "value": "[variables('uniqueString')]"
+          },
+          "userAssignedIdentityName": {
+            "value": "[variables('userAssignedIdentityName')]"
           },
           "tagValues": {
             "value": "[parameters('tagValues')]"
@@ -512,6 +594,9 @@
           "bigIpRuntimeInitConfig": {
             "value": "[parameters('bigIpRuntimeInitConfig')]"
           },
+          "secretId": {
+            "value": "[if(variables('createAccess'), reference('accessTemplate').outputs.secretId.value, '')]"
+          },
           "sshKey": {
             "value": "[parameters('sshKey')]"
           },
@@ -522,7 +607,7 @@
             "value": "[variables('uniqueString')]"
           },
           "userAssignManagedIdentity": {
-            "value": "[if(not(empty(parameters('bigIpUserAssignManagedIdentity'))), parameters('bigIpUserAssignManagedIdentity'), '')]"
+            "value": "[if(variables('createAccess'), reference('accessTemplate').outputs.userAssignedIdentityId.value, parameters('bigIpUserAssignManagedIdentity'))]"
           },
           "vmName": {
             "value": "[variables('vmName')]"
@@ -564,6 +649,11 @@
     "bigIpManagementPrivateUrl": {
       "type": "string",
       "value": "[if(equals(parameters('numNics'), 1), concat('https://', variables('mgmtSelfIp'), ':8443/'), concat('https://', variables('mgmtSelfIp'), ':443/'))]"
+    },
+    "bigIpSecretId": {
+      "condition": "[variables('createAccess')]",
+      "type": "string",
+      "value": "[reference('accessTemplate').outputs.secretId.value]"
     },
     "wafPublicIps": {
       "condition": "[variables('provisionApp')]",

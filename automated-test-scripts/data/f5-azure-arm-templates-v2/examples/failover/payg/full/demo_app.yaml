@@ -3,6 +3,9 @@ ADMIN USERNAME: azureuser
 APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
 CFE TAG: <RESOURCE GROUP>
+# if CREATE IDENTITY = false, then CREATE SECRET must also be false
+CREATE IDENTITY: true
+CREATE SECRET: true
 INSTANCE TYPE: Standard_D8s_v4
 IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.302000
 LICENSE TYPE: payg
