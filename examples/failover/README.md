@@ -251,8 +251,8 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | cfeStorageAccountName | No |  | string | Supply a unique name for a CFE storage account created and used by Cloud Failover Extension. If a value is not provided, a storage account will be created using the value of the uniqueString input parameter. For example: **uniqueStringstcfe**. |
 | cfeTag | No | "bigip_high_availability_solution" | string | Cloud Failover deployment tag value. |
 | bigIpMgmtSubnetId | **Yes** |  | string | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
-| bigIpExternalSubnetId | **Yes** |  | string | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
-| bigIpInternalSubnetId | **Yes** |  | string | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
+| bigIpExternalSubnetId | **Yes** |  | string | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. Required for 2 NIC deployments. |
+| bigIpInternalSubnetId | No |  | string | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. Required for 3 NIC deployments. |
 | bigIpMgmtAddress01 | No | 10.0.0.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress02 | No | 10.0.0.12 | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpExternalSelfIp01 | No | 10.0.1.11 | string | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
@@ -324,8 +324,8 @@ The easiest way to deploy this Azure Arm templates is to use the deploy button b
     - **cfeStorageAccountName**
   - And any network related parameters if deploying the azuredeploy-existing-network.json template, for example:
     - **bigIpMgmtSubnetId**
-    - **bigIpExternalSubnetId**
-    - **bigIpInternalSubnetId**
+    - **bigIpExternalSubnetId** *(for 2 NIC)*
+    - **bigIpInternalSubnetId** *(for 3 NIC)*
   - As well as the static IP address related parameters, which have defaults, but need to be mapped to your network.
   - Click "Next: Review + Create".
 
@@ -399,15 +399,23 @@ NOTE: If providing the json inline as a template parameter, you must escape all 
 F5 has provided the following example configuration files in the `examples/failover/bigip-configurations` folder:
 
 - These examples install Automation Tool Chain packages for a PAYG licensed deployment.
+  - `runtime-init-conf-2nic-payg-instance01.yaml`
+  - `runtime-init-conf-2nic-payg-instance02.yaml`
   - `runtime-init-conf-3nic-payg-instance01.yaml`
   - `runtime-init-conf-3nic-payg-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
+  - `runtime-init-conf-2nic-payg-instance01-with-app.yaml`
+  - `runtime-init-conf-2nic-payg-instance02-with-app.yaml`
   - `runtime-init-conf-3nic-payg-instance01-with-app.yaml`
   - `runtime-init-conf-3nic-payg-instance02-with-app.yaml`
 - These examples install Automation Tool Chain packages for a BYOL licensed deployment.
+  - `runtime-init-conf-2nic-byol-instance01.yaml`
+  - `runtime-init-conf-2nic-byol-instance02.yaml`
   - `runtime-init-conf-3nic-byol-instance01.yaml`
   - `runtime-init-conf-3nic-byol-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
+  - `runtime-init-conf-2nic-byol-instance01-with-app.yaml`
+  - `runtime-init-conf-2nic-byol-instance02-with-app.yaml`
   - `runtime-init-conf-3nic-byol-instance01-with-app.yaml`
   - `runtime-init-conf-3nic-byol-instance02-with-app.yaml`
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
@@ -419,6 +427,10 @@ See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init
 By default, this solution deploys 3-NIC PAYG BIG-IPs:
   - The **Full Stack** (azuredeploy.json) references the `runtime-init-conf-3nic-payg-instanceXX-with-app.yaml` BIG-IP config files, which include an example virtual service, and can be used as is. These example configurations do not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
   - The **Existing Network Stack** (azuredeploy-existing-network.json) references the `runtime-init-conf-3nic-payg-instanceXX.yaml` BIG-IP config files, which only provide basic system onboarding and do not **NOT** include an example virtual service, and can be used as is.
+
+To deploy **2NIC** instances:
+  1. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the corresponding `2nic` config files (for example, `runtime-init-conf-2nic-payg-instance01-with-app.yaml` and `runtime-init-conf-2nic-payg-instance02-with-app.yaml`)
+  2. Update the **numNics** input parameter to **2**
 
 To deploy **BYOL** instances:
   1. Update the **bigIpImage** input parameter to use a `byol` image.

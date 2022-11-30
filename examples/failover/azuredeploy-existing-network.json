@@ -117,6 +117,17 @@
       },
       "type": "string"
     },
+    "numNics": {
+      "allowedValues": [
+        2,
+        3
+      ],
+      "defaultValue": 3,
+      "metadata": {
+        "description": "Enter valid number of network interfaces to create on the BIG-IP VE instance."
+      },
+      "type": "int"
+    },
     "bigIpMgmtSubnetId": {
       "metadata": {
         "description": "REQUIRED - Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed."
@@ -130,8 +141,9 @@
       "type": "string"
     },
     "bigIpInternalSubnetId": {
+      "defaultValue": "",
       "metadata": {
-        "description": "REQUIRED - Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed."
+        "description": "Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed."
       },
       "type": "string"
     },
@@ -310,7 +322,7 @@
     ],
     "mgmtSecurityGroup": "[variables('mgmtNsgRulesArray')]",
     "externalSecurityGroup": "[variables('externalNsgRulesArray')]",
-    "internalSecurityGroup": "[variables('internalNsgRulesArray')]",
+    "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalNsgRulesArray'), createArray())]",
     "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm-01')]",
     "vmName02": "[concat(variables('uniqueString'), '-bigip-vm-02')]"
@@ -487,10 +499,10 @@
             "value": []
           },
           "nic2SubnetId": {
-            "value": "[parameters('bigIpInternalSubnetId')]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), parameters('bigIpInternalSubnetId'), '')]"
           },
           "nic2NsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('dagTemplate').outputs.nsg2Id.value, '')]"
           },
           "nic2PrimaryPublicId": {
             "value": ""
@@ -607,10 +619,10 @@
             "value": "[if(variables('provisionServicePrivateIp'), if(parameters('provisionServicePublicIp'), createArray(createObject('publicIpId', reference('dagTemplate').outputs.externalIpIds.value[2], 'privateIpAddress', parameters('bigIpExternalVip01'))), createArray(createObject('publicIpId', '', 'privateIpAddress', parameters('bigIpExternalVip01')))), createArray())]"
           },
           "nic2SubnetId": {
-            "value": "[parameters('bigIpInternalSubnetId')]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), parameters('bigIpInternalSubnetId'), '')]"
           },
           "nic2NsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('dagTemplate').outputs.nsg2Id.value, '')]"
           },
           "nic2PrimaryPublicId": {
             "value": ""

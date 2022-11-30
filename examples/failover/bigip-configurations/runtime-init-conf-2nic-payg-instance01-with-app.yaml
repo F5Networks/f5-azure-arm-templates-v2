@@ -20,7 +20,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
@@ -33,6 +33,7 @@ extension_services:
             tm.tcpudptxchecksum: Software-only
           My_Provisioning:
             class: Provision
+            asm: nominal
             ltm: nominal
           My_Ntp:
             class: NTP
@@ -91,19 +92,6 @@ extension_services:
               - tcp:6126
               - tcp:6127
               - tcp:6128
-            trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
-            vlan: internal
-            allowService: none
             trafficGroup: traffic-group-local-only
     - extensionType: cf
       type: inline
@@ -122,13 +110,75 @@ extension_services:
           scopingTags:
             f5_cloud_failover_label: bigip_high_availability_solution
           requireScopingTags: false
+    - extensionType: as3
+      type: inline
+      value:
+        class: ADC
+        schemaVersion: 3.0.0
+        label: Failover
+        remark: Failover
+        Tenant_1:
+          class: Tenant
+          Shared:
+            class: Application
+            template: shared
+            Shared_Pool:
+              class: Pool
+              remark: Service 1 shared pool
+              members:
+                - serverAddresses:
+                    - 10.0.3.4
+                  servicePort: 80
+              monitors:
+                - http
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+            Service_Address_01:
+              class: Service_Address
+              virtualAddress: 10.0.1.101
+          HTTP_Service:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - use: /Tenant_1/Shared/Service_Address_01
+              snat: auto
+              pool: /Tenant_1/Shared/Shared_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+          HTTPS_Service:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - use: /Tenant_1/Shared/Service_Address_01
+              snat: auto
+              pool: /Tenant_1/Shared/Shared_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+              serverTLS:
+                bigip: /Common/clientssl
+              redirect80: false
     - extensionType: do
       type: inline
       value:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
@@ -141,6 +191,7 @@ extension_services:
             tm.tcpudptxchecksum: Software-only
           My_Provisioning:
             class: Provision
+            asm: nominal
             ltm: nominal
           My_Ntp:
             class: NTP
@@ -199,19 +250,6 @@ extension_services:
               - tcp:6126
               - tcp:6127
               - tcp:6128
-            trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
-            vlan: internal
-            allowService: none
             trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
@@ -266,13 +304,6 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 1
-  - name: SELF_IP_INTERNAL
-    type: metadata
-    metadataProvider:
-      type: network
-      environment: azure
-      field: ipv4
-      index: 2
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:
