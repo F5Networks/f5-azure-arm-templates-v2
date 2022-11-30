@@ -137,6 +137,17 @@
       },
       "type": "string"
     },
+    "numNics": {
+      "allowedValues": [
+        2,
+        3
+      ],
+      "defaultValue": 3,
+      "metadata": {
+        "description": "Enter valid number of network interfaces to create on the BIG-IP VE instance."
+      },
+      "type": "int"
+    },
     "bigIpExternalSelfIp01": {
       "defaultValue": "10.0.1.11",
       "metadata": {
@@ -324,7 +335,7 @@
     ],
     "mgmtSecurityGroup": "[variables('mgmtNsgRulesArray')]",
     "appSecurityGroup": "[variables('appNsgRulesArray')]",
-    "internalSecurityGroup": "[variables('internalNsgRulesArray')]",
+    "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalNsgRulesArray'), createArray())]",
     "bastionInstanceName": "[variables('uniqueString')]",
     "bastionInstanceType": "Standard_D2_v4",
     "appInstanceName": "[variables('uniqueString')]",
@@ -634,10 +645,10 @@
             "value": []
           },
           "nic2SubnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[2]]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('networkTemplate').outputs.subnets.value[2], '')]"
           },
           "nic2NsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('dagTemplate').outputs.nsg2Id.value, '')]"
           },
           "nic2PrimaryPublicId": {
             "value": ""
@@ -760,10 +771,10 @@
             ]
           },
           "nic2SubnetId": {
-            "value": "[reference('networkTemplate').outputs.subnets.value[2]]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('networkTemplate').outputs.subnets.value[2], '')]"
           },
           "nic2NsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('dagTemplate').outputs.nsg2Id.value, '')]"
           },
           "nic2PrimaryPublicId": {
             "value": ""

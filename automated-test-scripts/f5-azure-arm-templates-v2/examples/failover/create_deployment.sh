@@ -42,12 +42,12 @@ fi
 
 ## Create runtime configs with yq
 if [[ "<PROVISION APP>" == "False" ]]; then
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml <DEWPOINT JOB ID>01.yaml
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml <DEWPOINT JOB ID>02.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-instance01.yaml <DEWPOINT JOB ID>01.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-instance02.yaml <DEWPOINT JOB ID>02.yaml
     do_index=2
 else
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml <DEWPOINT JOB ID>01.yaml
-    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml <DEWPOINT JOB ID>02.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-instance01-with-app.yaml <DEWPOINT JOB ID>01.yaml
+    cp /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-instance02-with-app.yaml <DEWPOINT JOB ID>02.yaml
     do_index=3
 fi
 
@@ -77,7 +77,7 @@ CONFIG_RESULT_02=$(az storage blob upload -f <DEWPOINT JOB ID>02.yaml --account-
 RUNTIME_CONFIG_URL_01=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>01.yaml
 RUNTIME_CONFIG_URL_02=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>02.yaml
 
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"allowUsageAnalytics":{"value":False},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpLicenseKey01":{"value":"'"${LIC_KEY_1}"'"},"bigIpLicenseKey02":{"value":"'"${LIC_KEY_2}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"bigIpPasswordSecretValue":{"value":"'"${SECRET_VALUE}"'"},"provisionExampleApp":{"value":<PROVISION APP>},"restrictedSrcAddressVip":{"value":"'"${SRC_IP}"'"},"bigIpExternalSelfIp01":{"value":"<SELF EXT 1>"},"bigIpExternalSelfIp02":{"value":"<SELF EXT 2>"},"bigIpInternalSelfIp01":{"value":"<SELF INT 1>"},"bigIpInternalSelfIp02":{"value":"<SELF INT 2>"},"bigIpMgmtAddress01":{"value":"<SELF MGMT 1>"},"bigIpMgmtAddress02":{"value":"<SELF MGMT 2>"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"},"cfeTag":{"value":"<CFE TAG>"},"bigIpRuntimeInitConfig01":{"value":"'"${RUNTIME_CONFIG_URL_01}"'"},"bigIpRuntimeInitConfig02":{"value":"'"${RUNTIME_CONFIG_URL_02}"'"},"bigIpUserAssignManagedIdentity":{"value":"'"${IDENTITY}"'"}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"allowUsageAnalytics":{"value":False},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpLicenseKey01":{"value":"'"${LIC_KEY_1}"'"},"bigIpLicenseKey02":{"value":"'"${LIC_KEY_2}"'"},"appContainerName":{"value":"<APP CONTAINER>"},"numNics":{"value":<NIC COUNT>},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"bigIpPasswordSecretValue":{"value":"'"${SECRET_VALUE}"'"},"provisionExampleApp":{"value":<PROVISION APP>},"restrictedSrcAddressVip":{"value":"'"${SRC_IP}"'"},"bigIpExternalSelfIp01":{"value":"<SELF EXT 1>"},"bigIpExternalSelfIp02":{"value":"<SELF EXT 2>"},"bigIpInternalSelfIp01":{"value":"<SELF INT 1>"},"bigIpInternalSelfIp02":{"value":"<SELF INT 2>"},"bigIpMgmtAddress01":{"value":"<SELF MGMT 1>"},"bigIpMgmtAddress02":{"value":"<SELF MGMT 2>"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"},"cfeTag":{"value":"<CFE TAG>"},"bigIpRuntimeInitConfig01":{"value":"'"${RUNTIME_CONFIG_URL_01}"'"},"bigIpRuntimeInitConfig02":{"value":"'"${RUNTIME_CONFIG_URL_02}"'"},"bigIpUserAssignManagedIdentity":{"value":"'"${IDENTITY}"'"}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

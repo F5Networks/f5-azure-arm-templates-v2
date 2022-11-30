@@ -20,7 +20,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
@@ -91,19 +91,6 @@ extension_services:
               - tcp:6126
               - tcp:6127
               - tcp:6128
-            trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
-            vlan: internal
-            allowService: none
             trafficGroup: traffic-group-local-only
     - extensionType: cf
       type: inline
@@ -128,7 +115,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
@@ -199,19 +186,6 @@ extension_services:
               - tcp:6126
               - tcp:6127
               - tcp:6128
-            trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
-            vlan: internal
-            allowService: none
             trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
@@ -266,13 +240,6 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 1
-  - name: SELF_IP_INTERNAL
-    type: metadata
-    metadataProvider:
-      type: network
-      environment: azure
-      field: ipv4
-      index: 2
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:

@@ -12,7 +12,7 @@ INSTANCE TYPE: Standard_D8s_v4
 IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000
 LICENSE TYPE: byol
 LOG LEVEL: debug
-NIC COUNT: 3
+NIC COUNT: 2
 PROVISION APP: false
 PROVISION PUBLIC IP: false
 REGION: eastus2

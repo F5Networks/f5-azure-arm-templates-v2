@@ -20,7 +20,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
@@ -91,19 +91,6 @@ extension_services:
               - tcp:6126
               - tcp:6127
               - tcp:6128
-            trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
-            vlan: internal
-            allowService: none
             trafficGroup: traffic-group-local-only
     - extensionType: cf
       type: inline
@@ -128,7 +115,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
@@ -200,19 +187,6 @@ extension_services:
               - tcp:6127
               - tcp:6128
             trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
-            vlan: internal
-            allowService: none
-            trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
             configsyncIp: /Common/external-self/address
@@ -223,8 +197,8 @@ extension_services:
             class: DeviceGroup
             type: sync-failover
             members:
-              - '{{{HOST_NAME}}}'
               - '{{{REMOTE_HOST_NAME}}}'
+              - '{{{HOST_NAME}}}'
             owner: /Common/failoverGroup/members/0
             autoSync: true
             saveOnAutoSync: false
@@ -235,7 +209,7 @@ extension_services:
             class: DeviceTrust
             localUsername: admin
             localPassword: '{{{BIGIP_PASSWORD}}}'
-            remoteHost: /Common/failoverGroup/members/0
+            remoteHost: '{{{REMOTE_HOST}}}'
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
 post_onboard_enabled: []
@@ -266,13 +240,6 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 1
-  - name: SELF_IP_INTERNAL
-    type: metadata
-    metadataProvider:
-      type: network
-      environment: azure
-      field: ipv4
-      index: 2
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:
@@ -299,3 +266,8 @@ runtime_parameters:
     tagProvider:
       environment: azure
       key: bigIpPeerHostname
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerAddr
