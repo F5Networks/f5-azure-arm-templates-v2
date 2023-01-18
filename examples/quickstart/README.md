@@ -108,6 +108,9 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 
   - ***IMPORTANT:*** Although the templates support advanced IAM functionality, by default, the example BIG-IP Runtime-Init configurations for quickstart are basic and don't leverage secrets. If a secret and instance profile are provisioned like per above, you will also need to customize and re-host the example BIG-IP configuration files to use the secret. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
+  - **KeyVault Firewall:**
+    - When providing an existing KeyVault secret, if Azure KeyVault Firewall is enabled and the default firewall action is Deny, you must explicitly add either the Azure public management IP address of the BIG-IP instance, or the Azure virtual network and management subnet, to the KeyVault Firewall allow list. *For more information, see [Azure KeyVault network security documentation](https://learn.microsoft.com/en-us/azure/key-vault/general/network-security).*
+
 - When specifying values for the **bigIpInstanceType** parameter, ensure that the instance type you select is appropriate for the deployment scenario. Each instance types allow a fixed number of NICs and Secondary IP addresses. See [Azure Virtual Machine Instance Types](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes) for more information.
 
 - This solution requires Internet access for: 
