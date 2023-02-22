@@ -139,7 +139,7 @@
     "provisionPublicIp": {
       "defaultValue": {},
       "metadata": {
-        "description": "Enter public ip json configuration to attach public ip to instances. See https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets for supported values. Leave default if using natpool, or not using public ip's on instances."
+        "description": "Enter public ip json configuration to attach public ip to instances. See https://learn.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachinescalesets?pivots=deployment-language-arm-template for supported values. Leave default if using natpool, or not using public ip's on instances."
       },
       "type": "object"
     },
