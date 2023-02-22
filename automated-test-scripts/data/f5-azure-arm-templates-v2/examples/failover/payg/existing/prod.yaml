@@ -8,7 +8,7 @@ CREATE IDENTITY: true
 CREATE SECRET: false
 EXT VIP ADDRESS: ''
 INSTANCE TYPE: Standard_D8s_v4
-IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.302000
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.303000
 LICENSE TYPE: payg
 LOG LEVEL: debug
 NIC COUNT: 2
