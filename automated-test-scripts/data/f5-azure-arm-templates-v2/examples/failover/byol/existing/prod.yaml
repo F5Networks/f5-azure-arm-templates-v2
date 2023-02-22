@@ -10,7 +10,7 @@ CREATE IDENTITY: false
 CREATE SECRET: false
 EXT VIP ADDRESS: 10.0.1.101
 INSTANCE TYPE: Standard_D8s_v4
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000
 LICENSE TYPE: byol
 LOG LEVEL: debug
 NIC COUNT: 2

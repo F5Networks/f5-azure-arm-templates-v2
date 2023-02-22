@@ -10,7 +10,7 @@ BIGIQ ADDRESS: <RESOURCE GROUP>-bigiq.<REGION>.cloudapp.azure.com
 BIGIQ TENANT: myTenant
 CREATE WORKSPACE: false
 DISAGGREGATOR: LB
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000
 INSTANCE TYPE: Standard_D2s_v4
 LICENSE TYPE: bigiq
 PROVISION EXTERNAL LB: true

@@ -6,7 +6,7 @@ SOLUTION TYPE: standard
 CREATE NAT GATEWAY: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: None
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000
 INSTANCE TYPE: Standard_D8s_v4
 INTERNAL LOAD BALANCER NAME: None
 LOAD BALANCER RULE PORTS: []

@@ -172,7 +172,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
 | bigIpLicenseKey02 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 02. Leave this parameter blank if deploying the PAYG solution. |
@@ -241,7 +241,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
 | bigIpLicenseKey02 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 02. Leave this parameter blank if deploying the PAYG solution. |
@@ -350,7 +350,7 @@ RESOURCE_GROUP="myGroupName"
 REGION="eastus"
 DEPLOYMENT_NAME="parentTemplate"
 TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/azuredeploy.json"
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.6.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"cfeStorageAccountName":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressVip":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig01":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"},"bigIpRuntimeInitConfig02":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"},"useAvailabilityZones":{"value":false}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.6.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"cfeStorageAccountName":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressVip":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig01":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"},"bigIpRuntimeInitConfig02":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"},"useAvailabilityZones":{"value":false}}'
 DEPLOY_PARAMS_FILE=deploy_params.json
 echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 az group create -n ${RESOURCE_GROUP} -l ${REGION}
@@ -794,8 +794,8 @@ These templates have been tested and validated with the following versions of BI
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.1.302000 | 16.1.3.2 Build 0.0.4 |
-| 14.1.502000 | 14.1.5.2 Build 0.0.3 |
+| 16.1.303000 | 16.1.3.3 Build 0.0.3 |
+| 14.1.503000 | 14.1.5.3 Build 0.0.5 |
 
 
 ## Supported Instance Types and Hypervisors

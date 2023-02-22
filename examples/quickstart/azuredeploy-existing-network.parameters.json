@@ -18,7 +18,7 @@
       "value": "bigip01.local"
     },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000"
+      "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"
     },
     "bigIpInstanceType": {
       "value": "Standard_D8s_v4"
@@ -48,7 +48,7 @@
       "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run"
     },
     "bigIpUserAssignManagedIdentity": {
       "value": ""
