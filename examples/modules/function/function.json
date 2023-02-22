@@ -29,7 +29,7 @@
 				"Name": "EP1"
 			},
 			"metadata": {
-				"description": "Enter json configuration to configure the Azure server farm plan premium or appservice sku. See https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2018-02-01/serverfarms for supported values."
+				"description": "Enter json configuration to configure the Azure server farm plan premium or appservice sku. See https://learn.microsoft.com/en-us/azure/templates/microsoft.web/serverfarms?pivots=deployment-language-arm-template for supported values."
 			},
 			"type": "object"
 		},
