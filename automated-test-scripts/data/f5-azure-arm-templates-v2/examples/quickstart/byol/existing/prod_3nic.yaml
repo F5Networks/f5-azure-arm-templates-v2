@@ -3,9 +3,10 @@ ADMIN USERNAME: azureuser
 APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
 AUTOFILL EVAL LICENSE KEY: ''
+CREATE SECRET: true
 EXT VIP ADDRESS: 10.0.1.101
 INSTANCE TYPE: Standard_D8s_v4
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000
 LICENSE TYPE: byol
 NIC COUNT: 3
 PROVISION APP: false
@@ -14,6 +15,7 @@ REGION: eastus2
 RESOURCE GROUP: dd-quick-<DEWPOINT JOB ID>
 RESTRICTED SRC ADDRESS: '*'
 RESTRICTED SRC ADDRESS APP: '*'
+SECRET VALUE: 'B!giq2017'
 SELF EXT: 10.0.1.11
 SELF INT: 10.0.2.11
 SELF MGMT: 10.0.0.11

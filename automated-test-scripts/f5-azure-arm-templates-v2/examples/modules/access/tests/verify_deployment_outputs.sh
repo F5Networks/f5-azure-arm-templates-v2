@@ -25,4 +25,15 @@ else
    fi
 fi
 
+if [[ "<CREATE SECRET>" == 'true' || "<USE SECRET>" == 'true' ]]; then
+   if [[ -z $(echo $deploymentOutputs | jq .keyVaultName) ]]; then
+      echo "OUTPUTS ERROR - KEY VAULT NAME"
+   fi
+   if [[ -z $(echo $deploymentOutputs | jq .secretId) ]]; then
+      echo "OUTPUTS ERROR - SECRET ID"
+   fi
+else
+   echo "KeyVault was not requested"
+fi
+
 echo "DEPLOYMENT OUTPUTS VALIDATED"

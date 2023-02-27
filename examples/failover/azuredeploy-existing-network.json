@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "2.6.0.0",
+  "contentVersion": "2.7.0.0",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -44,9 +44,9 @@
       "type": "string"
     },
     "bigIpImage": {
-      "defaultValue": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000",
+      "defaultValue": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000",
       "metadata": {
-        "description": "2 formats accepted. URN of the image to use in Azure marketplace or id of custom image. Example URN value: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000. You can find the URNs of F5 marketplace images in the README for this template or by running the command: az vm image list --output yaml --publisher f5-networks --all. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image."
+        "description": "2 formats accepted. URN of the image to use in Azure marketplace or id of custom image. Example URN value: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000. You can find the URNs of F5 marketplace images in the README for this template or by running the command: az vm image list --output yaml --publisher f5-networks --all. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image."
       },
       "type": "string"
     },
@@ -72,10 +72,18 @@
       "type": "string"
     },
     "bigIpPasswordSecretId": {
+      "defaultValue": "",
       "metadata": {
-        "description": "REQUIRED - The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid."
+        "description": "The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is REQUIRED if bigIpPasswordSecretValue is empty."
       },
       "type": "string"
+    },
+    "bigIpPasswordSecretValue": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "The value to use for the BIG-IP admin password, if a value is not provided for the bigIpPasswordSecretId parameter. This parameter is REQUIRED if bigIpPasswordSecretId is empty."
+      },
+      "type": "securestring"
     },
     "sshKey": {
       "metadata": {
@@ -109,6 +117,17 @@
       },
       "type": "string"
     },
+    "numNics": {
+      "allowedValues": [
+        2,
+        3
+      ],
+      "defaultValue": 3,
+      "metadata": {
+        "description": "Enter valid number of network interfaces to create on the BIG-IP VE instance."
+      },
+      "type": "int"
+    },
     "bigIpMgmtSubnetId": {
       "metadata": {
         "description": "REQUIRED - Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed."
@@ -122,8 +141,9 @@
       "type": "string"
     },
     "bigIpInternalSubnetId": {
+      "defaultValue": "",
       "metadata": {
-        "description": "REQUIRED - Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed."
+        "description": "Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed."
       },
       "type": "string"
     },
@@ -184,21 +204,21 @@
       "type": "string"
     },
     "bigIpRuntimeInitConfig01": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
       "type": "string"
     },
     "bigIpRuntimeInitConfig02": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml",
+      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml",
       "metadata": {
         "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
       },
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -253,6 +273,7 @@
     "solutionType": "failover",
     "provisionServicePrivateIp": "[not(empty(parameters('bigIpExternalVip01')))]",
     "createManagedIdentity": "[empty(parameters('bigIpUserAssignManagedIdentity'))]",
+    "createSecret": "[and(not(empty(parameters('bigIpPasswordSecretValue'))), empty(parameters('bigIpPasswordSecretId')))]",
     "customAssignableScopes": [],
     "customRolePermissions": [],
     "roleDescription": "Role created by failover deployment",
@@ -301,7 +322,7 @@
     ],
     "mgmtSecurityGroup": "[variables('mgmtNsgRulesArray')]",
     "externalSecurityGroup": "[variables('externalNsgRulesArray')]",
-    "internalSecurityGroup": "[variables('internalNsgRulesArray')]",
+    "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalNsgRulesArray'), createArray())]",
     "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm-01')]",
     "vmName02": "[concat(variables('uniqueString'), '-bigip-vm-02')]"
@@ -342,6 +363,12 @@
           },
           "secretId": {
             "value": "[parameters('bigIpPasswordSecretId')]"
+          },
+          "secretValue": {
+            "value": "[parameters('bigIpPasswordSecretValue')]"
+          },
+          "uniqueString": {
+            "value": "[variables('uniqueString')]"
           },
           "userAssignedIdentityName": {
             "value": "[variables('userAssignedIdentityName')]"
@@ -472,10 +499,10 @@
             "value": []
           },
           "nic2SubnetId": {
-            "value": "[parameters('bigIpInternalSubnetId')]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), parameters('bigIpInternalSubnetId'), '')]"
           },
           "nic2NsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('dagTemplate').outputs.nsg2Id.value, '')]"
           },
           "nic2PrimaryPublicId": {
             "value": ""
@@ -496,7 +523,7 @@
             "value": "[parameters('bigIpRuntimeInitConfig01')]"
           },
           "secretId": {
-            "value": "[parameters('bigIpPasswordSecretId')]"
+            "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"
@@ -592,10 +619,10 @@
             "value": "[if(variables('provisionServicePrivateIp'), if(parameters('provisionServicePublicIp'), createArray(createObject('publicIpId', reference('dagTemplate').outputs.externalIpIds.value[2], 'privateIpAddress', parameters('bigIpExternalVip01'))), createArray(createObject('publicIpId', '', 'privateIpAddress', parameters('bigIpExternalVip01')))), createArray())]"
           },
           "nic2SubnetId": {
-            "value": "[parameters('bigIpInternalSubnetId')]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), parameters('bigIpInternalSubnetId'), '')]"
           },
           "nic2NsgId": {
-            "value": "[reference('dagTemplate').outputs.nsg2Id.value]"
+            "value": "[if(greaterOrEquals(parameters('numNics'), 3), reference('dagTemplate').outputs.nsg2Id.value, '')]"
           },
           "nic2PrimaryPublicId": {
             "value": ""
@@ -616,7 +643,7 @@
             "value": "[parameters('bigIpRuntimeInitConfig02')]"
           },
           "secretId": {
-            "value": "[parameters('bigIpPasswordSecretId')]"
+            "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
           },
           "sshKey": {
             "value": "[parameters('sshKey')]"
@@ -684,6 +711,10 @@
     "bigIpInstance02ManagementPrivateUrl": {
       "type": "string",
       "value": "[concat('https://', parameters('bigIpMgmtAddress02'), ':443/')]"
+    },
+    "bigIpSecretId": {
+      "type": "string",
+      "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
     },
     "wafPublicIps": {
       "condition": "[parameters('provisionServicePublicIp')]",

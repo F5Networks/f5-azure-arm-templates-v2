@@ -16,6 +16,12 @@ SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public |
 STORAGE_ACCOUNT_NAME=$(echo st<RESOURCE GROUP>tmpl | tr -d -)
 STORAGE_ACCOUNT_FQDN=$(az storage account show -n ${STORAGE_ACCOUNT_NAME} -g <RESOURCE GROUP> | jq -r .primaryEndpoints.blob)
 
+SECRET_VALUE=''
+if [[ "<CREATE SECRET>" == "True" ]]; then
+    SECRET_VALUE='<SECRET VALUE>'
+    echo "SECRET_VALUE: $SECRET_VALUE"    
+fi
+
 MGMT_SUBNET_ID=$(az deployment group show -g <RESOURCE GROUP> -n <RESOURCE GROUP>-net-env | jq -r '.properties.outputs["subnets"].value[0]')
 echo "MGMT_SUBNET_ID is "
 echo $MGMT_SUBNET_ID
@@ -58,7 +64,7 @@ fi
 CONFIG_RESULT=$(az storage blob upload -f <DEWPOINT JOB ID>.yaml --account-name ${STORAGE_ACCOUNT_NAME} -c templates -n <DEWPOINT JOB ID>.yaml)
 RUNTIME_CONFIG_URL=${STORAGE_ACCOUNT_FQDN}templates/<DEWPOINT JOB ID>.yaml
 
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"allowUsageAnalytics":{"value":False},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"provisionServicePublicIp":{"value":<PROVISION APP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpLicenseKey":{"value":"'"${LIC_KEY}"'"},"bigIpMgmtSubnetId":{"value":"'"${MGMT_SUBNET_ID}"'"},"bigIpExternalSubnetId":{"value":"'"${EXT_SUBNET_ID}"'"},"bigIpInternalSubnetId":{"value":"'"${INT_SUBNET_ID}"'"},"bigIpMgmtSelfAddress":{"value":"<SELF MGMT>"},"bigIpExternalSelfAddress":{"value":"<SELF EXT>"},"bigIpInternalSelfAddress":{"value":"<SELF INT>"},"servicePrivateIpAddress":{"value":"<EXT VIP ADDRESS>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpRuntimeInitConfig":{"value":"'"${RUNTIME_CONFIG_URL}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"numNics":{"value":<NIC COUNT>}}'
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"'"${STORAGE_ACCOUNT_FQDN}"'"},"artifactLocation":{"value":"<ARTIFACT LOCATION>"},"allowUsageAnalytics":{"value":False},"uniqueString":{"value":"<RESOURCE GROUP>"},"provisionPublicIpMgmt":{"value":<PROVISION PUBLIC IP>},"provisionServicePublicIp":{"value":<PROVISION APP>},"sshKey":{"value":"'"${SSH_KEY}"'"},"bigIpInstanceType":{"value":"<INSTANCE TYPE>"},"bigIpImage":{"value":"<IMAGE>"},"bigIpLicenseKey":{"value":"'"${LIC_KEY}"'"},"bigIpMgmtSubnetId":{"value":"'"${MGMT_SUBNET_ID}"'"},"bigIpExternalSubnetId":{"value":"'"${EXT_SUBNET_ID}"'"},"bigIpInternalSubnetId":{"value":"'"${INT_SUBNET_ID}"'"},"bigIpMgmtSelfAddress":{"value":"<SELF MGMT>"},"bigIpExternalSelfAddress":{"value":"<SELF EXT>"},"bigIpInternalSelfAddress":{"value":"<SELF INT>"},"servicePrivateIpAddress":{"value":"<EXT VIP ADDRESS>"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpRuntimeInitConfig":{"value":"'"${RUNTIME_CONFIG_URL}"'"},"useAvailabilityZones":{"value":<USE AVAILABILITY ZONES>},"numNics":{"value":<NIC COUNT>},"bigIpPasswordSecretId":{"value":""},"bigIpPasswordSecretValue":{"value":"'"${SECRET_VALUE}"'"}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

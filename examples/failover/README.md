@@ -84,31 +84,45 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
       az group create -n ${RESOURCE_GROUP} -l ${REGION}
       ```
   - A location to host your custom BIG-IP config (runtime-init.conf) with your own Key Vault information. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
-  - This solution requires an Azure Key Vault and secret containing the password to access and cluster the HA Pair, provided in the format `https://yourvaultname.vault.azure.net/secrets/yoursecretid` or `https://yourvaultname.vault.azure.net/secrets/yoursecretid/yoursecretversion`. 
 
-    For example, to create the secret using the Azure CLI:
-      ```bash
-      az keyvault create --name [YOUR_VAULT_NAME] --resource-group [YOUR_RESOURCE_GROUP] --location [YOUR_REGION]
-      az keyvault secret set --vault-name [YOUR_VAULT_NAME] --name [YOUR_SECRET_ID] --value "[YOUR_BIGIP_PASSWORD]"
-      ```
-      - *NOTE:*
-        - Vault names in Azure are DNS based and hence globally unique.
-        - By default, the Key Vault needs to be in the same resource group as the deployment. 
-          - **Same Resource Group:** 
-            - By default, if the **bigIpUserAssignManagedIdentity** parameter is left empty, a user-assigned managed identity and Key Vault access policy will be created by the Access module.  
-            - The [account](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/overview#template-deployment-process) used for deploying the template itself must have sufficient permissions to create the user-assigned managed identities, roles and Key Vault access policies (including [Key Vault Contributer Role](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#azure-built-in-roles-for-key-vault-data-plane-operations)). For more information about the IAM resources created in this solution, see the Access module [documentation](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/main/examples/modules/access/README.md).
-          - **Different Resource Group:** 
-            - If the Key Vault is in a different resource group, you must supply a pre-existing user-assigned managed identity (using the  **bigIpUserAssignManagedIdentity** parameter value) which has access to the Key Vault.  For instructions on creating a user-assigned managed identity, see Azure [documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity).
-            - The pre-existing identity must have sufficent permissions for this solution. For testing purposes, Azure's built-in `Contributor` role can be used. However, for more information about the specific required permissions for this solution, see the [Access module](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/main/examples/modules/access/README.md) documentation. For more information on creating a custom role, see Azure's documentation [here](https://docs.microsoft.com/en-us/azure/role-based-access-control/custom-roles) and assigning it to your existing managed identity [here](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-steps).
-            - You must also grant the pre-existing existing identity `get` and `list` access to the Key Vault by creating a [Key Vault Access policy](https://docs.microsoft.com/en-us/azure/key-vault/general/assign-access-policy).
-              - For example, to create an identity, a role assignment and Key Vault access policy using the Azure CLI:
-                ```bash
-                az identity create --name [YOUR_IDENTITY_NAME] --resource-group [YOUR_RESOURCE_GROUP] | jq -r .principalId
-                az role assignment create --assignee-object-id [YOUR_PRINCIPAL_ID] --assignee-principal-type ServicePrincipal --role "Contributor" --resource-group [YOUR_RESOURCE_GROUP]
-                az keyvault set-policy --name [YOUR_VAULT_NAME] --secret-permissions get list --object-id [YOUR_PRINCIPAL_ID]
+  - This solution requires an Azure Key Vault and secret containing the password to access and cluster the HA Pair. By default, in order to reduce requirements to a minimum but also provide flexibility, this solution  conditionally provisions IAM resources based on various combinations of parameters. 
+    - The solution can create a *new* Azure Key Vault and secret by supplying a value to the **bigIpPasswordSecretValue** input parameter *OR* use an *existing* secret via the **bigIpPasswordSecretId** input parmeter.
+
+    - *IMPORTANT:*
+      - You must provide a value for either the **bigIpPasswordSecretValue** or **bigIpPasswordSecretId**, but never both. The following scenarios are supported:
+        - When *only* **bigIpPasswordSecretValue** is provided: A secret, Key Vault, Key Vault Access Policy and new user-assigned managed identity will all be created.
+        - When *only* **bigIpPasswordSecretId** is provided: A new user-assigned managed identity and Key Vault access policy will be created.
+        - When **bigIpUserAssignManagedIdentity** is provided: you must grant the identity access to the secret before creating the deployment *AND* also provide the secret ID via the **bigIpPasswordSecretId** parameter.
+
+    - To have this solution create a ***new*** secret, provide a valid BIG-IP password as the value for the **bigIpPasswordSecretValue** input parameter and leave the **bigIpPasswordSecretId** at the default value (empty). The Access module creates a new Key Vault named `${uniqueString}kv` *(where `${uniqueString}` is the value provided for the **uniqueString** input parameter)* and a secret named `BigIpSecret`, and creates the required permissions. See F5's KB article [K2873](https://support.f5.com/csp/article/K2873) for more information on choosing a password.
+
+    - To have this solution use an ***existing*** secret, you can supply the secret ID via the **bigIpPasswordSecretId** parameter and a new user-assigned managed identity and key vault access policy will be created *OR* you can use an existing user-assigned managed identity by supplying the  **bigIpUserAssignManagedIdentity** and **bigIpPasswordSecretId** parameters.  
+
+      - For example, to use an existing secret, create the Key Vault and secret using the Azure CLI:
+        ```bash
+        az keyvault create --name [YOUR_VAULT_NAME] --resource-group [YOUR_RESOURCE_GROUP] --location [YOUR_REGION]
+        az keyvault secret set --vault-name [YOUR_VAULT_NAME] --name [YOUR_SECRET_ID] --value "[YOUR_BIGIP_PASSWORD]"
+        ```
+        - *NOTE:*
+          - Vault names in Azure are DNS based and hence globally unique.
+          - By default, the Key Vault needs to be in the same resource group as the deployment. 
+            - **Same Resource Group:** 
+              - By default, if the **bigIpUserAssignManagedIdentity** parameter is left empty and a value is provided for **bigIpPasswordSecretId**, a user-assigned managed identity and Key Vault access policy will be created by the Access module.  
+              - The [account](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/overview#template-deployment-process) used for deploying the template itself must have sufficient permissions to create the user-assigned managed identities, roles and Key Vault access policies (including [Key Vault Contributer Role](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#azure-built-in-roles-for-key-vault-data-plane-operations)). For more information about the IAM resources created in this solution, see the Access module [documentation](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/main/examples/modules/access/README.md).
+            - **Different Resource Group:** 
+              - If the Key Vault is in a different resource group, you must supply a pre-existing user-assigned managed identity (using the  **bigIpUserAssignManagedIdentity** parameter value) which has access to the Key Vault.  For instructions on creating a user-assigned managed identity, see Azure [documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity).
+              - The pre-existing identity must have sufficent permissions for this solution. For testing purposes, Azure's built-in `Contributor` role can be used. However, for more information about the specific required permissions for this solution, see the [Access module](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/main/examples/modules/access/README.md) documentation. For more information on creating a custom role, see Azure's documentation [here](https://docs.microsoft.com/en-us/azure/role-based-access-control/custom-roles) and assigning it to your existing managed identity [here](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-steps).
+              - You must also grant the pre-existing existing identity `get` and `list` access to the Key Vault by creating a [Key Vault Access policy](https://docs.microsoft.com/en-us/azure/key-vault/general/assign-access-policy).
+                - For example, to create an identity, a role assignment and Key Vault access policy using the Azure CLI:
+                  ```bash
+                  az identity create --name [YOUR_IDENTITY_NAME] --resource-group [YOUR_RESOURCE_GROUP] | jq -r .principalId
+                  az role assignment create --assignee-object-id [YOUR_PRINCIPAL_ID] --assignee-principal-type ServicePrincipal --role "Contributor" --resource-group [YOUR_RESOURCE_GROUP]
+                  az keyvault set-policy --name [YOUR_VAULT_NAME] --secret-permissions get list --object-id [YOUR_PRINCIPAL_ID]
                 ```
-
-  - This solution requires an [SSH key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) for access to the BIG-IP instances. For more information about creating a key pair for use in Azure, see Azure SSH key [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys).
+          - **KeyVault Firewall:**
+            - When providing an existing KeyVault secret, if Azure KeyVault Firewall is enabled and the default firewall action is Deny, you must explicitly add either the Azure public management IP addresses of the BIG-IP instance(s), or the Azure virtual network and management subnet, to the KeyVault Firewall allow list. *For more information, see [Azure KeyVault network security documentation](https://learn.microsoft.com/en-us/azure/key-vault/general/network-security).*
+            
+- This solution requires an [SSH key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) for access to the BIG-IP instances. For more information about creating a key pair for use in Azure, see Azure SSH key [documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys).
 - This solution requires you to accept any Azure Marketplace "License/Terms and Conditions" for the images used in this solution.
   - By default, this solution uses [F5 BIG-IP BEST with IPI and Threat Campaigns (PAYG, 25Mbps)](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/f5-networks.f5-big-ip-best)
   - Azure CLI: 
@@ -158,11 +172,12 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
 | bigIpLicenseKey02 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 02. Leave this parameter blank if deploying the PAYG solution. |
-| bigIpPasswordSecretId | **Yes** | | string | The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. This will be used by the BIG-IP to cluster with other devices. |
+| bigIpPasswordSecretId | No* | | string | The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name in the format `https://yourvaultname.vault.azure.net/secrets/yoursecretid` or `https://yourvaultname.vault.azure.net/secrets/yoursecretid/yoursecretversion`. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is REQUIRED if bigIpPasswordSecretValue is empty. This will be used by the BIG-IP to cluster with other devices. |
+| bigIpPasswordSecretValue | No* | | string | The value to use for the BIG-IP admin password, if a value is not provided for the bigIpPasswordSecretId parameter. This parameter is REQUIRED if bigIpPasswordSecretId is empty. This will be used by the BIG-IP to cluster with other devices. |
 | bigIpRuntimeInitConfig01 | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
@@ -203,6 +218,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpInstance02ManagementPrivateIp | BIG-IP Template | string | Management Private IP Address |
 | bigIpInstance02ManagementPublicUrl | Dag Template | string | Management Public IP Address |
 | bigIpInstance02ManagementPrivateUrl | Dag Template | string | Management Public IP Address |
+| bigIpSecretId | Access Template | string | Key Vault/Secret resource ID |
 | bigIpUsername | BIG-IP Template | string | BIG-IP user name |
 | bigIpInstance01VmId | BIG-IP Template | string | Virtual Machine resource ID |
 | bigIpInstance02VmId | BIG-IP Template | string | Virtual Machine resource ID |
@@ -225,11 +241,12 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
 | bigIpLicenseKey02 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 02. Leave this parameter blank if deploying the PAYG solution. |
-| bigIpPasswordSecretId | **Yes** |  | string | The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. This will be used by the BIG-IP to cluster with other devices. |
+| bigIpPasswordSecretId | No* | | string | The full URL of the secretId where the BIG-IP password is stored, including KeyVault Name in the format `https://yourvaultname.vault.azure.net/secrets/yoursecretid` or `https://yourvaultname.vault.azure.net/secrets/yoursecretid/yoursecretversion`. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is REQUIRED if bigIpPasswordSecretValue is empty. This will be used by the BIG-IP to cluster with other devices. |
+| bigIpPasswordSecretValue | No* | | string | The value to use for the BIG-IP admin password, if a value is not provided for the bigIpPasswordSecretId parameter. This parameter is REQUIRED if bigIpPasswordSecretId is empty. This will be used by the BIG-IP to cluster with other devices. |
 | bigIpRuntimeInitConfig01 | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
@@ -237,8 +254,8 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | cfeStorageAccountName | No |  | string | Supply a unique name for a CFE storage account created and used by Cloud Failover Extension. If a value is not provided, a storage account will be created using the value of the uniqueString input parameter. For example: **uniqueStringstcfe**. |
 | cfeTag | No | "bigip_high_availability_solution" | string | Cloud Failover deployment tag value. |
 | bigIpMgmtSubnetId | **Yes** |  | string | Supply the Azure resource ID of the internal subnet where BIG-IP VE instances will be deployed. |
-| bigIpExternalSubnetId | **Yes** |  | string | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. |
-| bigIpInternalSubnetId | **Yes** |  | string | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. |
+| bigIpExternalSubnetId | **Yes** |  | string | Supply the Azure resource ID of the management subnet where BIG-IP VE instances will be deployed. Required for 2 NIC deployments. |
+| bigIpInternalSubnetId | No |  | string | Supply the Azure resource ID of the external subnet where BIG-IP VE instances will be deployed. Required for 3 NIC deployments. |
 | bigIpMgmtAddress01 | No | 10.0.0.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress02 | No | 10.0.0.12 | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpExternalSelfIp01 | No | 10.0.1.11 | string | External Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
@@ -270,6 +287,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpInstance02ManagementPrivateIp | BIG-IP Template | string | Management Private IP Address |
 | bigIpInstance02ManagementPublicUrl | Dag Template | string | Management Public IP Address |
 | bigIpInstance02ManagementPrivateUrl | Dag Template | string | Management Public IP Address |
+| bigIpSecretId | Access Template | string | Key Vault/Secret resource ID |
 | bigIpUsername | BIG-IP Template | string | BIG-IP user name |
 | bigIpInstance01VmId | BIG-IP Template | string | Virtual Machine resource ID |
 | bigIpInstance02VmId | BIG-IP Template | string | Virtual Machine resource ID |
@@ -294,10 +312,10 @@ Two options for deploying this solution include:
 The easiest way to deploy this Azure Arm templates is to use the deploy button below:<br>
 
 **Full Stack**
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.6.0.0%2Fexamples%2Ffailover%2Fazuredeploy.json)
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.7.0.0%2Fexamples%2Ffailover%2Fazuredeploy.json)
 
 **Existing Stack**
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.6.0.0%2Fexamples%2Ffailover%2Fazuredeploy-existing-network.json)
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.7.0.0%2Fexamples%2Ffailover%2Fazuredeploy-existing-network.json)
 
 *Step 1: Custom Template Page* 
   - Select or Create New Resource Group.
@@ -309,8 +327,8 @@ The easiest way to deploy this Azure Arm templates is to use the deploy button b
     - **cfeStorageAccountName**
   - And any network related parameters if deploying the azuredeploy-existing-network.json template, for example:
     - **bigIpMgmtSubnetId**
-    - **bigIpExternalSubnetId**
-    - **bigIpInternalSubnetId**
+    - **bigIpExternalSubnetId** *(for 2 NIC)*
+    - **bigIpInternalSubnetId** *(for 3 NIC)*
   - As well as the static IP address related parameters, which have defaults, but need to be mapped to your network.
   - Click "Next: Review + Create".
 
@@ -331,8 +349,8 @@ As an alternative to deploying through the Azure Portal (GUI), each solution pro
 RESOURCE_GROUP="myGroupName"
 REGION="eastus"
 DEPLOYMENT_NAME="parentTemplate"
-TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/azuredeploy.json"
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.6.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"cfeStorageAccountName":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressVip":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig01":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"},"bigIpRuntimeInitConfig02":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"},"useAvailabilityZones":{"value":false}}'
+TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/azuredeploy.json"
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.7.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"cfeStorageAccountName":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressVip":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig01":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"},"bigIpRuntimeInitConfig02":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"},"useAvailabilityZones":{"value":false}}'
 DEPLOY_PARAMS_FILE=deploy_params.json
 echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 az group create -n ${RESOURCE_GROUP} -l ${REGION}
@@ -354,10 +372,10 @@ Example from azuredeploy.parameters.json
         "value": false
     },
     "bigIpRuntimeInitConfig01": {
-        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
+        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
     },
     "bigIpRuntimeInitConfig02": {
-        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
+        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
     },
 ```
 
@@ -384,15 +402,23 @@ NOTE: If providing the json inline as a template parameter, you must escape all 
 F5 has provided the following example configuration files in the `examples/failover/bigip-configurations` folder:
 
 - These examples install Automation Tool Chain packages for a PAYG licensed deployment.
+  - `runtime-init-conf-2nic-payg-instance01.yaml`
+  - `runtime-init-conf-2nic-payg-instance02.yaml`
   - `runtime-init-conf-3nic-payg-instance01.yaml`
   - `runtime-init-conf-3nic-payg-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
+  - `runtime-init-conf-2nic-payg-instance01-with-app.yaml`
+  - `runtime-init-conf-2nic-payg-instance02-with-app.yaml`
   - `runtime-init-conf-3nic-payg-instance01-with-app.yaml`
   - `runtime-init-conf-3nic-payg-instance02-with-app.yaml`
 - These examples install Automation Tool Chain packages for a BYOL licensed deployment.
+  - `runtime-init-conf-2nic-byol-instance01.yaml`
+  - `runtime-init-conf-2nic-byol-instance02.yaml`
   - `runtime-init-conf-3nic-byol-instance01.yaml`
   - `runtime-init-conf-3nic-byol-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
+  - `runtime-init-conf-2nic-byol-instance01-with-app.yaml`
+  - `runtime-init-conf-2nic-byol-instance02-with-app.yaml`
   - `runtime-init-conf-3nic-byol-instance01-with-app.yaml`
   - `runtime-init-conf-3nic-byol-instance02-with-app.yaml`
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
@@ -404,6 +430,10 @@ See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init
 By default, this solution deploys 3-NIC PAYG BIG-IPs:
   - The **Full Stack** (azuredeploy.json) references the `runtime-init-conf-3nic-payg-instanceXX-with-app.yaml` BIG-IP config files, which include an example virtual service, and can be used as is. These example configurations do not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
   - The **Existing Network Stack** (azuredeploy-existing-network.json) references the `runtime-init-conf-3nic-payg-instanceXX.yaml` BIG-IP config files, which only provide basic system onboarding and do not **NOT** include an example virtual service, and can be used as is.
+
+To deploy **2NIC** instances:
+  1. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the corresponding `2nic` config files (for example, `runtime-init-conf-2nic-payg-instance01-with-app.yaml` and `runtime-init-conf-2nic-payg-instance02-with-app.yaml`)
+  2. Update the **numNics** input parameter to **2**
 
 To deploy **BYOL** instances:
   1. Update the **bigIpImage** input parameter to use a `byol` image.
@@ -764,8 +794,8 @@ These templates have been tested and validated with the following versions of BI
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.1.302000 | 16.1.3.2 Build 0.0.4 |
-| 14.1.502000 | 14.1.5.2 Build 0.0.3 |
+| 16.1.303000 | 16.1.3.3 Build 0.0.3 |
+| 14.1.503000 | 14.1.5.3 Build 0.0.5 |
 
 
 ## Supported Instance Types and Hypervisors

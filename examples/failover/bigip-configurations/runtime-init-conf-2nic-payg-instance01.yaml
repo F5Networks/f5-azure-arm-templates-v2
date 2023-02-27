@@ -1,0 +1,268 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.36.0
+      extensionHash: 6f94718afcbf7743b9c260ab341f33987d2d442ab1f5076410ebd557be7d2ff0
+    - extensionType: as3
+      extensionVersion: 3.43.0
+      extensionHash: 6e50f828292c3e9417136693b7fba232ca4c004187ae1499e83e39210b500e7a
+    - extensionType: cf
+      extensionVersion: 1.14.0
+      extensionHash: 22b262f3f354a1a29ff6aa3e706708e2d0b0abf5585c1db62a04682a9bcfe9bd
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            dhclient.mgmt: disable
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            class: Provision
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: '{{{HOST_NAME}}}'
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: '{{{MGMT_GW}}}'
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: '{{{MGMT_GW}}}'
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: '{{{MGMT_GW}}}'
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: '{{{DEFAULT_GW}}}'
+            network: default
+            mtu: 1500
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
+            trafficGroup: traffic-group-local-only
+    - extensionType: cf
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Cloud_Failover
+        environment: azure
+        controls:
+          class: Controls
+          logLevel: silly
+        externalStorage:
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+        failoverAddresses:
+          enabled: true
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+          requireScopingTags: false
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            provision.extramb: 1000
+            restjavad.useextramb: true
+            dhclient.mgmt: disable
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            class: Provision
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 168.63.129.16
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: '{{{HOST_NAME}}}'
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          default:
+            class: ManagementRoute
+            gw: '{{{MGMT_GW}}}'
+            network: default
+          dhclient_route1:
+            class: ManagementRoute
+            gw: '{{{MGMT_GW}}}'
+            network: 168.63.129.16/32
+          azureMetadata:
+            class: ManagementRoute
+            gw: '{{{MGMT_GW}}}'
+            network: 169.254.169.254/32
+          defaultRoute:
+            class: Route
+            gw: '{{{DEFAULT_GW}}}'
+            network: default
+            mtu: 1500
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
+            trafficGroup: traffic-group-local-only
+          configSync:
+            class: ConfigSync
+            configsyncIp: /Common/external-self/address
+          failoverAddress:
+            class: FailoverUnicast
+            address: /Common/external-self/address
+          failoverGroup:
+            class: DeviceGroup
+            type: sync-failover
+            members:
+              - '{{{HOST_NAME}}}'
+              - '{{{REMOTE_HOST_NAME}}}'
+            owner: /Common/failoverGroup/members/0
+            autoSync: true
+            saveOnAutoSync: false
+            networkFailover: true
+            fullLoadOnSync: false
+            asmSync: false
+          trust:
+            class: DeviceTrust
+            localUsername: admin
+            localPassword: '{{{BIGIP_PASSWORD}}}'
+            remoteHost: /Common/failoverGroup/members/0
+            remoteUsername: admin
+            remotePassword: '{{{BIGIP_PASSWORD}}}'
+post_onboard_enabled: []
+pre_onboard_enabled:
+  - name: provision_rest
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.extramb 1000
+      - /usr/bin/setdb restjavad.useextramb true
+runtime_parameters:
+  - name: VAULT_URL
+    type: url
+    value: file:///config/cloud/vault_url
+  - name: SECRET_ID
+    type: url
+    value: file:///config/cloud/secret_id
+  - name: BIGIP_PASSWORD
+    type: secret
+    secretProvider:
+      type: KeyVault
+      environment: azure
+      vaultUrl: '{{{VAULT_URL}}}'
+      secretId: '{{{SECRET_ID}}}'
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: azure
+      field: ipv4
+      index: 1
+  - name: DEFAULT_GW
+    type: metadata
+    metadataProvider:
+      environment: azure
+      type: network
+      field: ipv4
+      index: 1
+      ipcalc: first
+  - name: MGMT_GW
+    type: metadata
+    metadataProvider:
+      environment: azure
+      type: network
+      field: ipv4
+      index: 0
+      ipcalc: first
+  - name: HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: hostname
+  - name: REMOTE_HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerHostname

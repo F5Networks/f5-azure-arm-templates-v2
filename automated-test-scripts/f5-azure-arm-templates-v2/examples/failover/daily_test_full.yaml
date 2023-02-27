@@ -12,6 +12,8 @@ onStart:
 - ./create_deployment.sh
 - ../../common/verify_create.sh
 - ./tests/verify_outputs.sh
+# remove the following when Azure fixes Fast Path issue 364674860
+- ./tests/associate_nsg.sh
 - ./tests/verify_login.sh
 - ./tests/verify_sync.sh
 - ./tests/verify_failover.sh

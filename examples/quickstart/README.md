@@ -59,6 +59,7 @@ The modules below create the following resources:
 - **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. *(Full stack only)*
 - **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. *(Full stack only)*
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Network Security Groups, Public IP Addresses, NAT rules and probes.
+- **Access**: This template creates a User-Assigned Managed Identity, grants it access to the supplied BIG-IP password Key Vault secret, and assigns it to the BIG-IP instances. Alternately, you can supply a pre-existing User-Assigned Managed Identity to assign to the instances.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
 
 
@@ -92,6 +93,23 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 ## Important Configuration Notes
 
 - By default, this solution creates a username **admin** with a **temporary** password set to value of the Azure virtual machine ID which is provided in the output **bigIpVmId** of the parent template. **IMPORTANT**: You should change this temporary password immediately following deployment.
+
+- By default, in order to reduce requirements to a minimum, this solution does not create or require IAM resources (which are required to leverage cloud secrets to set passwords for example). However, if desired and permissions allow, the solution can conditionally provision IAM resources by providing various parameters combinations. 
+  
+  - By specifying a value for the **bigIpUserAssignManagedIdentity** input parameter, you can assign a pre-existing user-assigned identity to the BIG-IP instance. NOTE: ensure the pre-existing identity has all the permissions required for your solution. See Azure [documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity) and the Access module [documentation](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/main/examples/modules/access/README.md) for more information on creating these resources.
+  - By leaving the **bigIpUserAssignManagedIdentity** input parameter empty and specifying a value for either the **bigIpPasswordSecretId** *OR* the **bigIpPasswordSecretValue** input parameter, this solution will create a user-assigned identity which grants access to the Azure Key Vault secret. If a **bigIpPasswordSecretValue** value is provided, the solution creates an Azure Key Vault named `${uniqueString}kv` *(where `${uniqueString}` is the value provided for the **uniqueString** input parameter)* and a secret named `BigIpSecret`. See F5's KB article [K2873](https://support.f5.com/csp/article/K2873) for more information on choosing a password.
+
+
+  - The following scenarios are supported:
+      - When neither **bigIpPasswordSecretId**, **bigIpPasswordSecretValue**, nor **bigIpUserAssignManagedIdentity** are provided: No IAM resources are created and no identity is assigned to the BIG-IP instance. This is the default.
+      - When **bigIpUserAssignManagedIdentity** is provided: The existing identity is assigned to the BIG-IP instance. If the deployment uses an existing secret, you must grant the identity access to the secret before creating the deployment *AND* also provide the secret ID via the **bigIpPasswordSecretId** parameter.
+      - When *only* **bigIpPasswordSecretId** is provided: A new user-assigned managed identity and Key Vault access policy will be created.
+      - When *only* **bigIpPasswordSecretValue** is provided: A new secret, Key Vault, Key Vault Access Policy and user-assigned managed identity will all be created.
+
+  - ***IMPORTANT:*** Although the templates support advanced IAM functionality, by default, the example BIG-IP Runtime-Init configurations for quickstart are basic and don't leverage secrets. If a secret and instance profile are provisioned like per above, you will also need to customize and re-host the example BIG-IP configuration files to use the secret. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
+
+  - **KeyVault Firewall:**
+    - When providing an existing KeyVault secret, if Azure KeyVault Firewall is enabled and the default firewall action is Deny, you must explicitly add either the Azure public management IP address of the BIG-IP instance, or the Azure virtual network and management subnet, to the KeyVault Firewall allow list. *For more information, see [Azure KeyVault network security documentation](https://learn.microsoft.com/en-us/azure/key-vault/general/network-security).*
 
 - When specifying values for the **bigIpInstanceType** parameter, ensure that the instance type you select is appropriate for the deployment scenario. Each instance types allow a fixed number of NICs and Secondary IP addresses. See [Azure Virtual Machine Instance Types](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes) for more information.
 
@@ -129,9 +147,11 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | appContainerName | No | "f5devcentral/f5-demo-app:latest" | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | bigIpLicenseKey | No |  | string | Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution. |
+| bigIpPasswordSecretId | No | | string | The full URL of an existing secretId to pass to the BIG-IP instance, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is ignored if bigIpUserAssignManagedIdentity is provided. |
+| bigIpPasswordSecretValue | No | | string | The value to use for the secret to pass to the BIG-IP instance. If not provided, the solution will pass the value provided for the bigIpPasswordSecretId parameter. This parameter is ignored if bigIpUserAssignManagedIdentity is provided. |
 | bigIpRuntimeInitConfig | No |  https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
 | bigIpUserAssignManagedIdentity | No |  | string | Enter user-assigned pre-existing management identity ID to be associated to Virtual Machine. For example: "/subscriptions/f18b486b-112d-4402-add2-1112222333444/resourcegroups/yourresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/youridentity". |
@@ -156,6 +176,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpManagementPrivateUrl | BIG-IP Template | string | Management Private IP Address. |
 | bigIpManagementPublicIpId | Dag Template | string | Management Public IP Address. |
 | bigIpManagementPublicUrl | Dag Template | string | Management Public IP Address. |
+| bigIpSecretId | Access Template | string | Key Vault/Secret resource ID |
 | bigIpUsername | BIG-IP Template | string | BIG-IP user name. |
 | bigIpVmId | BIG-IP Template | string | Virtual Machine resource ID. |
 | vip1PrivateIp | Application Template | string | Service (VIP) Private IP Address. |
@@ -176,9 +197,11 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | allowUsageAnalytics | No | true | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
 | artifactLocation | No | "f5-azure-arm-templates-v2/v2.0.0.0/examples/" | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
+| bigIpImage | No | "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000" | string | Two formats accepted. `URN` of the image to use in Azure marketplace or `ID` of custom image. Example URN value: "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000". You can find the URNs of F5 marketplace images in the README for this template or by running the command: `az vm image list --output yaml --publisher f5-networks --all`. See https://clouddocs.f5.com/cloud/public/v1/azure/Azure_download.html for information on creating custom BIG-IP image. |
 | bigIpInstanceType | No | "Standard_D8s_v4" | string | Enter a valid instance type. |
 | bigIpLicenseKey | No |  | string | Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution. |
+| bigIpPasswordSecretId | No | | string | The full URL of an existing secretId to pass to the BIG-IP instance, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. If not provided, the solution will create a secret with the value provided for the bigIpPasswordSecretValue parameter. This parameter is ignored if bigIpUserAssignManagedIdentity is provided. |
+| bigIpPasswordSecretValue | No | | string | The value to use for the secret to pass to the BIG-IP instance. If not provided, the solution will pass the value provided for the bigIpPasswordSecretId parameter. This parameter is ignored if bigIpUserAssignManagedIdentity is provided. |
 | bigIpRuntimeInitConfig | No | https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
 | numNics | No | 3 | integer | Enter valid number of network interfaces (1-3) to create on the BIG-IP VE instance. |
@@ -209,6 +232,7 @@ By default, this solution creates a VNet with four subnets, an example Web Appli
 | bigIpManagementPrivateUrl | BIG-IP Template | string | Management Private IP Address. |
 | bigIpManagementPublicIp | Dag Template | string | Management Public IP Address. |
 | bigIpManagementPublicUrl | Dag Template | string | Management Public IP Address. |
+| bigIpSecretId | Access Template | string | Key Vault/Secret resource ID |
 | bigIpUsername | BIG-IP Template | string | BIG-IP user name. |
 | bigIpVmId | BIG-IP Template | string | Virtual Machine resource ID. |
 | vip1PrivateIp | Service Private IP Address | string | Service (VIP) Private IP Address. |
@@ -233,10 +257,10 @@ Two options for deploying this solution include:
 The easiest way to deploy this Azure Arm templates is to use the deploy button below:<br>
 
 **Full Stack**
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.6.0.0%2Fexamples%2Fquickstart%2Fazuredeploy.json)
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.7.0.0%2Fexamples%2Fquickstart%2Fazuredeploy.json)
 
 **Existing Stack**
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.6.0.0%2Fexamples%2Fquickstart%2Fazuredeploy-existing-network.json)
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FF5Networks%2Ff5-azure-arm-templates-v2%2Fv2.7.0.0%2Fexamples%2Fquickstart%2Fazuredeploy-existing-network.json)
 
 *Step 1: Custom Template Page* 
   - Select or Create New Resource Group.
@@ -269,8 +293,8 @@ As an alternative to deploying through the Azure Portal (GUI), each solution pro
 RESOURCE_GROUP="myGroupName"
 REGION="eastus"
 DEPLOYMENT_NAME="parentTemplate"
-TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/quickstart/azuredeploy.json"
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.6.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.302000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"}, "bigIpRuntimeInitConfig":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"},"useAvailabilityZones":{"value":false},"numNics":{"value":3}}'
+TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/quickstart/azuredeploy.json"
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.7.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"}, "bigIpRuntimeInitConfig":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"},"useAvailabilityZones":{"value":false},"numNics":{"value":3}}'
 DEPLOY_PARAMS_FILE=deploy_params.json
 echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 az group create -n ${RESOURCE_GROUP} -l ${REGION}
@@ -292,7 +316,7 @@ Example from azuredeploy.parameters.json
         "value": false
     },
     "bigIpRuntimeInitConfig": {
-        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
     },
 ```
 
@@ -305,7 +329,7 @@ The F5 BIG-IP Runtime Init configuration file can also be formatted in json and/
         "value": false
     },
     "bigIpRuntimeInitConfig": {
-        "value": "{\"controls\":{\"logLevel\":\"info\",\"logFilename\":\"/var/log/cloud/bigIpRuntimeInit.log\"},\"extension_packages\":{\"install_operations\":[{\"extensionType\":\"do\",\"extensionVersion\":\"1.27.0\",\"extensionHash\":\"2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf\"},{\"extensionType\":\"as3\",\"extensionVersion\":\"3.34.0\",\"extensionHash\":\"05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4\"},{\"extensionType\":\"cf\",\"extensionVersion\":\"1.10.0\",\"extensionHash\":\"d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace\"}]},\"extension_services\":{\"service_operations\":[{\"extensionType\":\"do\",\"type\":\"inline\",\"value\":{\"schemaVersion\":\"1.0.0\",\"class\":\"Device\",\"async\":true,\"label\":\"Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license\",\"Common\":{\"class\":\"Tenant\",\"My_DbVariables\":{\"class\":\"DbVariables\",\"provision.extramb\":1000,\"restjavad.useextramb\":true,\"dhclient.mgmt\":\"disable\",\"config.allow.rfc3927\":\"enable\",\"tm.tcpudptxchecksum\":\"Software-only\"},\"My_Provisioning\":{\"class\":\"Provision\",\"asm\":\"nominal\",\"ltm\":\"nominal\"},\"My_Ntp\":{\"class\":\"NTP\",\"servers\":[\"0.pool.ntp.org\",\"1.pool.ntp.org\"],\"timezone\":\"UTC\"},\"My_Dns\":{\"class\":\"DNS\",\"nameServers\":[\"168.63.129.16\"]},\"My_System\":{\"autoPhonehome\":true,\"class\":\"System\",\"hostname\":\"failover01.local\"},\"My_License\":{\"class\":\"License\",\"licenseType\":\"regKey\",\"regKey\":\"REPLACE_WITH_VALID_REGKEY\"},\"admin\":{\"class\":\"User\",\"userType\":\"regular\",\"password\":\"{{{BIGIP_PASSWORD}}}\",\"shell\":\"bash\"},\"default\":{\"class\":\"ManagementRoute\",\"gw\":\"10.0.0.1\",\"network\":\"default\"},\"dhclient_route1\":{\"class\":\"ManagementRoute\",\"gw\":\"10.0.0.1\",\"network\":\"168.63.129.16/32\"},\"azureMetadata\":{\"class\":\"ManagementRoute\",\"gw\":\"10.0.0.1\",\"network\":\"169.254.169.254/32\"},\"defaultRoute\":{\"class\":\"Route\",\"gw\":\"10.0.1.1\",\"network\":\"default\",\"mtu\":1500},\"external\":{\"class\":\"VLAN\",\"tag\":4094,\"mtu\":1500,\"interfaces\":[{\"name\":\"1.1\",\"tagged\":false}]},\"external-self\":{\"class\":\"SelfIp\",\"address\":\"{{{SELF_IP_EXTERNAL}}}\",\"vlan\":\"external\",\"allowService\":[\"tcp:443\",\"udp:1026\",\"tcp:4353\",\"tcp:6123\",\"tcp:6124\",\"tcp:6125\",\"tcp:6126\",\"tcp:6127\",\"tcp:6128\"],\"trafficGroup\":\"traffic-group-local-only\"},\"internal\":{\"class\":\"VLAN\",\"interfaces\":[{\"name\":\"1.2\",\"tagged\":false}],\"mtu\":1500,\"tag\":4093},\"internal-self\":{\"class\":\"SelfIp\",\"address\":\"{{{SELF_IP_INTERNAL}}}\",\"vlan\":\"internal\",\"allowService\":\"none\",\"trafficGroup\":\"traffic-group-local-only\"},\"configSync\":{\"class\":\"ConfigSync\",\"configsyncIp\":\"/Common/external-self/address\"},\"failoverAddress\":{\"class\":\"FailoverUnicast\",\"address\":\"/Common/external-self/address\"},\"failoverGroup\":{\"class\":\"DeviceGroup\",\"type\":\"sync-failover\",\"members\":[\"failover01local\",\"failover02.local\"],\"owner\":\"/Common/failoverGroup/members/0\",\"autoSync\":true,\"saveOnAutoSync\":false,\"networkFailover\":true,\"fullLoadOnSync\":false,\"asmSync\":false},\"trust\":{\"class\":\"DeviceTrust\",\"localUsername\":\"admin\",\"localPassword\":\"{{{BIGIP_PASSWORD}}}\",\"remoteHost\":\"/Common/failoverGroup/members/0\",\"remoteUsername\":\"admin\",\"remotePassword\":\"{{{BIGIP_PASSWORD}}}\"}}}},{\"extensionType\":\"cf\",\"type\":\"inline\",\"value\":{\"schemaVersion\":\"1.0.0\",\"class\":\"Cloud_Failover\",\"environment\":\"azure\",\"controls\":{\"class\":\"Controls\",\"logLevel\":\"silly\"},\"externalStorage\":{\"scopingTags\":{\"f5_cloud_failover_label\":\"bigip_high_availability_solution\"}},\"failoverAddresses\":{\"enabled\":true,\"scopingTags\":{\"f5_cloud_failover_label\":\"bigip_high_availability_solution\"},\"requireScopingTags\":false}}},{\"extensionType\":\"as3\",\"type\":\"inline\",\"value\":{\"class\":\"ADC\",\"schemaVersion\":\"3.0.0\",\"label\":\"Failover\",\"remark\":\"Failover\",\"Tenant_1\":{\"class\":\"Tenant\",\"Shared\":{\"class\":\"Application\",\"template\":\"shared\",\"Shared_Pool\":{\"class\":\"Pool\",\"remark\":\"Service 1 shared pool\",\"members\":[{\"serverAddresses\":[\"10.0.3.4\"],\"servicePort\":80}],\"monitors\":[\"http\"]},\"Custom_HTTP_Profile\":{\"class\":\"HTTP_Profile\",\"xForwardedFor\":true},\"Custom_WAF_Policy\":{\"class\":\"WAF_Policy\",\"url\":\"https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\",\"enforcementMode\":\"blocking\",\"ignoreChanges\":false},\"Service_Address_01\":{\"class\":\"Service_Address\",\"virtualAddress\":\"10.0.1.101\"}},\"HTTP_Service\":{\"class\":\"Application\",\"template\":\"http\",\"serviceMain\":{\"class\":\"Service_HTTP\",\"virtualAddresses\":[{\"use\":\"/Tenant_1/Shared/Service_Address_01\"}],\"snat\":\"auto\",\"pool\":\"/Tenant_1/Shared/Shared_Pool\",\"profileHTTP\":{\"use\":\"/Tenant_1/Shared/Custom_HTTP_Profile\"},\"policyWAF\":{\"use\":\"/Tenant_1/Shared/Custom_WAF_Policy\"}}},\"HTTPS_Service\":{\"class\":\"Application\",\"template\":\"https\",\"serviceMain\":{\"class\":\"Service_HTTPS\",\"virtualAddresses\":[{\"use\":\"/Tenant_1/Shared/Service_Address_01\"}],\"snat\":\"auto\",\"pool\":\"/Tenant_1/Shared/Shared_Pool\",\"profileHTTP\":{\"use\":\"/Tenant_1/Shared/Custom_HTTP_Profile\"},\"policyWAF\":{\"use\":\"/Tenant_1/Shared/Custom_WAF_Policy\"},\"serverTLS\":{\"bigip\":\"/Common/clientssl\"},\"redirect80\":false}}}}}]},\"post_onboard_enabled\":[],\"pre_onboard_enabled\":[{\"name\":\"provision_rest\",\"type\":\"inline\",\"commands\":[\"/usr/bin/setdb provision.extramb 1000\",\"/usr/bin/setdb restjavad.useextramb true\"]}],\"runtime_parameters\":[{\"name\":\"BIGIP_PASSWORD\",\"type\":\"secret\",\"secretProvider\":{\"type\":\"KeyVault\",\"environment\":\"azure\",\"vaultUrl\":\"https://yourvaultname.vault.azure.net\",\"secretId\":\"mySecretId\"}},{\"name\":\"SELF_IP_EXTERNAL\",\"type\":\"metadata\",\"metadataProvider\":{\"type\":\"network\",\"environment\":\"azure\",\"field\":\"ipv4\",\"index\":1}},{\"name\":\"SELF_IP_INTERNAL\",\"type\":\"metadata\",\"metadataProvider\":{\"type\":\"network\",\"environment\":\"azure\",\"field\":\"ipv4\",\"index\":2}}]}"
+        "value": "{\"controls\":{\"logLevel\":\"info\",\"logFilename\":\"/var/log/cloud/bigIpRuntimeInit.log\"},\"extension_packages\":{\"install_operations\":[{\"extensionType\":\"do\",\"extensionVersion\":\"1.27.0\",\"extensionHash\":\"2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf\"},{\"extensionType\":\"as3\",\"extensionVersion\":\"3.34.0\",\"extensionHash\":\"05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4\"},{\"extensionType\":\"cf\",\"extensionVersion\":\"1.10.0\",\"extensionHash\":\"d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace\"}]},\"extension_services\":{\"service_operations\":[{\"extensionType\":\"do\",\"type\":\"inline\",\"value\":{\"schemaVersion\":\"1.0.0\",\"class\":\"Device\",\"async\":true,\"label\":\"Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license\",\"Common\":{\"class\":\"Tenant\",\"My_DbVariables\":{\"class\":\"DbVariables\",\"provision.extramb\":1000,\"restjavad.useextramb\":true,\"dhclient.mgmt\":\"disable\",\"config.allow.rfc3927\":\"enable\",\"tm.tcpudptxchecksum\":\"Software-only\"},\"My_Provisioning\":{\"class\":\"Provision\",\"asm\":\"nominal\",\"ltm\":\"nominal\"},\"My_Ntp\":{\"class\":\"NTP\",\"servers\":[\"0.pool.ntp.org\",\"1.pool.ntp.org\"],\"timezone\":\"UTC\"},\"My_Dns\":{\"class\":\"DNS\",\"nameServers\":[\"168.63.129.16\"]},\"My_System\":{\"autoPhonehome\":true,\"class\":\"System\",\"hostname\":\"failover01.local\"},\"My_License\":{\"class\":\"License\",\"licenseType\":\"regKey\",\"regKey\":\"REPLACE_WITH_VALID_REGKEY\"},\"admin\":{\"class\":\"User\",\"userType\":\"regular\",\"password\":\"{{{BIGIP_PASSWORD}}}\",\"shell\":\"bash\"},\"default\":{\"class\":\"ManagementRoute\",\"gw\":\"10.0.0.1\",\"network\":\"default\"},\"dhclient_route1\":{\"class\":\"ManagementRoute\",\"gw\":\"10.0.0.1\",\"network\":\"168.63.129.16/32\"},\"azureMetadata\":{\"class\":\"ManagementRoute\",\"gw\":\"10.0.0.1\",\"network\":\"169.254.169.254/32\"},\"defaultRoute\":{\"class\":\"Route\",\"gw\":\"10.0.1.1\",\"network\":\"default\",\"mtu\":1500},\"external\":{\"class\":\"VLAN\",\"tag\":4094,\"mtu\":1500,\"interfaces\":[{\"name\":\"1.1\",\"tagged\":false}]},\"external-self\":{\"class\":\"SelfIp\",\"address\":\"{{{SELF_IP_EXTERNAL}}}\",\"vlan\":\"external\",\"allowService\":[\"tcp:443\",\"udp:1026\",\"tcp:4353\",\"tcp:6123\",\"tcp:6124\",\"tcp:6125\",\"tcp:6126\",\"tcp:6127\",\"tcp:6128\"],\"trafficGroup\":\"traffic-group-local-only\"},\"internal\":{\"class\":\"VLAN\",\"interfaces\":[{\"name\":\"1.2\",\"tagged\":false}],\"mtu\":1500,\"tag\":4093},\"internal-self\":{\"class\":\"SelfIp\",\"address\":\"{{{SELF_IP_INTERNAL}}}\",\"vlan\":\"internal\",\"allowService\":\"none\",\"trafficGroup\":\"traffic-group-local-only\"},\"configSync\":{\"class\":\"ConfigSync\",\"configsyncIp\":\"/Common/external-self/address\"},\"failoverAddress\":{\"class\":\"FailoverUnicast\",\"address\":\"/Common/external-self/address\"},\"failoverGroup\":{\"class\":\"DeviceGroup\",\"type\":\"sync-failover\",\"members\":[\"failover01local\",\"failover02.local\"],\"owner\":\"/Common/failoverGroup/members/0\",\"autoSync\":true,\"saveOnAutoSync\":false,\"networkFailover\":true,\"fullLoadOnSync\":false,\"asmSync\":false},\"trust\":{\"class\":\"DeviceTrust\",\"localUsername\":\"admin\",\"localPassword\":\"{{{BIGIP_PASSWORD}}}\",\"remoteHost\":\"/Common/failoverGroup/members/0\",\"remoteUsername\":\"admin\",\"remotePassword\":\"{{{BIGIP_PASSWORD}}}\"}}}},{\"extensionType\":\"cf\",\"type\":\"inline\",\"value\":{\"schemaVersion\":\"1.0.0\",\"class\":\"Cloud_Failover\",\"environment\":\"azure\",\"controls\":{\"class\":\"Controls\",\"logLevel\":\"silly\"},\"externalStorage\":{\"scopingTags\":{\"f5_cloud_failover_label\":\"bigip_high_availability_solution\"}},\"failoverAddresses\":{\"enabled\":true,\"scopingTags\":{\"f5_cloud_failover_label\":\"bigip_high_availability_solution\"},\"requireScopingTags\":false}}},{\"extensionType\":\"as3\",\"type\":\"inline\",\"value\":{\"class\":\"ADC\",\"schemaVersion\":\"3.0.0\",\"label\":\"Failover\",\"remark\":\"Failover\",\"Tenant_1\":{\"class\":\"Tenant\",\"Shared\":{\"class\":\"Application\",\"template\":\"shared\",\"Shared_Pool\":{\"class\":\"Pool\",\"remark\":\"Service 1 shared pool\",\"members\":[{\"serverAddresses\":[\"10.0.3.4\"],\"servicePort\":80}],\"monitors\":[\"http\"]},\"Custom_HTTP_Profile\":{\"class\":\"HTTP_Profile\",\"xForwardedFor\":true},\"Custom_WAF_Policy\":{\"class\":\"WAF_Policy\",\"url\":\"https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\",\"enforcementMode\":\"blocking\",\"ignoreChanges\":false},\"Service_Address_01\":{\"class\":\"Service_Address\",\"virtualAddress\":\"10.0.1.101\"}},\"HTTP_Service\":{\"class\":\"Application\",\"template\":\"http\",\"serviceMain\":{\"class\":\"Service_HTTP\",\"virtualAddresses\":[{\"use\":\"/Tenant_1/Shared/Service_Address_01\"}],\"snat\":\"auto\",\"pool\":\"/Tenant_1/Shared/Shared_Pool\",\"profileHTTP\":{\"use\":\"/Tenant_1/Shared/Custom_HTTP_Profile\"},\"policyWAF\":{\"use\":\"/Tenant_1/Shared/Custom_WAF_Policy\"}}},\"HTTPS_Service\":{\"class\":\"Application\",\"template\":\"https\",\"serviceMain\":{\"class\":\"Service_HTTPS\",\"virtualAddresses\":[{\"use\":\"/Tenant_1/Shared/Service_Address_01\"}],\"snat\":\"auto\",\"pool\":\"/Tenant_1/Shared/Shared_Pool\",\"profileHTTP\":{\"use\":\"/Tenant_1/Shared/Custom_HTTP_Profile\"},\"policyWAF\":{\"use\":\"/Tenant_1/Shared/Custom_WAF_Policy\"},\"serverTLS\":{\"bigip\":\"/Common/clientssl\"},\"redirect80\":false}}}}}]},\"post_onboard_enabled\":[],\"pre_onboard_enabled\":[{\"name\":\"provision_rest\",\"type\":\"inline\",\"commands\":[\"/usr/bin/setdb provision.extramb 1000\",\"/usr/bin/setdb restjavad.useextramb true\"]}],\"runtime_parameters\":[{\"name\":\"BIGIP_PASSWORD\",\"type\":\"secret\",\"secretProvider\":{\"type\":\"KeyVault\",\"environment\":\"azure\",\"vaultUrl\":\"https://yourvaultname.vault.azure.net\",\"secretId\":\"mySecretId\"}},{\"name\":\"SELF_IP_EXTERNAL\",\"type\":\"metadata\",\"metadataProvider\":{\"type\":\"network\",\"environment\":\"azure\",\"field\":\"ipv4\",\"index\":1}},{\"name\":\"SELF_IP_INTERNAL\",\"type\":\"metadata\",\"metadataProvider\":{\"type\":\"network\",\"environment\":\"azure\",\"field\":\"ipv4\",\"index\":2}}]}"
     },
 ```
 
@@ -391,6 +415,40 @@ To change BIG-IP configuration:
                   - <YOUR_CUSTOM_NTP_SERVER>
                 timezone: UTC
     ```
+
+    or if you wanted to set the admin password using a secret instead, update the `BIGIP_PASSWORD` runtime parameter from using the Virtual Machine ID:
+
+    Example:
+    ```yaml
+    runtime_parameters:
+      - name: BIGIP_PASSWORD
+        type: url
+        query: vmId
+        value: 'http://169.254.169.254/metadata/instance/compute?api-version=2017-08-01'
+        headers:
+          - name: Metadata
+            value: true
+    ```
+
+    to using the secret.
+
+    ```yaml
+    runtime_parameters:
+      - name: VAULT_URL
+        type: url
+        value: file:///config/cloud/vault_url
+      - name: SECRET_ID
+        type: url
+        value: file:///config/cloud/secret_id
+      - name: BIGIP_PASSWORD
+        type: secret
+        secretProvider:
+          type: KeyVault
+          environment: azure
+          vaultUrl: '{{{VAULT_URL}}}'
+          secretId: '{{{SECRET_ID}}}'
+    ```
+
 
 2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, Azure Storage, git, etc.).
 3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated BIG-IP configuration.
@@ -684,8 +742,8 @@ These templates have only been explicitly tested and validated with the followin
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.1.302000 | 16.1.3.2 Build 0.0.4 |
-| 14.1.502000 | 14.1.5.2 Build 0.0.3 |
+| 16.1.303000 | 16.1.3.3 Build 0.0.3 |
+| 14.1.503000 | 14.1.5.3 Build 0.0.5 |
 
 These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 

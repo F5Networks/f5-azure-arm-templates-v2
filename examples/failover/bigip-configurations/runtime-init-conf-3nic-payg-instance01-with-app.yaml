@@ -4,14 +4,14 @@ controls:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.33.0
-      extensionHash: 4ac7b7c6eb93320df20f964f32ce7bc6e0454858a36440761f774a8a42a01020
+      extensionVersion: 1.36.0
+      extensionHash: 6f94718afcbf7743b9c260ab341f33987d2d442ab1f5076410ebd557be7d2ff0
     - extensionType: as3
-      extensionVersion: 3.40.0
-      extensionHash: 708533815cb8e608b4d28fbb730f0ed34617ce5def53c5462c0ab98bd54730fc
+      extensionVersion: 3.43.0
+      extensionHash: 6e50f828292c3e9417136693b7fba232ca4c004187ae1499e83e39210b500e7a
     - extensionType: cf
-      extensionVersion: 1.13.0
-      extensionHash: 93be496d250838697d8a9aca8bd0e6fe7480549ecd43280279f0a63fc741ab50
+      extensionVersion: 1.14.0
+      extensionHash: 22b262f3f354a1a29ff6aa3e706708e2d0b0abf5585c1db62a04682a9bcfe9bd
 extension_services:
   service_operations:
     - extensionType: do
@@ -20,8 +20,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
         Common:
           class: Tenant
           My_DbVariables:
@@ -150,7 +150,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
             Service_Address_01:
@@ -191,8 +191,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
         Common:
           class: Tenant
           My_DbVariables:
