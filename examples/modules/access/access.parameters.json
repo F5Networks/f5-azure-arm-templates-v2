@@ -1,6 +1,6 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "2.6.0.0",
+  "contentVersion": "2.7.0.0",
   "parameters": {
     "customAssignableScopes": {
       "value": []
@@ -29,6 +29,9 @@
     "secretId": {
       "value": ""
     },
+    "secretValue": {
+      "value": ""
+    },
     "solutionType": {
       "value": "standard"
     },
@@ -40,6 +43,9 @@
         "group": "f5group",
         "owner": "f5owner"
       }
+    },
+    "uniqueString": {
+      "value": ""
     },
     "userAssignedIdentityName": {
       "value": ""

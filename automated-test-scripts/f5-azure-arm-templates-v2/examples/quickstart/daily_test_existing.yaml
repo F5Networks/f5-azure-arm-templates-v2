@@ -16,6 +16,8 @@ onStart:
 - ./tests/verify_login.sh
 - ./tests/verify_runtimeinit_install_params.sh
 - ./tests/verify_waf_blocking.sh
+- ./tests/verify_secret.sh
+- ./tests/verify_identity.sh
 - ./tests/verify_outputs.sh
 - ../../common/delete_deployment.sh
 - ../../common/verify_delete.sh

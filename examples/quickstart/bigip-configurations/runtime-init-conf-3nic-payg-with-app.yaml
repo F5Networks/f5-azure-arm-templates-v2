@@ -54,17 +54,17 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.33.0
-      extensionHash: 4ac7b7c6eb93320df20f964f32ce7bc6e0454858a36440761f774a8a42a01020
+      extensionVersion: 1.36.0
+      extensionHash: 6f94718afcbf7743b9c260ab341f33987d2d442ab1f5076410ebd557be7d2ff0
     - extensionType: as3
-      extensionVersion: 3.40.0
-      extensionHash: 708533815cb8e608b4d28fbb730f0ed34617ce5def53c5462c0ab98bd54730fc
+      extensionVersion: 3.43.0
+      extensionHash: 6e50f828292c3e9417136693b7fba232ca4c004187ae1499e83e39210b500e7a
     - extensionType: ts
       extensionVersion: 1.32.0
       extensionHash: a6bf242728a5ba1b8b8f26b59897765567db7e0f0267ba9973f822be3ab387b6
     - extensionType: fast
-      extensionVersion: 1.21.0
-      extensionHash: 9b637713abf07ba33d99b67c85cd8267556cceb1a0ed2816ef19306f330104c5
+      extensionVersion: 1.24.0
+      extensionHash: 7f1c8080b6712915d18caaf3410d8ed21c0454f53bfc8999f294bd958231b47f
 extension_services:
   service_operations:
     - extensionType: do
@@ -178,7 +178,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.6.0.0/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
             Service_Address_01:

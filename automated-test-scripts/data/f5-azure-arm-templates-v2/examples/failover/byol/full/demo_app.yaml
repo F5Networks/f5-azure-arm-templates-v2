@@ -5,8 +5,11 @@ ARTIFACT LOCATION: 'templates/'
 AUTOFILL EVAL LICENSE KEY: ''
 AUTOFILL EVAL LICENSE KEY 2: ''
 CFE TAG: <RESOURCE GROUP>
+# if CREATE IDENTITY = false, then CREATE SECRET must also be false
+CREATE IDENTITY: true
+CREATE SECRET: false
 INSTANCE TYPE: Standard_D8s_v4
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.302000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000
 LICENSE TYPE: byol
 LOG LEVEL: debug
 NIC COUNT: 3

@@ -12,8 +12,15 @@ TEMPLATE_FILE=${TMP_DIR}/<RESOURCE GROUP>.json
 curl -k <TEMPLATE URL> -o ${TEMPLATE_FILE}
 echo "TEMPLATE URI: <TEMPLATE URL>"
 
-SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
-echo $SECRET_ID
+SECRET_ID=''
+SECRET_VALUE=''
+if [[ "<CREATE SECRET>" == "True" ]]; then
+    SECRET_VALUE='<SECRET VALUE>'
+    echo "SECRET_VALUE: $SECRET_VALUE"    
+else
+    SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
+    echo "SECRET_ID: $SECRET_ID"    
+fi
 
 SSH_KEY=$(az keyvault secret show --vault-name dewdropKeyVault -n dewpt-public | jq .value --raw-output)
 
@@ -29,7 +36,7 @@ else
     NETWORK_PARAMS=',"restrictedSrcAddressVip":{"value":"'"${SRC_IP}"'"}'
 fi
 
-DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"allowUsageAnalytics":{"value":False},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"}'${NETWORK_PARAMS}'}'
+DEPLOY_PARAMS='{"uniqueString":{"value":"<RESOURCE GROUP>"},"allowUsageAnalytics":{"value":False},"sshKey":{"value":"'"${SSH_KEY}"'"},"restrictedSrcAddressApp":{"value":"'"${SRC_IP}"'"},"restrictedSrcAddressMgmt":{"value":"'"${SRC_IP}"'"},"bigIpPasswordSecretId":{"value":"'"${SECRET_ID}"'"},"bigIpPasswordSecretValue":{"value":"'"${SECRET_VALUE}"'"},"cfeStorageAccountName":{"value":"<DEWPOINT JOB ID>stcfe"}'${NETWORK_PARAMS}'}'
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 
 # save deployment parameters to a file, to avoid weird parameter parsing errors with certain values

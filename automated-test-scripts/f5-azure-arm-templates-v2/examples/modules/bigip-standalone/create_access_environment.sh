@@ -56,7 +56,9 @@ fi
 SECRET_ID=$(az keyvault secret show --vault-name <RESOURCE GROUP>fv -n <RESOURCE GROUP>bigiq | jq .id --raw-output)
 SECRET_ID_STRING=',"secretId":{"value":"'"$SECRET_ID"'"}'
 
-DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${SOLUTION_TYPE}${ROLE_NAME}${ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${ROLE_SCOPE}'}}'
+UNIQUE_STRING=',"uniqueString":{"value":"<RESOURCE GROUP>"}'
+
+DEPLOY_PARAMS='{"$schema":"http:\/\/schema.management.azure.com\/schemas\/2015-01-01\/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{'${SOLUTION_TYPE}${ROLE_NAME}${ROLE_DESCRIPTION}${CUSTOM_ROLE_PERMISSIONS}${SECRET_ID_STRING}${USER_ASSIGNED_IDENT_NAME}${ROLE_SCOPE}${UNIQUE_STRING}'}}'
 
 DEPLOY_PARAMS_FILE=${TMP_DIR}/deploy_params.json
 

@@ -60,7 +60,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | instanceType | Yes | --- | --- | Enter a valid instance type. |
 | loadBalancerBackendAddressPoolsArray | Yes | --- | --- | Enter an array of pools where BIG-IP instances are to be added. |
 | nsgID | No | --- | --- | Enter security group ID to use. Use default if you do not wish to apply an NSG policy. |
-| provisionPublicIp | No | --- | --- | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
+| provisionPublicIp | No | --- | --- | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://learn.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachinescalesets?pivots=deployment-language-arm-template) for supported values. Leave default if using natpool, or not using public IPs on instances. |
 | roleDefinitionId | No | --- | --- | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
 | runtimeConfig | Yes | --- | --- | Url to bigip-runtime-init configuration file or json string to use for configuration file. |
 | scaleInCpuThreshold | Sometimes | --- | --- | The percentage of CPU utilization that should trigger a scale in event. Required when customAutoscaleRules parameter not used. |

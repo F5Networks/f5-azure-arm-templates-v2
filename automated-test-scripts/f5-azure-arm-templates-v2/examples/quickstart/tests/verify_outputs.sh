@@ -78,6 +78,10 @@ if echo "<TEMPLATE URL>" | grep "azuredeploy.json"; then
     fi
 fi
 
+if [[ <CREATE SECRET> == True ]]; then
+    outputs[bigIpSecretId]="BigIpSecret"
+fi
+
 # Run array through function
 response=$(verify_outputs "outputs")
 spacer=$'\n============\n'
