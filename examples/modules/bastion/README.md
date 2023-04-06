@@ -49,7 +49,7 @@ This template deploys a simple example bastion host. It launches a linux VM used
 | publicIpId | Yes |  | string | Public IP ID for the Virtual Machine. |
 | sshKey | Yes |  | string | Supply the SSH public key you want to use to connect to the bastion instance. |
 | subnetId | Yes |  | string | Private subnet ID for the Virtual Machine. |
-| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
+| tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
 | vmScaleSetMaxCount | Yes | 10 | integer | The maximum number of bastion instances that can be deployed into the Virtual Machine Scale Set. |
 | vmScaleSetMinCount | Yes | 1 | integer | The minimum (and default) number of bastion instances that will be deployed into the Virtual Machine Scale Set. |
 

@@ -1,18 +1,24 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "2.3.0.0",
+  "contentVersion": "2.7.0.0",
   "parameters": {
     "adminUsername": {
       "value": "azureuser"
     },
+    "allowUsageAnalytics": {
+      "value": true
+    },
     "bigIpPeerAddr": {
+      "value": ""
+    },
+    "bigIpPeerHostname": {
       "value": ""
     },
     "bigIpRuntimeInitConfig": {
       "value": ""
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run"
     },
     "cfeStorageAccountName": {
       "value": ""
@@ -20,11 +26,17 @@
     "cfeTag": {
       "value": ""
     },
+    "hostname": {
+      "value": "bigip01.local"
+    },
     "image": {
       "value": "f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-25m-best-hourly:15.1.201000"
     },
     "instanceType": {
       "value": "Standard_D8s_v4"
+    },
+    "licenseKey": {
+      "value": ""
     },
     "mgmtNsgId": {
       "value": ""
@@ -79,18 +91,15 @@
     },
     "tagValues": {
       "value": {
-        "application": "APP",
-        "cost": "COST",
-        "environment": "ENV",
-        "group": "GROUP",
-        "owner": "OWNER"
+        "application": "f5demoapp",
+        "cost": "f5cost",
+        "environment": "f5env",
+        "group": "f5group",
+        "owner": "f5owner"
       }
     },
     "uniqueString": {
       "value": ""
-    },
-    "useAvailabilityZones": {
-      "value": false
     },
     "userAssignManagedIdentity": {
       "value": ""
@@ -100,6 +109,9 @@
     },
     "workspaceId": {
       "value": "WORKSPACE_ID"
+    },
+    "zone": {
+      "value": ""
     }
   }
 }

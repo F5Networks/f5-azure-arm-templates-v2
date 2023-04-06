@@ -50,11 +50,11 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 | --- | --- | --- | --- | --- |
 | bigIpRuntimeInitConfig | No |  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | functionAppName | No | "functionApp" | string | Supply a name for the new function app. |
-| functionAppSku | No | {"Tier": "ElasticPremium","Name": "EP1"}, | object | Supply a configuration for the function app server farm plan SKU (premium or appservice) in JSON format. Information about server farm plans is available [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2018-02-01/serverfarms). |
+| functionAppSku | No | {"Tier": "ElasticPremium","Name": "EP1"}, | object | Supply a configuration for the function app server farm plan SKU (premium or appservice) in JSON format. Information about server farm plans is available [here](https://learn.microsoft.com/en-us/azure/templates/microsoft.web/serverfarms?pivots=deployment-language-arm-template). |
 | functionAppVnetId | No |  | string | The fully-qualified resource ID of the Azure Virtual Network where BIG-IQ is deployed. This is required when connecting to BIG-IQ via a private IP address; the Azure function app will be granted ingress permission to the virtual network. When specifying an Azure public IP address for bigIqAddress, leave the default of **Default**. |
 | secretId | No |  | string | The full URL of the secretId, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. |
 | userAssignManagedIdentity | No |  | string | Enter user-assigned management identity ID to be associated to Virtual Machine Scale Set. Leave default if not used. |
-| tagValues| No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | List of tags to add to created resources. |
+| tagValues| No | {"application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner"}, | object | List of tags to add to created resources. |
 | vmssId | No |  | string | Supply the fully-qualified resource ID of the Azure Virtual Machine Scale Set to be monitored. |
 
 ### Template Outputs
@@ -70,7 +70,7 @@ This template creates the Azure function app, hosting plan, key vault, applicati
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.3.0.0/examples/images/azure-function-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.7.0.0/examples/images/azure-function-module.png)
 
 
 ### Contributor License Agreement

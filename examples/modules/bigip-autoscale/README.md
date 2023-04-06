@@ -45,6 +45,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- | --- | --- |
 | adminUsername | No | "azureuser" | string | Enter a valid BIG-IP username. This creates the specified username on the BIG-IP with admin role. |
+| allowUsageAnalytics | No | true | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
 | appInsights | No |  | string | Valid values: empty value, an acceptable application insight component name. Creates application insight component with specified name. |
 | bigIpRuntimeInitConfig | Yes |  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
@@ -62,7 +63,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | maxUnhealthyUpgradedInstancePercent | No | 20 | integer | The maximum percentage of upgraded virtual machine instances that can be found to be in an unhealthy state. |
 | nsgId | No |  | string | Enter security group ID to use. Use default if you do not wish to apply an NSG policy. |
 | pauseTimeBetweenBatches | No | 0 | integer | The wait time between completing the update for all virtual machines in one batch and starting the next batch. |
-| provisionPublicIp | No |  | object | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-07-01/virtualmachinescalesets) for supported values. Leave default if using natpool, or not using public IPs on instances. |
+| provisionPublicIp | No |  | object | Enter public IP json configuration to attach public IP to instances. See [this documentation](https://learn.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachinescalesets?pivots=deployment-language-arm-template) for supported values. Leave default if using natpool, or not using public IPs on instances. |
 | roleDefinitionId | No |  | string | Enter a role definition ID you want to add to system managed identity. Leave default if system managed identity is not used. |
 | scaleInCpuThreshold | No | 20 | integer | The percentage of CPU utilization that should trigger a scale in event. Required when customAutoscaleRules parameter not used. |
 | scaleInThroughputThreshold | No | 10000000 | integer | The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB. This is required when the customAutoscaleRules parameter is not used. |
@@ -73,7 +74,7 @@ This ARM template creates a BIG-IP Virtual Machine Scale Set, configures Autosca
 | secretId | No |  | string | The full URL of the secretId where the BIG-IQ password is stored, including KeyVault Name. For example: https://yourvaultname.vault.azure.net/secrets/yoursecretid. |
 | sshKey | Yes |  | string | Supply the SSH public key you want to use to connect to the BIG-IP. |
 | subnetId | Yes |  | string | Enter the subnet ID to use. |
-| tagValues | No | "application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
+| tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique, adjust them as needed for each key. |
 | throughputMetricName | No | "Network In" | string | Valid classic compute metric, default is for aggregate interface traffic. [this documentation(https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported) for supported values. This is required when the customAutoscaleRules parameter is not used. |
 | uniqueString | Yes |  | string | Unique DNS Name for the Public IP address used to access the Virtual Machine and postfix resource names. |
 | useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired, the input should be set false. If the region does not support availability zones, the input should be set to false. |
@@ -372,7 +373,7 @@ Example on one line:
                 "My_ASM_Policy": {
                     "class": "WAF_Policy",
                     "ignoreChanges": true,
-                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
+                    "url": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml"
                 },
                 "class": "Application",
                 "serviceMain": {
@@ -414,5 +415,5 @@ Example on one line:
 ```
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.3.0.0/examples/images/azure-bigip-autoscale-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.7.0.0/examples/images/azure-bigip-autoscale-module.png)
 

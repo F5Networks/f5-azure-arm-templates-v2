@@ -1,7 +1,12 @@
 controls:
   logLevel: info
   logFilename: /var/log/cloud/bigIpRuntimeInit.log
-pre_onboard_enabled: []
+pre_onboard_enabled:
+  - name: allow_ts_listener
+    type: inline
+    commands:
+      - echo "Added for 16.1.3.1 and above. See https://support.f5.com/csp/article/K05413010"
+      - /usr/bin/setdb tmm.tcl.rule.node.allow_loopback_addresses true || exit 0
 runtime_parameters:
   - name: HOST_NAME
     type: metadata
@@ -44,14 +49,14 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.28.0
-      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
+      extensionVersion: 1.36.0
+      extensionHash: 6f94718afcbf7743b9c260ab341f33987d2d442ab1f5076410ebd557be7d2ff0
     - extensionType: as3
-      extensionVersion: 3.36.1
-      extensionHash: 48876a92d3d8fe7da70310882dc9fd1499d209579d798394715e18c12138daf3
+      extensionVersion: 3.43.0
+      extensionHash: 6e50f828292c3e9417136693b7fba232ca4c004187ae1499e83e39210b500e7a
     - extensionType: ts
-      extensionVersion: 1.29.0
-      extensionHash: d4b1df7a4b79e15bd0d1f56465d96000989858b20546a7bf6cfb4c194a7c2a61
+      extensionVersion: 1.32.0
+      extensionHash: a6bf242728a5ba1b8b8f26b59897765567db7e0f0267ba9973f822be3ab387b6
 extension_services:
   service_operations:
     - extensionType: do
@@ -169,7 +174,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTP_Service:
@@ -241,7 +246,7 @@ extension_services:
               - My_System_Poller
               - My_Custom_Endpoints_Poller
           My_Azure_Application_Insights:
-            appInsightsResourceName: '{{{UNIQUE_STRING}}}-insights'
+            appInsightsResourceName: '{{{UNIQUE_STRING}}}-app-insights'
             class: Telemetry_Consumer
             maxBatchIntervalMs: 5000
             maxBatchSize: 250

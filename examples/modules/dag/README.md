@@ -44,7 +44,7 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 | nsg2 | No |  [{"destinationPortRanges": ["80","443"], "protocol": "Tcp", "sourceAddressPrefix": ""}] | array | Valid values include an array containing network security rule property objects, or an empty array. A non-empty array value creates a security group and inbound rules using the destinationPortRanges, sourceAddressPrefix, and protocol values provided for each object. For example, this example will allow traffic on ports 80 and 443 from a specific IP address: ```[{"destinationPortRanges": ["80","443"],"sourceAddressPrefix": "1.2.3.4/32", "protocol": "Tcp"}]``` By default, an outbound security rule is also applied to this network security group to allow traffic to an Azure load balancer. |
 | numberPublicExternalIpAddresses | No | 1 | integer | Valid values include any integer between 1-10. Enter the number of public external IP addresses to create. At least one is required to build ELB. |
 | numberPublicMgmtIpAddresses | No | 0 | integer | Valid values include any integer between 1-10. Enter the number of public mgmt IP addresses to create. |
-| tagValues| No | -"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER" | object | List of tags to add to created resources. |
+| tagValues| No | -"application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | List of tags to add to created resources. |
 | uniqueString | Yes |  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 
 ### Template Outputs
@@ -77,4 +77,4 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.3.0.0/examples/images/azure-dag-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.7.0.0/examples/images/azure-dag-module.png)

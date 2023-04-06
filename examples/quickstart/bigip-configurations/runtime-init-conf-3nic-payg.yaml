@@ -9,11 +9,10 @@ pre_onboard_enabled:
       - /usr/bin/setdb restjavad.useextramb true
 runtime_parameters:
   - name: HOST_NAME
-    type: metadata
-    metadataProvider:
-      type: compute
+    type: tag
+    tagProvider:
       environment: azure
-      field: name
+      key: hostname
   - name: BIGIP_PASSWORD
     type: url
     query: vmId
@@ -55,17 +54,17 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.28.0
-      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
+      extensionVersion: 1.36.0
+      extensionHash: 6f94718afcbf7743b9c260ab341f33987d2d442ab1f5076410ebd557be7d2ff0
     - extensionType: as3
-      extensionVersion: 3.36.1
-      extensionHash: 48876a92d3d8fe7da70310882dc9fd1499d209579d798394715e18c12138daf3
+      extensionVersion: 3.43.0
+      extensionHash: 6e50f828292c3e9417136693b7fba232ca4c004187ae1499e83e39210b500e7a
     - extensionType: ts
-      extensionVersion: 1.29.0
-      extensionHash: d4b1df7a4b79e15bd0d1f56465d96000989858b20546a7bf6cfb4c194a7c2a61
+      extensionVersion: 1.32.0
+      extensionHash: a6bf242728a5ba1b8b8f26b59897765567db7e0f0267ba9973f822be3ab387b6
     - extensionType: fast
-      extensionVersion: 1.18.0
-      extensionHash: 8693d4a676abbf9cc4f4d5040c7b9c3274b574a1f2a64d68b517a118311151c3
+      extensionVersion: 1.24.0
+      extensionHash: 7f1c8080b6712915d18caaf3410d8ed21c0454f53bfc8999f294bd958231b47f
 extension_services:
   service_operations:
     - extensionType: do
@@ -104,7 +103,7 @@ extension_services:
           My_System:
             class: System
             autoPhonehome: true
-            hostname: '{{{HOST_NAME}}}.local'
+            hostname: '{{{HOST_NAME}}}'
           admin:
             class: User
             userType: regular
@@ -150,6 +149,6 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
             vlan: internal
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
 post_onboard_enabled: []

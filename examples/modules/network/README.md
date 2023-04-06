@@ -36,7 +36,7 @@ This ARM template creates a virtual network, subnets, and route tables required 
 | --- | --- | --- | --- | --- |
 | createNatGateway | No | false | boolean | You must select Yes to create a NAT gateway to allow outbound access when deploying a standalone BIG-IP VE without a public management IP address. Note: The NAT gateway is applied to subnet0. |
 | numSubnets| No | 1 | integer | Number of subnets to create. A route table resource will be created and associated with each subnet resource. |
-| tagValues| No | {"application": "APP", "cost": "COST", "environment": "ENV", "group": "GROUP", "owner": "OWNER"}, | object | List of tags to add to created resources. |
+| tagValues| No | {"application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner"}, | object | List of tags to add to created resources. |
 | vnetAddressPrefix | No | 10.0 | string | Enter the start of the CIDR block used when creating the Vnet and subnets. You MUST type just the first two octets of the /16 virtual network that will be created, for example '10.0', '10.100', 192.168'." |
 | vnetName| No | "virtualNetwork" | string | Name used to create virtual network. |
 
@@ -52,4 +52,4 @@ This ARM template creates a virtual network, subnets, and route tables required 
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.3.0.0/examples/images/azure-network-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.7.0.0/examples/images/azure-network-module.png)

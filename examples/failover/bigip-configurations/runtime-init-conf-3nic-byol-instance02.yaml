@@ -4,14 +4,14 @@ controls:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.28.0
-      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
+      extensionVersion: 1.36.0
+      extensionHash: 6f94718afcbf7743b9c260ab341f33987d2d442ab1f5076410ebd557be7d2ff0
     - extensionType: as3
-      extensionVersion: 3.36.1
-      extensionHash: 48876a92d3d8fe7da70310882dc9fd1499d209579d798394715e18c12138daf3
+      extensionVersion: 3.43.0
+      extensionHash: 6e50f828292c3e9417136693b7fba232ca4c004187ae1499e83e39210b500e7a
     - extensionType: cf
-      extensionVersion: 1.11.0
-      extensionHash: f3c7aca8a19d0dc01e529d38aa0d235b4dfad34beec2584f8402aa9a92c34699
+      extensionVersion: 1.14.0
+      extensionHash: 22b262f3f354a1a29ff6aa3e706708e2d0b0abf5585c1db62a04682a9bcfe9bd
 extension_services:
   service_operations:
     - extensionType: do
@@ -20,8 +20,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          BYOL license
+        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with BYOL
+          license
         Common:
           class: Tenant
           My_DbVariables:
@@ -47,11 +47,11 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover1.local'
+            hostname: '{{{HOST_NAME}}}'
           My_License:
             class: License
             licenseType: regKey
-            regKey: REPLACE_WITH_VALID_REGKEY
+            regKey: '{{{LICENSE_KEY}}}'
           admin:
             class: User
             userType: regular
@@ -85,7 +85,16 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
-            allowService: default
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
             trafficGroup: traffic-group-local-only
           internal:
             class: VLAN
@@ -98,7 +107,7 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
             vlan: internal
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
     - extensionType: cf
       type: inline
@@ -123,8 +132,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          BYOL license
+        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with BYOL
+          license
         Common:
           class: Tenant
           My_DbVariables:
@@ -150,7 +159,7 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover1.local'
+            hostname: '{{{HOST_NAME}}}'
           admin:
             class: User
             userType: regular
@@ -184,7 +193,16 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
-            allowService: default
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
             trafficGroup: traffic-group-local-only
           internal:
             class: VLAN
@@ -197,7 +215,7 @@ extension_services:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
             vlan: internal
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
           configSync:
             class: ConfigSync
@@ -209,8 +227,8 @@ extension_services:
             class: DeviceGroup
             type: sync-failover
             members:
-              - failover0.local
-              - failover1.local
+              - '{{{REMOTE_HOST_NAME}}}'
+              - '{{{HOST_NAME}}}'
             owner: /Common/failoverGroup/members/0
             autoSync: true
             saveOnAutoSync: false
@@ -238,6 +256,9 @@ runtime_parameters:
   - name: SECRET_ID
     type: url
     value: file:///config/cloud/secret_id
+  - name: LICENSE_KEY
+    type: url
+    value: file:///config/cloud/license_key
   - name: BIGIP_PASSWORD
     type: secret
     secretProvider:
@@ -259,11 +280,6 @@ runtime_parameters:
       environment: azure
       field: ipv4
       index: 2
-  - name: REMOTE_HOST
-    type: tag
-    tagProvider:
-      environment: azure
-      key: bigIpPeerAddr
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:
@@ -280,3 +296,18 @@ runtime_parameters:
       field: ipv4
       index: 0
       ipcalc: first
+  - name: HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: hostname
+  - name: REMOTE_HOST_NAME
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerHostname
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: azure
+      key: bigIpPeerAddr

@@ -1,9 +1,12 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "2.3.0.0",
+  "contentVersion": "2.7.0.0",
   "parameters": {
+    "allowUsageAnalytics": {
+      "value": true
+    },
     "artifactLocation": {
-      "value": "f5-azure-arm-templates-v2/v2.3.0.0/examples/"
+      "value": "f5-azure-arm-templates-v2/v2.7.0.0/examples/"
     },
     "bigIpExternalSelfAddress": {
       "value": "10.0.1.11"
@@ -11,8 +14,11 @@
     "bigIpExternalSubnetId": {
       "value": ""
     },
+    "bigIpHostname": {
+      "value": "bigip01.local"
+    },
     "bigIpImage": {
-      "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.202000"
+      "value": "f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"
     },
     "bigIpInstanceType": {
       "value": "Standard_D8s_v4"
@@ -23,17 +29,29 @@
     "bigIpInternalSubnetId": {
       "value": ""
     },
+    "bigIpLicenseKey": {
+      "value": ""
+    },
     "bigIpMgmtSelfAddress": {
       "value": "10.0.0.11"
     },
     "bigIpMgmtSubnetId": {
       "value": ""
     },
+    "bigIpPasswordSecretId": {
+      "value": ""
+    },
+    "bigIpPasswordSecretValue": {
+      "value": ""
+    },
     "bigIpRuntimeInitConfig": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.3.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run"
+    },
+    "bigIpUserAssignManagedIdentity": {
+      "value": ""
     },
     "numNics": {
       "value": 3
@@ -58,11 +76,11 @@
     },
     "tagValues": {
       "value": {
-        "application": "APP",
-        "cost": "COST",
-        "environment": "ENV",
-        "group": "GROUP",
-        "owner": "OWNER"
+        "application": "f5demoapp",
+        "cost": "f5cost",
+        "environment": "f5env",
+        "group": "f5group",
+        "owner": "f5owner"
       }
     },
     "templateBaseUrl": {
@@ -73,9 +91,6 @@
     },
     "useAvailabilityZones": {
       "value": false
-    },
-    "userAssignManagedIdentity": {
-      "value": ""
     }
   }
 }
