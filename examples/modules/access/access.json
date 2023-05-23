@@ -213,7 +213,7 @@
 			"type": "Microsoft.Authorization/roleAssignments"
 		},
 		{
-			"apiVersion": "2019-09-01",
+			"apiVersion": "2022-07-01",
 			"condition": "[and(variables('createSecret'), variables('createUserAssignedIdentity'))]",
 			"name": "[variables('keyVaultName')]",
 			"location": "[resourceGroup().location]",
@@ -231,10 +231,11 @@
 				"enabledForDeployment": true,
 				"enabledForDiskEncryption": true,
 				"enabledForTemplateDeployment": true,
+				"enablePurgeProtection": true,
 				"networkAcls": {
 					"bypass": "AzureServices",
 					"defaultAction": "Allow"
-				},
+				},  
 				"sku": {
 					"family": "A",
 					"name": "standard"
@@ -245,7 +246,7 @@
 			"type": "Microsoft.KeyVault/vaults"
 		},
 		{
-			"apiVersion": "2019-09-01",
+			"apiVersion": "2022-07-01",
 			"condition": "[and(variables('createSecret'), variables('createUserAssignedIdentity'))]",
 			"dependsOn": [
 				"[variables('keyVaultName')]"
@@ -259,7 +260,7 @@
 			"type": "Microsoft.KeyVault/vaults/secrets"
 		},
 		{
-			"apiVersion": "2019-09-01",
+			"apiVersion": "2022-07-01",
 			"condition": "[and(variables('useSecret'), variables('createUserAssignedIdentity'))]",
 			"dependsOn": [
 				"[variables('keyVaultName')]"

@@ -561,13 +561,13 @@
       "zones": "[if(parameters('useAvailabilityZones'), createArray(1, 2, 3), json('null'))]"
     },
     {
-      "apiVersion": "2021-04-01",
+      "apiVersion": "2022-09-01",
       "kind": "Storage",
       "location": "[resourceGroup().location]",
       "name": "[variables('diagnosticsStorageAccountName')]",
       "properties": {
-        "supportsHttpsTrafficOnly": true
-      },
+        "allowBlobPublicAccess": false,
+        "supportsHttpsTrafficOnly": true      },
       "sku": {
         "name": "Standard_LRS",
         "tier": "Standard"
