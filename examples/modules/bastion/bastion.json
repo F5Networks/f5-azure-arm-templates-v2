@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion":"2.7.0.0",
+    "contentVersion":"2.8.0.0",
     "parameters":{
         "adminUsername":{
             "defaultValue":"azureuser",
@@ -111,13 +111,13 @@
     },
     "resources":[
         {
-            "apiVersion":"2021-04-01",
+            "apiVersion":"2022-09-01",
             "kind":"Storage",
             "location":"[resourceGroup().location]",
             "name":"[variables('storageName')]",
             "properties":{
-                "supportsHttpsTrafficOnly":true
-            },
+                "allowBlobPublicAccess": false,
+                "supportsHttpsTrafficOnly": true            },
             "sku":{
                 "name":"[variables('storageAccountType')]",
                 "tier":"Standard"
