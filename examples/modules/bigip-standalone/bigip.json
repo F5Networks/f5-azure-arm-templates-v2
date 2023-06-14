@@ -45,7 +45,7 @@
       "type": "string"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run",
+      "defaultValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run",
       "metadata": {
         "description": "URL for BIG-IP Runtime Init package"
       },
@@ -429,7 +429,7 @@
       "name": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
       "properties": {
         "allowBlobPublicAccess": false,
-        "supportsHttpsTrafficOnly": true      
+        "supportsHttpsTrafficOnly": true
       },
       "sku": {
         "name": "Standard_LRS",
@@ -445,7 +445,8 @@
       "name": "[variables('diagnosticsStorageAccountName')]",
       "properties": {
         "allowBlobPublicAccess": false,
-        "supportsHttpsTrafficOnly": true      },
+        "supportsHttpsTrafficOnly": true
+      },
       "sku": {
         "name": "Standard_LRS",
         "tier": "Standard"
