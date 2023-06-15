@@ -910,7 +910,7 @@ dewdrop_test_run:
 
 # publish templates to github
 publish_to_github:
-  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:14
   stage: release
   only:
     - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
