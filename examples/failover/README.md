@@ -94,7 +94,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
         - When *only* **bigIpPasswordSecretId** is provided: A new user-assigned managed identity and Key Vault access policy will be created.
         - When **bigIpUserAssignManagedIdentity** is provided: you must grant the identity access to the secret before creating the deployment *AND* also provide the secret ID via the **bigIpPasswordSecretId** parameter.
 
-    - To have this solution create a ***new*** secret, provide a valid BIG-IP password as the value for the **bigIpPasswordSecretValue** input parameter and leave the **bigIpPasswordSecretId** at the default value (empty). The Access module creates a new Key Vault named `${uniqueString}kv` *(where `${uniqueString}` is the value provided for the **uniqueString** input parameter)* and a secret named `BigIpSecret`, and creates the required permissions. See F5's KB article [K2873](https://support.f5.com/csp/article/K2873) for more information on choosing a password.
+    - To have this solution create a ***new*** secret, provide a valid BIG-IP password as the value for the **bigIpPasswordSecretValue** input parameter and leave the **bigIpPasswordSecretId** at the default value (empty). The Access module creates a new Key Vault named `${uniqueString}kv` *(where `${uniqueString}` is the value provided for the **uniqueString** input parameter)* and a secret named `BigIpSecret`, and creates the required permissions. See F5's KB article [K2873]() for more information on choosing a password.
 
     - To have this solution use an ***existing*** secret, you can supply the secret ID via the **bigIpPasswordSecretId** parameter and a new user-assigned managed identity and key vault access policy will be created *OR* you can use an existing user-assigned managed identity by supplying the  **bigIpUserAssignManagedIdentity** and **bigIpPasswordSecretId** parameters.  
 
@@ -349,8 +349,8 @@ As an alternative to deploying through the Azure Portal (GUI), each solution pro
 RESOURCE_GROUP="myGroupName"
 REGION="eastus"
 DEPLOYMENT_NAME="parentTemplate"
-TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/azuredeploy.json"
-DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.7.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"cfeStorageAccountName":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressVip":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig01":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"},"bigIpRuntimeInitConfig02":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"},"useAvailabilityZones":{"value":false}}'
+TEMPLATE_URI="https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.8.0.0/examples/failover/azuredeploy.json"
+DEPLOY_PARAMS='{"templateBaseUrl":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/"},"artifactLocation":{"value":"v2.8.0.0/examples/"},"uniqueString":{"value":"<YOUR_VALUE>"},"sshKey":{"value":"<YOUR_VALUE>"},"cfeStorageAccountName":{"value":"<YOUR_VALUE>"},"bigIpInstanceType":{"value":"Standard_D8s_v4"},"bigIpImage":{"value":"f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps:16.1.303000"},"appContainerName":{"value":"f5devcentral/f5-demo-app:latest"},"restrictedSrcAddressMgmt":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressApp":{"value":"<YOUR_VALUE>"},"restrictedSrcAddressVip":{"value":"<YOUR_VALUE>"},"bigIpRuntimeInitConfig01":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.8.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"},"bigIpRuntimeInitConfig02":{"value":"https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.8.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"},"useAvailabilityZones":{"value":false}}'
 DEPLOY_PARAMS_FILE=deploy_params.json
 echo ${DEPLOY_PARAMS} > ${DEPLOY_PARAMS_FILE}
 az group create -n ${RESOURCE_GROUP} -l ${REGION}
@@ -372,10 +372,10 @@ Example from azuredeploy.parameters.json
         "value": false
     },
     "bigIpRuntimeInitConfig01": {
-        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
+        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.8.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
     },
     "bigIpRuntimeInitConfig02": {
-        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.7.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
+        "value": "https://raw.githubusercontent.com/f5networks/f5-azure-arm-templates-v2/v2.8.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
     },
 ```
 
