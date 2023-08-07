@@ -5,8 +5,8 @@ pre_onboard_enabled:
   - name: provision_rest
     type: inline
     commands:
-      - /usr/bin/setdb provision.extramb 1000
-      - /usr/bin/setdb restjavad.useextramb true
+      - /usr/bin/setdb provision.extramb 1000 || exit 0
+      - /usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb true || exit 0
 runtime_parameters:
   - name: NAME
     type: metadata
@@ -59,8 +59,6 @@ extension_services:
           class: Tenant
           My_DbVariables:
             class: DbVariables
-            provision.extramb: 1000
-            restjavad.useextramb: true
             ui.advisory.enabled: true
             ui.advisory.color: blue
             ui.advisory.text: BIG-IP VE Quickstart

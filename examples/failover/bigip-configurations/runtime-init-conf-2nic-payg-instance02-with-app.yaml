@@ -26,8 +26,6 @@ extension_services:
           class: Tenant
           My_DbVariables:
             class: DbVariables
-            provision.extramb: 1000
-            restjavad.useextramb: true
             dhclient.mgmt: disable
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
@@ -104,11 +102,11 @@ extension_services:
           logLevel: silly
         externalStorage:
           scopingTags:
-            f5_cloud_failover_label: bigip_high_availability_solution
+            f5_cloud_failover_label: "{{{FAILOVER_TAG}}}"
         failoverAddresses:
           enabled: true
           scopingTags:
-            f5_cloud_failover_label: bigip_high_availability_solution
+            f5_cloud_failover_label: "{{{FAILOVER_TAG}}}"
           requireScopingTags: false
     - extensionType: as3
       type: inline
@@ -184,8 +182,6 @@ extension_services:
           class: Tenant
           My_DbVariables:
             class: DbVariables
-            provision.extramb: 1000
-            restjavad.useextramb: true
             dhclient.mgmt: disable
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
@@ -281,8 +277,8 @@ pre_onboard_enabled:
   - name: provision_rest
     type: inline
     commands:
-      - /usr/bin/setdb provision.extramb 1000
-      - /usr/bin/setdb restjavad.useextramb true
+      - /usr/bin/setdb provision.extramb 1000 || exit 0
+      - /usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb true || exit 0
 runtime_parameters:
   - name: VAULT_URL
     type: url
@@ -335,3 +331,8 @@ runtime_parameters:
     tagProvider:
       environment: azure
       key: bigIpPeerAddr
+  - name: FAILOVER_TAG
+    type: tag
+    tagProvider:
+      environment: azure
+      key: f5_cloud_failover_label
