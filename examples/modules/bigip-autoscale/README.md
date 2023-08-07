@@ -287,7 +287,7 @@ Example on one line:
         "dbvars": {
             "class": "DbVariables",
             "provision.extramb": 500,
-            "restjavad.useextramb": true
+            "provision.restjavad.extramb": 884
         },
         "My_Dns": {
             "class": "DNS",

@@ -55,12 +55,6 @@ fi
 /usr/bin/yq e ".controls.logLevel = \"<LOG LEVEL>\"" -i <DEWPOINT JOB ID>01.yaml
 /usr/bin/yq e ".controls.logLevel = \"<LOG LEVEL>\"" -i <DEWPOINT JOB ID>02.yaml
 
-# Update cfe tag
-/usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<RESOURCE GROUP>\"" -i <DEWPOINT JOB ID>01.yaml
-/usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<RESOURCE GROUP>\"" -i <DEWPOINT JOB ID>02.yaml
-/usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<RESOURCE GROUP>\"" -i <DEWPOINT JOB ID>01.yaml
-/usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<RESOURCE GROUP>\"" -i <DEWPOINT JOB ID>02.yaml
-
 if [[ "<PROVISION APP>" == "True" ]]; then
     # Use CDN for WAF policy since failover not published yet
     /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>01.yaml
