@@ -5,8 +5,9 @@ pre_onboard_enabled:
   - name: provision_rest
     type: inline
     commands:
-      - /usr/bin/setdb provision.extramb 1000
-      - /usr/bin/setdb restjavad.useextramb true
+      - /usr/bin/setdb provision.extramb 1000 || exit 0
+      - /usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb
+        true || exit 0
 runtime_parameters:
   - name: NAME
     type: metadata
@@ -33,17 +34,17 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.38.0
-      extensionHash: d52c0723fc5ac0ca5af002874acae165e2319e8793afcbf596f813c132427f9c
+      extensionVersion: 1.39.0
+      extensionHash: 4a67449195a53683a159b42857edd49a757da1a5a2029ccf94c4d6aa11ae4cda
     - extensionType: as3
-      extensionVersion: 3.45.0
-      extensionHash: 35e7a7efae33a9539e3df52ba594222f93231883f146d4c1fc36737dacc084b8
+      extensionVersion: 3.46.0
+      extensionHash: 9550bcdcd1ffe1f002fa5e3c71b8818877d9c7e161f5c68027c82ad85e56e924
     - extensionType: ts
       extensionVersion: 1.33.0
       extensionHash: 573d8cf589d545b272250ea19c9c124cf8ad5bcdd169dbe2139e82ce4d51a449
     - extensionType: fast
-      extensionVersion: 1.24.0
-      extensionHash: 7f1c8080b6712915d18caaf3410d8ed21c0454f53bfc8999f294bd958231b47f
+      extensionVersion: 1.25.0
+      extensionHash: 434309179af405e6b663e255d4d3c0a1fd45cac9b561370e350bb8dd8b39761f
 extension_services:
   service_operations:
     - extensionType: do
@@ -59,8 +60,6 @@ extension_services:
           class: Tenant
           My_DbVariables:
             class: DbVariables
-            provision.extramb: 1000
-            restjavad.useextramb: true
             ui.advisory.enabled: true
             ui.advisory.color: blue
             ui.advisory.text: BIG-IP VE Quickstart
