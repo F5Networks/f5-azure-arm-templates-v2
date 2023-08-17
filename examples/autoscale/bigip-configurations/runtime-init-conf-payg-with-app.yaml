@@ -49,11 +49,11 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.38.0
-      extensionHash: d52c0723fc5ac0ca5af002874acae165e2319e8793afcbf596f813c132427f9c
+      extensionVersion: 1.39.0
+      extensionHash: 4a67449195a53683a159b42857edd49a757da1a5a2029ccf94c4d6aa11ae4cda
     - extensionType: as3
-      extensionVersion: 3.45.0
-      extensionHash: 35e7a7efae33a9539e3df52ba594222f93231883f146d4c1fc36737dacc084b8
+      extensionVersion: 3.46.0
+      extensionHash: 9550bcdcd1ffe1f002fa5e3c71b8818877d9c7e161f5c68027c82ad85e56e924
     - extensionType: ts
       extensionVersion: 1.33.0
       extensionHash: 573d8cf589d545b272250ea19c9c124cf8ad5bcdd169dbe2139e82ce4d51a449
@@ -172,7 +172,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.8.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v2.9.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTP_Service:
