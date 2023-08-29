@@ -103,6 +103,8 @@ This solution leverages more traditional Autoscale configuration management prac
 
 - If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
+- Because this solution does not utilize BIG-IP Device Service Clustering (DSC), synchronizing ASM WAF cookie protection settings across instances is not supported. If you are deploying this solution into a production environment, F5 recommends customizing the default runtime-init configuration to install the cookie protection string on each BIG-IP instance at provisioning time. This requires creating an additional Azure Key Vault secret containing the cookie protection string. See customization example #1 under [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for step-by-step instructions.
+
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
 - If you are deploying the solution into an Azure region that supports Availability Zones, you can specify True for the useAvailabilityZones parameter. See [Azure Availability Zones](https://docs.microsoft.com/en-us/azure/availability-zones/az-region#azure-regions-with-availability-zones) for a list of regions that support Availability Zones.
@@ -326,8 +328,50 @@ By default, this solution references the `runtime-init-conf-payg-with-app.yaml` 
   - The **Full Stack** (azuredeploy.json) can use this file as is. This example configuration does not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
   - The **Existing Network Stack** (azuredeploy-existing-network.json) always **requires** customizing this file (with a Virtual Service configuration pointing at your own application) before deploying.
 
-
 **Example Customization 1:**
+
+To install the ASM WAF cookie protection string on each BIG-IP instance:
+
+  1. Export the cookie protection string from a running BIG-IP ASM WAF instance.
+      Example:
+      ```bash
+      BIGIP="192.168.1.245"
+      TOKEN=$(curl -sk https://${BIGIP}/mgmt/shared/authn/login -d '{"username": "admin", "password": "myBigIpPassword"}' | jq -r.token.token)
+
+      TASK_ID=$(curl -sk -X POST https://${BIGIP}/mgmt/tm/asm/tasks/export-data-protection -H "X-F5-Auth-Token: ${TOKEN}" -d'{"inline": true}' | jq -r .id)
+      COOKIE_PROTECTION=$(curl -sk -X GET https://${BIGIP}/mgmt/tm/asm/tasks/export-data-protection/${TASK_ID} -H "X-F5-Auth-Token: ${TOKEN}"  | jq .result.file)
+      ```
+  2. Create an Azure Key Vault secret using the previously acquired cookie protection string value. This step requires the Azure CLI; you can also create the secret via the **AWS Console > Secrets Manager > Store a new secret** menu.
+      Example:
+      ```bash
+      az keyvault create --name myKeyVault --resource-group ${RESOURCE_GROUP} --location ${REGION}
+      az keyvault secret set --vault-name myKeyVault --name mySecret --value ${COOKIE_PROTECTION}
+      ```
+  3. Edit/modify the runtime-init config file [runtime-init-conf-payg-with-app.yaml](../bigip-configurations/runtime-init-conf-payg-with-app.yaml) with the new `COOKIE_PROTECTION` runtime parameter and post_onboard_enabled values. 
+
+      Example:
+      ```yaml
+      runtime_parameters:  
+        - name: COOKIE_PROTECTION
+          type: secret
+          secretProvider:
+            environment: azure
+            secretId: 'mySecret'
+            type: KeyVault
+            vaultUrl: https://mykeyvault.vault.azure.net/
+      ```
+      ```yaml
+      post_onboard_enabled:
+        - name: import_data_protection
+          type: inline
+          commands:
+            - "id=$(curl -su 'admin:admin' -X POST http://localhost:8100/mgmt/tm/asm/tasks/import-data-protection -d '{\"importText\": \"{{{COOKIE_PROTECTION}}}\"}' | jq -r .id) && sleep 10 && echo data protection id: ${id} && status=$(curl -su 'admin:admin' http://localhost:8100/mgmt/tm/asm/tasks/import-data-protection/${id} | jq -r .status) && echo data protection status: ${status}"
+      ```
+  4. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
+  5. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
+  6. If you are installing the cookie protection string to an existing deployment, follow the steps at [Updating this Solution](#updating-this-solution) to redeploy instances using the new configuration.
+
+**Example Customization 2:**
 
 To change the Virtual Service configuration:
 
@@ -372,7 +416,7 @@ To change the Virtual Service configuration:
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
   4. Deploy or redeploy.
 
-**Example Customization 2:**
+**Example Customization 3:**
 
 The example configuration contains a Telemetry Streaming declaration that sends metrics to Azure Insights and logs to Azure Log Analytics. By default, the fields for the Telemetry Streaming declaration (**appInsightsResourceName** and **workspaceId**) are rendered from values from Azure metadata and/or a specific naming convention. These values can be modified to use different static values. 
 

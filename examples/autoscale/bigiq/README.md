@@ -109,6 +109,8 @@ This solution leverages more traditional Autoscale configuration management prac
 
 ## Important Configuration Notes
 
+-  This solution requires you to customize and host your own runtime-init configurations. For your customized the Runtime Configurations, use the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
+
 - By default, this solution does not create a custom BIG-IP WebUI user as instances are not intended to be managed directly. However, an sshKey is installed to provide CLI access for demonstration and debugging purposes. 
   -  **Disclaimer:** ***Accessing or logging into the instances themselves is for demonstration and debugging purposes only. All configuration changes should be applied by updating the model via the template instead.***
   - See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
@@ -131,6 +133,8 @@ This solution leverages more traditional Autoscale configuration management prac
 - F5 ARM templates do not reconfigure existing Azure resources, such as network security groups. Depending on your configuration, you may need to configure these resources to allow the BIG-IP VE(s) to receive traffic for your application. Similarly, the DAG example template that deploys Azure Load Balancer(s) configures load balancing rules and probes on those resources to forward external traffic to the BIG-IP(s) on standard ports 443 and 80. F5 recommends cloning this repository and modifying the module templates to fit your use case.
 
 - If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
+
+- Because this solution does not utilize BIG-IP Device Service Clustering (DSC), synchronizing ASM WAF cookie protection settings across instances is not supported. If you are deploying this solution into a production environment, F5 recommends customizing the default runtime-init configuration to install the cookie protection string on each BIG-IP instance at provisioning time. This requires creating an additional Azure Key Vault secret containing the cookie protection string. See customization example #1 under [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for step-by-step instructions.
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -363,8 +367,50 @@ By default, this solution references the `runtime-init-conf-bigiq-with-app.yaml`
   - The **Full Stack** (azuredeploy.json) always **requires** customizing this file with your BIG-IQ Licensing configuration.
   - The **Existing Network Stack** (azuredeploy-existing-network.json) always **requires** customizing this file (with your BIG-IQ Licensing **AND** Virtual Service configuration pointing at your own application) and republishing before deploying
 
-
 **Example Customization 1:**
+
+To install the ASM WAF cookie protection string on each BIG-IP instance:
+
+  1. Export the cookie protection string from a running BIG-IP ASM WAF instance.
+      Example:
+      ```bash
+      BIGIP="192.168.1.245"
+      TOKEN=$(curl -sk https://${BIGIP}/mgmt/shared/authn/login -d '{"username": "admin", "password": "myBigIpPassword"}' | jq -r.token.token)
+
+      TASK_ID=$(curl -sk -X POST https://${BIGIP}/mgmt/tm/asm/tasks/export-data-protection -H "X-F5-Auth-Token: ${TOKEN}" -d'{"inline": true}' | jq -r .id)
+      COOKIE_PROTECTION=$(curl -sk -X GET https://${BIGIP}/mgmt/tm/asm/tasks/export-data-protection/${TASK_ID} -H "X-F5-Auth-Token: ${TOKEN}"  | jq .result.file)
+      ```
+  2. Create an Azure Key Vault secret using the previously acquired cookie protection string value. This step requires the Azure CLI; you can also create the secret via the **AWS Console > Secrets Manager > Store a new secret** menu.
+      Example:
+      ```bash
+      az keyvault create --name myKeyVault --resource-group ${RESOURCE_GROUP} --location ${REGION}
+      az keyvault secret set --vault-name myKeyVault --name mySecret --value ${COOKIE_PROTECTION}
+      ```
+  3. Edit/modify the runtime-init config file [runtime-init-conf-bigiq-with-app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `COOKIE_PROTECTION` runtime parameter and post_onboard_enabled values. 
+
+      Example:
+      ```yaml
+      runtime_parameters:  
+        - name: COOKIE_PROTECTION
+          type: secret
+          secretProvider:
+            environment: azure
+            secretId: 'mySecret'
+            type: KeyVault
+            vaultUrl: https://myKeyVault.vault.azure.net/
+      ```
+      ```yaml
+      post_onboard_enabled:
+        - name: import_data_protection
+          type: inline
+          commands:
+            - "id=$(curl -su 'admin:admin' -X POST http://localhost:8100/mgmt/tm/asm/tasks/import-data-protection -d '{\"importText\": \"{{{COOKIE_PROTECTION}}}\"}' | jq -r .id) && sleep 10 && echo data protection id: ${id} && status=$(curl -su 'admin:admin' http://localhost:8100/mgmt/tm/asm/tasks/import-data-protection/${id} | jq -r .status) && echo data protection status: ${status}"
+      ```
+  4. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
+  5. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
+  6. If you are installing the cookie protection string to an existing deployment, follow the steps at [Updating this Solution](#updating-this-solution) to redeploy instances using the new configuration.
+
+**Example Customization 2:**
 
 To change the BIG-IQ Licensing configuration:
 
@@ -393,7 +439,7 @@ To change the BIG-IQ Licensing configuration:
   6. Deploy or Re-Deploy the template.
 
 
-**Example Customization 2:**
+**Example Customization 3:**
 
 To change the Virtual Service configuration:
 
@@ -437,7 +483,7 @@ To change the Virtual Service configuration:
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL or inline JSON of the updated configuration.
   4. Deploy or redeploy.
 
-**Example Customization 3:**
+**Example Customization 4:**
 
 The example configuration contains a Telemetry Streaming declaration that sends metrics to Azure Insights and logs to Azure Log Analytics. By default, the fields for the Telemetry Streaming declaration (**appInsightsResourceName** and **workspaceId**) are rendered from values from Azure metadata and/or a specific naming convention. These values can be modified to use different static values. 
 
