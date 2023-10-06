@@ -78,7 +78,7 @@
       "value": "bigip_high_availability_solution"
     },
     "numNics": {
-      "value": 3
+      "value": 2
     },
     "provisionExampleApp": {
       "value": true
