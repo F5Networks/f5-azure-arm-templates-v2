@@ -4,7 +4,7 @@ APP CONTAINER: 'f5devcentral/f5-demo-app:1.0.1'
 ARTIFACT LOCATION: 'templates/'
 CREATE SECRET: true
 INSTANCE TYPE: Standard_D4s_v4
-IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.303000
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:17.1.100002
 LICENSE TYPE: payg
 NIC COUNT: 1
 PROVISION APP: false

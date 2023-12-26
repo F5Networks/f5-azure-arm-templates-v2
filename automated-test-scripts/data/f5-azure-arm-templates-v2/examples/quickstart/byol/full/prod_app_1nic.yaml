@@ -5,7 +5,7 @@ ARTIFACT LOCATION: 'templates/'
 AUTOFILL EVAL LICENSE KEY: ''
 CREATE SECRET: false
 INSTANCE TYPE: Standard_D4s_v4
-IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:16.1.303000
+IMAGE: f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:17.1.100002
 LICENSE TYPE: byol
 NIC COUNT: 1
 PROVISION APP: true

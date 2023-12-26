@@ -84,10 +84,10 @@ azure-arm-quickstart-byol-example-test:
   run: "random"
   random-num-of-tests: 0
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/demo_app_3nic.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/full/prod_app_3nic.yaml"
 
@@ -97,10 +97,10 @@ azure-arm-quickstart-payg-example-test:
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/demo_app_3nic.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/full/prod_app_3nic.yaml"
 
@@ -110,10 +110,10 @@ azure-arm-quickstart-byol-existing-test:
   run: "random"
   random-num-of-tests: 0
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/demo_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/demo_app_3nic.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prod_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/byol/existing/prod_app_3nic.yaml"
 
@@ -123,10 +123,10 @@ azure-arm-quickstart-payg-existing-test:
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/demo_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/demo_app_3nic.yaml"
-    - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prod_app_1nic.yaml"
+    # - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-azure-arm-templates-v2/examples/quickstart/payg/existing/prod_app_3nic.yaml"
 

@@ -94,8 +94,11 @@ These are the RBAC permissions produced by each type of solution supported by th
 | Microsoft.Resources/subscriptions/read | logging | 
 | Microsoft.Resources/subscriptions/resourceGroups/deployments/* | logging | 
 | Microsoft.Resources/subscriptions/resourceGroups/read | standard, failover | 
-| Microsoft.Storage/storageAccounts/listKeys/action | failover, logging | 
 | Microsoft.Storage/storageAccounts/read | failover |
+| Microsoft.Storage/storageAccounts/blobServices/containers/read | failover, logging | 
+| Microsoft.Storage/storageAccounts/blobServices/containers/write | failover |
+| Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read | failover |
+| Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write | failover |
 | Microsoft.Support/* | logging | 
 
 ### Template Input Parameters
@@ -129,4 +132,4 @@ These are the RBAC permissions produced by each type of solution supported by th
 ## Resource Creation Flow Chart
 
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v2.9.0.0/examples/images/azure-access-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v3.0.0.0/examples/images/azure-access-module.png)
