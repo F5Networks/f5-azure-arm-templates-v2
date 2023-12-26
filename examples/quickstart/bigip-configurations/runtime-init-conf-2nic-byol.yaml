@@ -51,11 +51,11 @@ bigip_ready_enabled: []
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.39.0
-      extensionHash: 4a67449195a53683a159b42857edd49a757da1a5a2029ccf94c4d6aa11ae4cda
+      extensionVersion: 1.41.0
+      extensionHash: 3044e7ea1c8d7e10f51ec14a895374a956b3cbe3251dd6916f4f97da65d0a8e6
     - extensionType: as3
-      extensionVersion: 3.46.0
-      extensionHash: 9550bcdcd1ffe1f002fa5e3c71b8818877d9c7e161f5c68027c82ad85e56e924
+      extensionVersion: 3.48.0
+      extensionHash: d732b0e5e462bd5a7b253022ed13dd72afcc30696f0606f4acef47ec02dc31bb
     - extensionType: ts
       extensionVersion: 1.33.0
       extensionHash: 573d8cf589d545b272250ea19c9c124cf8ad5bcdd169dbe2139e82ce4d51a449

@@ -5,20 +5,21 @@
 
 
 if [[ "<CREATE IDENTITY>" == "False" ]]; then
-    # In this case, the template will create the identity
     # Using a pre-existing identity requires a pre-existing secret
     VAULT_NAME=<RESOURCE GROUP>fv
+
+    SUBSCRIPTION_ID=$(az account show | jq -r .id)
 
     PRINCIPAL_ID=$(az identity create -g <RESOURCE GROUP> -n <RESOURCE GROUP>id | jq -r .principalId)
     echo "Principal ID: $PRINCIPAL_ID"
 
-    ROLE_ASS=$(az role assignment create --assignee-object-id ${PRINCIPAL_ID} --assignee-principal-type ServicePrincipal --role "Contributor" --resource-group <RESOURCE GROUP> | jq -r .resourceGroup)
+    ROLE_ASS=$(az role assignment create --assignee-object-id ${PRINCIPAL_ID} --assignee-principal-type ServicePrincipal --role "Contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/<RESOURCE GROUP> | jq -r .)
     echo "ROLE_ASS: $ROLE_ASS"
 
-    VAULT_ASS=$(az keyvault set-policy --name ${VAULT_NAME} --secret-permissions get list --object-id ${PRINCIPAL_ID} | jq -r .)
-    echo "VAULT_ASS: $VAULT_ASS"
+    STORAGE_ROLE_ASS=$(az role assignment create --assignee-object-id ${PRINCIPAL_ID} --assignee-principal-type ServicePrincipal --role "Storage Blob Data Owner" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/<RESOURCE GROUP> | jq -r .)
+    echo "STORAGE_ROLE_ASS: $ROLE_ASS"
 
-    if [[ $VAULT_ASS == "<RESOURCE GROUP>" ]]; then
+    if echo "${ROLE_ASS}" | grep -q "<RESOURCE GROUP>"; then
         echo "Succeeded"
     else
         echo "Failed"

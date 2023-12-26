@@ -9,7 +9,7 @@ CUSTOM EMAIL: '[]'
 CREATE WORKSPACE: true
 DNSLABEL: <RESOURCE GROUP>
 EXTERNAL LOAD BALANCER NAME: dd-elb-<DEWPOINT JOB ID>
-IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:16.1.303000 # custom image fails licensing, needs investigation
+IMAGE: f5-networks:f5-big-ip-best:f5-big-best-plus-hourly-25mbps-po-f5:17.1.100002 # custom image fails licensing, needs investigation
 INSTANCE TYPE: Standard_D2s_v4
 INTERNAL LOAD BALANCER NAME: dd-ilb-<DEWPOINT JOB ID>
 LOAD BALANCER RULE PORTS:
