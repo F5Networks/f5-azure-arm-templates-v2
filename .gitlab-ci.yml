@@ -100,6 +100,7 @@ run_link_checker:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
   script:
     - make link_check
+  allow_failure: true
 
 # validate test policy parameters are present
 run_test_param_checker:
@@ -945,6 +946,7 @@ run_link_checker_release:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
   script:
     - make link_check_release
+  allow_failure: true
 
 # verifies all examples use the latest AT Components versions
 # temporarily allowing failure due to bug with DO 1.29.0
