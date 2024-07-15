@@ -172,7 +172,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.2.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.3.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTP_Service:

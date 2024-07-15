@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-	"contentVersion": "3.2.0.0",
+	"contentVersion": "3.3.0.0",
 	"parameters": {
 		"vmssId": {
 			"defaultValue": "",

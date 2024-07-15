@@ -77,4 +77,4 @@ This template creates various cloud resources to get traffic to BIG-IP solutions
 
 ## Resource Creation Flow Chart
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v3.2.0.0/examples/images/azure-dag-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v3.3.0.0/examples/images/azure-dag-module.png)

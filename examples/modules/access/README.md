@@ -132,4 +132,4 @@ These are the RBAC permissions produced by each type of solution supported by th
 ## Resource Creation Flow Chart
 
 
-![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v3.2.0.0/examples/images/azure-access-module.png)
+![Resource Creation Flow Chart](https://github.com/F5Networks/f5-azure-arm-templates-v2/blob/v3.3.0.0/examples/images/azure-access-module.png)
