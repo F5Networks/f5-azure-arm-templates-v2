@@ -10,8 +10,8 @@ extension_packages:
       extensionVersion: 3.51.0
       extensionHash: e151a9ccd0fd60c359f31839dc3a70bfcf2b46b9fedb8e1c37e67255ee482c0f
     - extensionType: cf
-      extensionVersion: 2.1.1
-      extensionHash: c2a23066038e173e857b61c1cf94a7f1530550df5a1e9435da04246f6cb058e7
+      extensionVersion: 2.1.2
+      extensionHash: 476d38a4d32d6474ae5435b5d448b318e638db4655edf049944f854504310839
 extension_services:
   service_operations:
     - extensionType: do
@@ -135,7 +135,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.2.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.3.0.0/examples/failover/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
             Service_Address_01:

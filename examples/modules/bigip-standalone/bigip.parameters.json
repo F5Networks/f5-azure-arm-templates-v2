@@ -1,6 +1,6 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "3.2.0.0",
+  "contentVersion": "3.3.0.0",
   "parameters": {
     "adminUsername": {
       "value": "azureuser"
@@ -18,7 +18,7 @@
       "value": ""
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.2/dist/f5-bigip-runtime-init-2.0.2-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.3/dist/f5-bigip-runtime-init-2.0.3-1.gz.run"
     },
     "cfeStorageAccountName": {
       "value": ""

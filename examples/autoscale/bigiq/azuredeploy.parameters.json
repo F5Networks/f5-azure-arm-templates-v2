@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "3.2.0.0",
+  "contentVersion": "3.3.0.0",
   "parameters": {
     "allowUsageAnalytics": {
       "value": true
@@ -15,7 +15,7 @@
       "value": 1
     },
     "artifactLocation": {
-      "value": "f5-azure-arm-templates-v2/v3.2.0.0/examples/"
+      "value": "f5-azure-arm-templates-v2/v3.3.0.0/examples/"
     },
     "bigIpImage": {
       "value": "f5-networks:f5-big-ip-byol:f5-big-all-2slot-byol:17.1.100002"
@@ -36,10 +36,10 @@
       "value": 0
     },
     "bigIpRuntimeInitConfig": {
-      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
+      "value": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
     },
     "bigIpRuntimeInitPackageUrl": {
-      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.2/dist/f5-bigip-runtime-init-2.0.2-1.gz.run"
+      "value": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.3/dist/f5-bigip-runtime-init-2.0.3-1.gz.run"
     },
     "bigIpScaleInCpuThreshold": {
       "value": 20
