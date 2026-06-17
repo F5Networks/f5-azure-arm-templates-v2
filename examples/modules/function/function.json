@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-	"contentVersion": "3.3.0.0",
+	"contentVersion": "3.3.0.0-avset",
 	"parameters": {
 		"vmssId": {
 			"defaultValue": "",
@@ -88,7 +88,7 @@
 	"resources": [
 		{
 			"apiVersion": "2021-04-01",
-			"kind": "Storage",
+			"kind": "StorageV2",
 			"location": "[variables('location')]",
 			"name": "[variables('functionStorageAccountName')]",
 			"sku": {

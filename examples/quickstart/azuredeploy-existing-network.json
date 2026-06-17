@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "3.3.0.0",
+  "contentVersion": "3.3.0.0-avset",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -64,11 +64,7 @@
       "type": "string"
     },
     "numNics": {
-      "allowedValues": [
-        1,
-        2,
-        3
-      ],
+      "allowedValues": [1, 2, 3],
       "defaultValue": 3,
       "metadata": {
         "description": "Enter valid number of network interfaces to create on the BIG-IP VE instance."
@@ -170,6 +166,26 @@
       },
       "type": "bool"
     },
+    "useAvailabilitySet": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy the HA cluster into an Availability Set (recommended for this 2-node failover deployment)."
+      },
+      "type": "bool"
+    },
+    "availabilitySetName": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Availability Set name (will be auto-generated if left empty)."
+      },
+      "type": "string"
+    },
+    "diagnosticsStorageAccountName": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name to use for the Diagnostics Storage Account. Leave blank to auto-generate from uniqueString."
+      }
+    },
     "bigIpUserAssignManagedIdentity": {
       "defaultValue": "",
       "metadata": {
@@ -213,18 +229,13 @@
     "solutionType": "standard",
     "createSecret": "[and(not(empty(parameters('bigIpPasswordSecretValue'))), empty(parameters('bigIpPasswordSecretId')), empty(parameters('bigIpUserAssignManagedIdentity')))]",
     "useSecret": "[and(not(empty(parameters('bigIpPasswordSecretId'))), empty(parameters('bigIpPasswordSecretValue')), empty(parameters('bigIpUserAssignManagedIdentity')))]",
+    "diagnosticsStorageAccountName": "[parameters('diagnosticsStorageAccountName')]",
     "customAssignableScopes": [],
     "customRolePermissions": [],
     "roleDescription": "Role created by quickstart deployment",
     "roleName": "[concat(variables('uniqueString'), '-bigip-high-availability-role')]",
-    "keyVaultPermissionsKeys": [
-      "list",
-      "get"
-    ],
-    "keyVaultPermissionsSecrets": [
-      "list",
-      "get"
-    ],
+    "keyVaultPermissionsKeys": ["list", "get"],
+    "keyVaultPermissionsSecrets": ["list", "get"],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-bigip-user-identity')]",
     "provisionServicePrivateIp": "[not(empty(parameters('servicePrivateIpAddress')))]",
     "externalLoadBalancerName": "None",
@@ -242,20 +253,14 @@
     ],
     "externalRulesArray": [
       {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
+        "destinationPortRanges": ["80", "443"],
         "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
         "protocol": "Tcp"
       }
     ],
     "internalRulesArray": [
       {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
+        "destinationPortRanges": ["80", "443"],
         "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
         "protocol": "Tcp"
       }
@@ -263,7 +268,8 @@
     "mgmtSecurityGroup": "[if(equals(parameters('numNics'), 1), union(variables('mgmtRulesArray'), variables('externalRulesArray'), variables('internalRulesArray')), variables('mgmtRulesArray'))]",
     "externalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 2), variables('externalRulesArray'), createArray())]",
     "internalSecurityGroup": "[if(greaterOrEquals(parameters('numNics'), 3), variables('internalRulesArray'), createArray())]",
-    "vmName": "[concat(variables('uniqueString'), '-bigip-vm-01')]"
+    "vmName": "[concat(variables('uniqueString'), '-bigip-vm-01')]",
+    "availabilitySetName": "[if(and(empty(parameters('availabilitySetName')),parameters('useAvailabilitySet')), concat(parameters('uniqueString'), '-avset'), parameters('availabilitySetName'))]"
   },
   "resources": [
     {
@@ -462,11 +468,20 @@
           "userAssignManagedIdentity": {
             "value": "[if(variables('createAccess'), reference('accessTemplate').outputs.userAssignedIdentityId.value, parameters('bigIpUserAssignManagedIdentity'))]"
           },
+          "diagnosticsStorageAccountName": {
+            "value": "[variables('diagnosticsStorageAccountName')]"
+          },
           "vmName": {
             "value": "[variables('vmName')]"
           },
           "zone": {
             "value": "[if(parameters('useAvailabilityZones'), '1', '')]"
+          },
+          "useAvailabilitySet": {
+            "value": "[parameters('useAvailabilitySet')]"
+          },
+          "availabilitySetName": {
+            "value": "[parameters('availabilitySetName')]"
           }
         }
       }

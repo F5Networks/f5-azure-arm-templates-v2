@@ -201,7 +201,9 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | https://cdn.f5.com/product/cloudsolutions/ | string | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | **Yes** |  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. If you set this to true you should set useAvailabilitySet to false. |
+| useAvailabilitySet | No | true | boolean | This deplloyment can deploy resources into Azure Availability Sets (if zones are not supported in the region). Note that Availability Sets and Availability Zones are mutually exclusive. If you set useAvailabilityZones to true you should set useAvailabilitySet to false. |
+| availabilitySetName | No | | string | Provide the name to use for the Availability Set. If left blank or not supplied, the availability set name will be derived by appending '-avset' to the `uniqueString` value. |
 
 ### Template Outputs
 
@@ -273,7 +275,9 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | tagValues | No | "application": "f5demoapp", "cost": "f5cost", "environment": "f5env", "group": "f5group", "owner": "f5owner" | object | Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key. |
 | templateBaseUrl | No | https://cdn.f5.com/product/cloudsolutions/ | string | The publicly accessible URL where the linked ARM templates are located. |
 | uniqueString | **Yes** |  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. |
+| useAvailabilityZones | No | false | boolean | This deployment can deploy resources into Azure Availability Zones (if the region supports it). If that is not desired the input should be set false. If the region does not support availability zones the input should be set to false. If you set this to true you should set useAvailabilitySet to false. |
+| useAvailabilitySet | No | true | boolean | This deplloyment can deploy resources into Azure Availability Sets (if zones are not supported in the region). Note that Availability Sets and Availability Zones are mutually exclusive. If you set useAvailabilityZones to true you should set useAvailabilitySet to false. |
+| availabilitySetName | No | | string | Provide the name to use for the Availability Set. If left blank or not supplied, the availability set name will be derived by appending '-avset' to the `uniqueString` value. |
 
 
 ### Existing Network Template Outputs

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "3.3.0.0",
+  "contentVersion": "3.3.0.0-avset",
   "parameters": {
     "adminUsername": {
       "defaultValue": "azureuser",
@@ -562,7 +562,7 @@
     },
     {
       "apiVersion": "2022-09-01",
-      "kind": "Storage",
+      "kind": "StorageV2",
       "location": "[resourceGroup().location]",
       "name": "[variables('diagnosticsStorageAccountName')]",
       "properties": {
