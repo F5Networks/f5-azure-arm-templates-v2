@@ -424,7 +424,7 @@
     {
       "apiVersion": "2022-09-01",
       "condition": "[not(empty(parameters('cfeStorageAccountName')))]",
-      "kind": "Storage",
+      "kind": "StorageV2",
       "location": "[resourceGroup().location]",
       "name": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
       "properties": {
@@ -440,7 +440,7 @@
     },
     {
       "apiVersion": "2022-09-01",
-      "kind": "Storage",
+      "kind": "StorageV2",
       "location": "[resourceGroup().location]",
       "name": "[variables('diagnosticsStorageAccountName')]",
       "properties": {

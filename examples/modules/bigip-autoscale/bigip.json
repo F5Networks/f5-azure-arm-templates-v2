@@ -562,7 +562,7 @@
     },
     {
       "apiVersion": "2022-09-01",
-      "kind": "Storage",
+      "kind": "StorageV2",
       "location": "[resourceGroup().location]",
       "name": "[variables('diagnosticsStorageAccountName')]",
       "properties": {
