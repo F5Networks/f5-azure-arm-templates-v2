@@ -198,16 +198,16 @@
       "type": "string"
     },
     "bigIpRuntimeInitConfig01": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.3.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml",
+      "defaultValue": "",
       "metadata": {
-        "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
+        "description": "Optional. Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string. Leave blank to auto-select the BYOL config when bigIpLicenseKey01 is set, otherwise the PAYG config (3nic or 2nic per numNics and provisionExampleApp)."
       },
       "type": "string"
     },
     "bigIpRuntimeInitConfig02": {
-      "defaultValue": "https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates-v2/v3.3.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml",
+      "defaultValue": "",
       "metadata": {
-        "description": "Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration."
+        "description": "Optional. Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string. Leave blank to auto-select the BYOL config when bigIpLicenseKey02 is set, otherwise the PAYG config (3nic or 2nic per numNics and provisionExampleApp)."
       },
       "type": "string"
     },
@@ -261,6 +261,8 @@
     }
   },
   "variables": {
+    "runtimeInitConfig01": "[if(empty(parameters('bigIpRuntimeInitConfig01')), concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'failover/bigip-configurations/runtime-init-conf-', string(parameters('numNics')), 'nic-', if(empty(parameters('bigIpLicenseKey01')), 'payg', 'byol'), '-instance01', if(parameters('provisionExampleApp'), '-with-app', ''), '.yaml'), parameters('bigIpRuntimeInitConfig01'))]",
+    "runtimeInitConfig02": "[if(empty(parameters('bigIpRuntimeInitConfig02')), concat(parameters('templateBaseUrl'), parameters('artifactLocation'), 'failover/bigip-configurations/runtime-init-conf-', string(parameters('numNics')), 'nic-', if(empty(parameters('bigIpLicenseKey02')), 'payg', 'byol'), '-instance02', if(parameters('provisionExampleApp'), '-with-app', ''), '.yaml'), parameters('bigIpRuntimeInitConfig02'))]",
     "contentVersion": "[deployment().properties.template.contentVersion]",
     "uniqueString": "[toLower(parameters('uniqueString'))]",
     "adminUsername": "[string('azureuser')]",
@@ -666,7 +668,7 @@
             "value": "[parameters('bigIpRuntimeInitPackageUrl')]"
           },
           "bigIpRuntimeInitConfig": {
-            "value": "[parameters('bigIpRuntimeInitConfig01')]"
+            "value": "[variables('runtimeInitConfig01')]"
           },
           "secretId": {
             "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
@@ -792,7 +794,7 @@
             "value": "[parameters('bigIpRuntimeInitPackageUrl')]"
           },
           "bigIpRuntimeInitConfig": {
-            "value": "[parameters('bigIpRuntimeInitConfig02')]"
+            "value": "[variables('runtimeInitConfig02')]"
           },
           "secretId": {
             "value": "[if(variables('createManagedIdentity'), reference('accessTemplate').outputs.secretId.value, parameters('bigIpPasswordSecretId'))]"
