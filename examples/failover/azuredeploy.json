@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "3.3.0.0",
+  "contentVersion": "3.3.0.0-avset",
   "parameters": {
     "templateBaseUrl": {
       "defaultValue": "https://cdn.f5.com/product/cloudsolutions/",
@@ -138,10 +138,7 @@
       "type": "string"
     },
     "numNics": {
-      "allowedValues": [
-        2,
-        3
-      ],
+      "allowedValues": [2, 3],
       "defaultValue": 3,
       "metadata": {
         "description": "Enter valid number of network interfaces to create on the BIG-IP VE instance."
@@ -239,12 +236,32 @@
       },
       "type": "bool"
     },
+    "useAvailabilitySet": {
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy the HA cluster into an Availability Set (recommended for this 2-node failover deployment)."
+      },
+      "type": "bool"
+    },
+    "availabilitySetName": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Availability Set name (will be auto-generated if left empty)."
+      },
+      "type": "string"
+    },
     "bigIpUserAssignManagedIdentity": {
       "defaultValue": "",
       "metadata": {
         "description": "Enter user assigned management identity ID to be associated to virtual machine. Leave default if not used."
       },
       "type": "string"
+    },
+    "diagnosticsStorageAccountName": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name to use for the Diagnostics Storage Account. Leave blank to auto-generate from uniqueString."
+      }
     },
     "tagValues": {
       "defaultValue": {
@@ -274,14 +291,8 @@
     "customRolePermissions": [],
     "roleDescription": "Role created by failover deployment",
     "roleName": "[concat(variables('uniqueString'), '-bigip-high-availability-role')]",
-    "keyVaultPermissionsKeys": [
-      "list",
-      "get"
-    ],
-    "keyVaultPermissionsSecrets": [
-      "list",
-      "get"
-    ],
+    "keyVaultPermissionsKeys": ["list", "get"],
+    "keyVaultPermissionsSecrets": ["list", "get"],
     "userAssignedIdentityName": "[concat(variables('uniqueString'), '-bigip-user-identity')]",
     "createAutoscaleGroup": false,
     "externalLoadBalancerName": "None",
@@ -289,46 +300,31 @@
     "loadBalancerRulePorts": [],
     "mgmtNsgRulesArray": [
       {
-        "destinationPortRanges": [
-          "22",
-          "443"
-        ],
+        "destinationPortRanges": ["22", "443"],
         "sourceAddressPrefix": "[parameters('restrictedSrcAddressMgmt')]",
         "protocol": "Tcp"
       }
     ],
     "appNsgRulesArray": [
       {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
+        "destinationPortRanges": ["80", "443"],
         "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
         "protocol": "Tcp"
       },
       {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
+        "destinationPortRanges": ["80", "443"],
         "sourceAddressPrefix": "10.0.0.0/8",
         "protocol": "Tcp"
       }
     ],
     "internalNsgRulesArray": [
       {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
+        "destinationPortRanges": ["80", "443"],
         "sourceAddressPrefix": "[parameters('restrictedSrcAddressApp')]",
         "protocol": "Tcp"
       },
       {
-        "destinationPortRanges": [
-          "80",
-          "443"
-        ],
+        "destinationPortRanges": ["80", "443"],
         "sourceAddressPrefix": "10.0.0.0/8",
         "protocol": "Tcp"
       }
@@ -341,9 +337,11 @@
     "appInstanceName": "[variables('uniqueString')]",
     "appInstanceType": "Standard_D2_v4",
     "cfeStorageAccountName": "[if(not(empty(parameters('cfeStorageAccountName'))), parameters('cfeStorageAccountName'), concat(parameters('uniqueString'), 'stcfe'))]",
+    "diagnosticsStorageAccountName": "[parameters('diagnosticsStorageAccountName')]",
     "cloudInitUrl": "",
     "vmName01": "[concat(variables('uniqueString'), '-bigip-vm-01')]",
-    "vmName02": "[concat(variables('uniqueString'), '-bigip-vm-02')]"
+    "vmName02": "[concat(variables('uniqueString'), '-bigip-vm-02')]",
+    "availabilitySetName": "[if(empty(parameters('availabilitySetName')), concat(parameters('uniqueString'), '-avset'), parameters('availabilitySetName'))]"
   },
   "resources": [
     {
@@ -683,11 +681,20 @@
           "userAssignManagedIdentity": {
             "value": "[if(not(variables('createManagedIdentity')), parameters('bigIpUserAssignManagedIdentity'), reference('accessTemplate').outputs.userAssignedIdentityId.value)]"
           },
+          "diagnosticsStorageAccountName": {
+            "value": "[variables('diagnosticsProfile')]"
+          },
           "vmName": {
             "value": "[variables('vmName01')]"
           },
           "zone": {
             "value": "[if(parameters('useAvailabilityZones'), '1', '')]"
+          },
+          "useAvailabilitySet": {
+            "value": "[parameters('useAvailabilitySet')]"
+          },
+          "availabilitySetName": {
+            "value": "[parameters('availabilitySetName')]"
           }
         }
       }
@@ -809,11 +816,20 @@
           "userAssignManagedIdentity": {
             "value": "[if(not(variables('createManagedIdentity')), parameters('bigIpUserAssignManagedIdentity'), reference('accessTemplate').outputs.userAssignedIdentityId.value)]"
           },
+          "diagnosticsStorageAccountName": {
+            "value": "[variables('diagnosticsStorageAccountName')]"
+          },
           "vmName": {
             "value": "[variables('vmName02')]"
           },
           "zone": {
             "value": "[if(parameters('useAvailabilityZones'), '2', '')]"
+          },
+          "useAvailabilitySet": {
+            "value": "[parameters('useAvailabilitySet')]"
+          },
+          "availabilitySetName": {
+            "value": "[parameters('availabilitySetName')]"
           }
         }
       }

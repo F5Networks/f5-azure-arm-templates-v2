@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "3.3.0.0",
+  "contentVersion": "3.3.0.0-avset",
   "parameters": {
     "allowUsageAnalytics": {
       "value": true
@@ -71,6 +71,9 @@
     "bigIpUserAssignManagedIdentity": {
       "value": ""
     },
+    "diagnosticsStorageAccountName": {
+      "value": ""
+    },
     "cfeStorageAccountName": {
       "value": ""
     },
@@ -115,6 +118,12 @@
     },
     "useAvailabilityZones": {
       "value": false
+    },
+    "useAvailabilitySet": {
+      "value": true
+    },
+    "availabilitySetName": {
+      "value": ""
     }
   }
 }
